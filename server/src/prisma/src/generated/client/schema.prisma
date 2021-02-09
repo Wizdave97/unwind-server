@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./src/generated/client"
+}
+
+model User {
+  userId    Int         @id @default(autoincrement()) @map("user_id")
+  uid       String?     @unique
+  firstName String      @map("first_name")
+  lastName  String      @map("last_name")
+  userName  String?     @unique @map("user_name")
+  email     String      @unique
+  imgUrl    String?     @map("img_url")
+  following User[]      @relation("User")
+  followers User[]      @relation("User")
+  created   DateTime    @default(now())
+  updated   DateTime    @updatedAt
+  location  Json?
+  posts     Post[]
+  cruise    Cruise[]
+  comment   Comment[]
+  challenge Challenge[]
+}
+
+enum AttahmentType {
+  VIDEO
+  IMAGE
+}
+
+model Post {
+  id             Int           @id @default(autoincrement())
+  user           User          @relation(fields: [userId], references: [userId])
+  userId         Int           @map("user_id")
+  attachmentUrl  String        @map("attachment_url")
+  attachmentType AttahmentType
+  content        String?
+  created        DateTime      @default(now())
+  updated        DateTime      @updatedAt
+  reaction       Json?
+  location       Json?
+  hashtags       String[]
+  comments       Comment[]
+  cruiseId       Int[]
+  challengeId    Int?
+}
+
+model Cruise {
+  id             Int           @id @default(autoincrement())
+  creator        User          @relation(fields: [creatorId], references: [userId])
+  slogan         String
+  attachmentType AttahmentType
+  creatorId      Int
+  followers      Int[]
+  following      Int[]
+  created        DateTime      @default(now())
+  updated        DateTime      @updatedAt
+}
+
+model Comment {
+  id      Int      @id @default(autoincrement())
+  postId  Int
+  post    Post     @relation(fields: [postId], references: [id])
+  comment String
+  userId  Int
+  user    User     @relation(fields: [userId], references: [userId])
+  created DateTime @default(now())
+  updated DateTime @updatedAt
+}
+
+model Challenge {
+  id             Int           @id @default(autoincrement())
+  creator        User          @relation(fields: [creatorId], references: [userId])
+  challenge      String
+  creatorId      Int
+  attachmentType AttahmentType
+  followers      Int[]
+  following      Int[]
+  start          DateTime
+  end            DateTime
+  created        DateTime      @default(now())
+  updated        DateTime      @updatedAt
+}

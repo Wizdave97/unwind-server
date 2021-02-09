@@ -1,0 +1,129 @@
+type Query {
+    info:String!
+}
+type Mutation {
+    createUser(input: CreateUserInput!): User!
+    updateUser(input: UpdateUserInput!): User!
+    createPost(input: CreatePostInput!): Post!
+}
+
+input CreateUserInput {
+    email: String! 
+    firstName: String! 
+    lastName: String! 
+    uid: String!
+}
+
+input UpdateUserInput {
+    firstName: String 
+    lastName: String  
+    imgUrl: String 
+    userName: String 
+    uid: String!
+}
+
+input LocationInput {
+    lat: Float!
+    long: Float!
+}
+
+input CreatePostInput {
+    attachmentType: AttachmentType!
+    uid: String!
+    location: LocationInput
+    content: String
+    fileAttachment: FileInput!
+}
+
+input FileInput {
+    mimetype: String!
+    filename: String!
+    encoding: String!
+    url: String!
+}
+
+type Location {
+    lat: Float!
+    long: Float!
+}
+
+type File {
+    filename: String!
+    mimetype: String!
+    encoding: String!
+}
+
+type Reaction {
+    hearts: Int!
+    kisses: Int!
+    fire: Int!
+}
+enum AttachmentType {
+    VIDEO
+    IMAGE
+}
+
+type User {
+    userId: Int!
+    firstName: String!
+    lastName: String!
+    userName: String
+    email: String!
+    created: String!
+    updated: String!
+    location: Location
+}
+
+type Post {
+    id: Int!         
+    attachmentType: AttachmentType!       
+    user: User       
+    userId: Int!    
+    imgUrl: String     
+    videoUrl: String  
+    content: String 
+    created: String!    
+    updated: String!    
+    reaction: Reaction!  
+    location: Location  
+    comments: [Comment]!  
+    cruiseId: Int   
+    challengeId: Int
+}
+
+type Challenge {
+    id: Int!       
+    creator: User!  
+    challenge: String!
+    attachmentType: AttachmentType
+    creatorId: Int!
+    followers: [Int]!
+    following: [Int]!
+    start: String!    
+    end: String!      
+    created: String!  
+    updated: String!  
+}
+
+type Comment {
+    id: Int!     
+    postId: Int! 
+    post: Post!   
+    comment: String!
+    userId: Int! 
+    user: User!  
+    created: String!
+    updated: String!
+}
+
+type Cruise {
+    id: Int!     
+    creator: User! 
+    slogan: String!  
+    attachmentType: AttachmentType
+    creatorId: Int!
+    followers: [Int]!
+    following: [Int]!
+    created: String!  
+    updated: String!  
+}

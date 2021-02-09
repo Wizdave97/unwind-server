@@ -15,6 +15,7 @@ services:
     build: 
       context: ./server
       dockerfile: Dockerfile.dev
+    restart: always
     volumes:
       - /usr/app/node_modules
       - ./server:/usr/app
@@ -26,7 +27,6 @@ services:
       - PGDATABASE=postgres
       - PGPASSWORD=postgres_password
       - PGPORT=5432
-      - DATABASE_URL="postgresql://${postgres}:${postgres_password}@${postgres}:5432/${postgres}"
       - NODE_ENV=development
   nginx:
     build:

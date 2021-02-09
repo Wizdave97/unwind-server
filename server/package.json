@@ -5,18 +5,21 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:dev": "nodemon --exec ts-node src/index.ts",
+    "start:dev": "nodemon --exec ts-node --project ./tsconfig.json --files src/index.ts",
     "start": "tsc  && node dist/index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^2.15.0",
+    "@prisma/client": "2.15.0",
     "apollo-server": "^2.19.2",
+    "firebase-admin": "^9.4.2",
+    "graphql-constraint-directive": "^2.1.1",
+    "module-alias": "^2.2.2",
     "redis": "^3.0.2"
   },
   "devDependencies": {
-    "@prisma/cli": "^2.14.0",
+    "@prisma/cli": "2.15.0",
     "@types/redis": "^2.8.28",
     "nodemon": "^2.0.7",
     "ts-node": "^9.1.1",
@@ -26,6 +29,9 @@
     "watch": [
       "src"
     ],
-    "ext": "ts, js"
+    "ext": "ts, js, graphql"
+  },
+  "_moduleAliases": {
+    "unwind-server": "src/"
   }
 }
