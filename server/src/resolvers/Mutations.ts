@@ -1,6 +1,6 @@
 import { ApolloError, AuthenticationError, UserInputError } from "apollo-server";
 import { ContextInterface, ParentInterface, Partial } from "unwind-server/types";
-import { AttachmentType, CreatePostArgs, CreateUserArgs, UpdateUserArgs } from "./types";
+import { AttachmentType, CreateChallengeArgs, CreateCruiseArgs, CreatePostArgs, CreateUserArgs, UpdateUserArgs } from "./types";
 
 
 export const createUser = async (parent: ParentInterface, { input }: { input: CreateUserArgs }, context: ContextInterface) => {
@@ -75,9 +75,68 @@ export const createPost = async (parent: ParentInterface, { input }: {input: Cre
             user: { connect : { userId : user?.userId! }},
             attachmentType,
             attachmentUrl: fileAttachment.url,
+            attachmentMeta: fileAttachment,
             ...(content && { content }),
             ...(hashtags && { hashtags })
         }
     })
     return post
+}
+
+export const createCruise = async (parent: ParentInterface, { input }: {input: CreateCruiseArgs}, context: ContextInterface) => {
+    const { prisma, decodedToken } = context
+    if(!decodedToken) throw new AuthenticationError('User not authenticated')
+    const errors: {[key: string]: string} = {}
+    const { attachmentType, slogan, uid, fileAttachment} = input
+
+    const user = await prisma.user.findUnique({
+        where: {
+            uid
+        }
+    })
+    if(!user) throw new ApolloError('Database Error: Could not find user', '500')
+    let hashtags = slogan?.match(/#\w*/gi)
+
+    const cruise =  await prisma.cruise.create({
+        data: {
+            creator: {connect: {userId: user?.userId!}},
+            slogan,
+            attachmentType: attachmentType,
+            attachmentUrl: fileAttachment.url,
+            attachmentMeta: fileAttachment,
+            ...(hashtags && { hashtags })
+        }
+    })
+
+    return cruise
+}
+
+export const createChallenge = async (parent: ParentInterface, { input }: {input: CreateChallengeArgs}, context: ContextInterface) => {
+    const { prisma, decodedToken } = context
+    if(!decodedToken) throw new AuthenticationError('User not authenticated')
+    const errors: {[key: string]: string} = {}
+    const { attachmentType, challenge, uid, fileAttachment,start, end} = input
+
+    const user = await prisma.user.findUnique({
+        where: {
+            uid
+        }
+    })
+    if(!user) throw new ApolloError('Database Error: Could not find user', '500')
+    let hashtags = challenge?.match(/#\w*/gi)
+
+    const newChallenge =  await prisma.challenge.create({
+        data: {
+            creator: {connect: {userId: user?.userId!}},
+            challenge,
+            attachmentType: attachmentType,
+            attachmentUrl: fileAttachment.url,
+            attachmentMeta: fileAttachment,
+            ...(hashtags && { hashtags }),
+            start,
+            end
+        }
+    })
+
+    return newChallenge
 }

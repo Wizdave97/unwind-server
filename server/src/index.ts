@@ -4,20 +4,26 @@ import fs from 'fs'
 import path from 'path'
 import { verifyToken } from 'unwind-server/auth'
 import { PrismaClient } from 'unwind-server/prisma/src/generated/client'
-import { mutations, Post } from 'unwind-server/resolvers'
+import { mutations, Post, Cruise, Comment, Challenge } from 'unwind-server/resolvers'
+import { dateScalar } from './utils/scalars';
 
 
 const prisma = new PrismaClient()
 
+
 // 2
 const resolvers = {
+  Date: dateScalar,
   Query: {
     info: () => `This is the API of a Hackernews Clone App`,
   },
   Mutation: {
     ...mutations
   }, 
-  Post
+  Post,
+  Cruise,
+  Comment,
+  Challenge
 }
 
 // 3

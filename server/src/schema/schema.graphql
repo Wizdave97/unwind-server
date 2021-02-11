@@ -1,3 +1,4 @@
+scalar Date
 type Query {
     info:String!
 }
@@ -5,6 +6,8 @@ type Mutation {
     createUser(input: CreateUserInput!): User!
     updateUser(input: UpdateUserInput!): User!
     createPost(input: CreatePostInput!): Post!
+    createChallenge(input: CreateChallengeInput!): Challenge!
+    createCruise(input: CreateCruiseInput!): Cruise!
 }
 
 input CreateUserInput {
@@ -35,6 +38,22 @@ input CreatePostInput {
     fileAttachment: FileInput!
 }
 
+input CreateChallengeInput {
+    uid: String!
+    challenge: String!
+    attachmentType: AttachmentType!
+    fileAttachment: FileInput!
+    start: Date
+    end: Date
+}
+
+input CreateCruiseInput {
+    uid: String!
+    slogan: String!
+    attachmentType: AttachmentType!
+    fileAttachment: FileInput!
+}
+
 input FileInput {
     mimetype: String!
     filename: String!
@@ -51,6 +70,7 @@ type File {
     filename: String!
     mimetype: String!
     encoding: String!
+    url: String!
 }
 
 type Reaction {
@@ -76,7 +96,8 @@ type User {
 
 type Post {
     id: Int!         
-    attachmentType: AttachmentType!       
+    attachmentType: AttachmentType!   
+    attachmentMeta: File    
     user: User       
     userId: Int!    
     imgUrl: String     
@@ -96,6 +117,8 @@ type Challenge {
     creator: User!  
     challenge: String!
     attachmentType: AttachmentType
+    attachmentUrl: String!
+    attachmentMeta: File
     creatorId: Int!
     followers: [Int]!
     following: [Int]!
@@ -110,6 +133,9 @@ type Comment {
     postId: Int! 
     post: Post!   
     comment: String!
+    attachmentType: AttachmentType
+    attachmentUrl: String!
+    attachmentMeta: File
     userId: Int! 
     user: User!  
     created: String!
@@ -121,6 +147,8 @@ type Cruise {
     creator: User! 
     slogan: String!  
     attachmentType: AttachmentType
+    attachmentUrl: String!
+    attachmentMeta: File
     creatorId: Int!
     followers: [Int]!
     following: [Int]!

@@ -40,6 +40,7 @@ model Post {
   user           User          @relation(fields: [userId], references: [userId])
   userId         Int           @map("user_id")
   attachmentUrl  String        @map("attachment_url")
+  attachmentMeta Json
   attachmentType AttahmentType
   content        String?
   created        DateTime      @default(now())
@@ -57,22 +58,30 @@ model Cruise {
   creator        User          @relation(fields: [creatorId], references: [userId])
   slogan         String
   attachmentType AttahmentType
+  attachmentMeta Json
+  attachmentUrl  String        @map("attachment_url")
   creatorId      Int
+  reaction       Json?
   followers      Int[]
   following      Int[]
+  hashtags       String[]
   created        DateTime      @default(now())
   updated        DateTime      @updatedAt
 }
 
 model Comment {
-  id      Int      @id @default(autoincrement())
-  postId  Int
-  post    Post     @relation(fields: [postId], references: [id])
-  comment String
-  userId  Int
-  user    User     @relation(fields: [userId], references: [userId])
-  created DateTime @default(now())
-  updated DateTime @updatedAt
+  id             Int           @id @default(autoincrement())
+  postId         Int
+  post           Post          @relation(fields: [postId], references: [id])
+  comment        String
+  attachmentMeta Json
+  attachmentType AttahmentType 
+  attachmentUrl  String        @map("attachment_url")
+  userId         Int
+  reaction       Json?
+  user           User          @relation(fields: [userId], references: [userId])
+  created        DateTime      @default(now())
+  updated        DateTime      @updatedAt
 }
 
 model Challenge {
@@ -81,6 +90,10 @@ model Challenge {
   challenge      String
   creatorId      Int
   attachmentType AttahmentType
+  attachmentUrl  String        @map("attachment_url")
+  attachmentMeta Json
+  reaction       Json?
+  hashtags       String[]
   followers      Int[]
   following      Int[]
   start          DateTime

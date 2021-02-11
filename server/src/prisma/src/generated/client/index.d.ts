@@ -31,6 +31,7 @@ export type Post = {
   id: number
   userId: number
   attachmentUrl: string
+  attachmentMeta: Prisma.JsonValue
   attachmentType: AttahmentType
   content: string | null
   created: Date
@@ -50,9 +51,13 @@ export type Cruise = {
   id: number
   slogan: string
   attachmentType: AttahmentType
+  attachmentMeta: Prisma.JsonValue
+  attachmentUrl: string
   creatorId: number
+  reaction: Prisma.JsonValue | null
   followers: number[]
   following: number[]
+  hashtags: string[]
   created: Date
   updated: Date
 }
@@ -65,7 +70,11 @@ export type Comment = {
   id: number
   postId: number
   comment: string
+  attachmentMeta: Prisma.JsonValue
+  attachmentType: AttahmentType
+  attachmentUrl: string
   userId: number
+  reaction: Prisma.JsonValue | null
   created: Date
   updated: Date
 }
@@ -79,6 +88,10 @@ export type Challenge = {
   challenge: string
   creatorId: number
   attachmentType: AttahmentType
+  attachmentUrl: string
+  attachmentMeta: Prisma.JsonValue
+  reaction: Prisma.JsonValue | null
+  hashtags: string[]
   followers: number[]
   following: number[]
   start: Date
@@ -1520,6 +1533,7 @@ export namespace Prisma {
     id: number
     userId: number
     attachmentUrl: string | null
+    attachmentMeta: JsonValue | null
     attachmentType: AttahmentType | null
     content: string | null
     created: Date | null
@@ -1533,6 +1547,7 @@ export namespace Prisma {
     id: number
     userId: number
     attachmentUrl: string | null
+    attachmentMeta: JsonValue | null
     attachmentType: AttahmentType | null
     content: string | null
     created: Date | null
@@ -1546,6 +1561,7 @@ export namespace Prisma {
     id: number
     userId: number
     attachmentUrl: number | null
+    attachmentMeta: number | null
     attachmentType: number | null
     content: number | null
     created: number | null
@@ -1577,6 +1593,7 @@ export namespace Prisma {
     id?: true
     userId?: true
     attachmentUrl?: true
+    attachmentMeta?: true
     attachmentType?: true
     content?: true
     created?: true
@@ -1590,6 +1607,7 @@ export namespace Prisma {
     id?: true
     userId?: true
     attachmentUrl?: true
+    attachmentMeta?: true
     attachmentType?: true
     content?: true
     created?: true
@@ -1603,6 +1621,7 @@ export namespace Prisma {
     id?: true
     userId?: true
     attachmentUrl?: true
+    attachmentMeta?: true
     attachmentType?: true
     content?: true
     created?: true
@@ -1691,6 +1710,7 @@ export namespace Prisma {
     user?: boolean | UserArgs
     userId?: boolean
     attachmentUrl?: boolean
+    attachmentMeta?: boolean
     attachmentType?: boolean
     content?: boolean
     created?: boolean
@@ -2270,7 +2290,10 @@ export namespace Prisma {
     id: number
     slogan: string | null
     attachmentType: AttahmentType | null
+    attachmentMeta: JsonValue | null
+    attachmentUrl: string | null
     creatorId: number
+    reaction: JsonValue | null
     created: Date | null
     updated: Date | null
   }
@@ -2279,7 +2302,10 @@ export namespace Prisma {
     id: number
     slogan: string | null
     attachmentType: AttahmentType | null
+    attachmentMeta: JsonValue | null
+    attachmentUrl: string | null
     creatorId: number
+    reaction: JsonValue | null
     created: Date | null
     updated: Date | null
   }
@@ -2288,9 +2314,13 @@ export namespace Prisma {
     id: number
     slogan: number | null
     attachmentType: number | null
+    attachmentMeta: number | null
+    attachmentUrl: number | null
     creatorId: number
+    reaction: number | null
     followers: number | null
     following: number | null
+    hashtags: number | null
     created: number | null
     updated: number | null
     _all: number
@@ -2315,7 +2345,10 @@ export namespace Prisma {
     id?: true
     slogan?: true
     attachmentType?: true
+    attachmentMeta?: true
+    attachmentUrl?: true
     creatorId?: true
+    reaction?: true
     created?: true
     updated?: true
   }
@@ -2324,7 +2357,10 @@ export namespace Prisma {
     id?: true
     slogan?: true
     attachmentType?: true
+    attachmentMeta?: true
+    attachmentUrl?: true
     creatorId?: true
+    reaction?: true
     created?: true
     updated?: true
   }
@@ -2333,9 +2369,13 @@ export namespace Prisma {
     id?: true
     slogan?: true
     attachmentType?: true
+    attachmentMeta?: true
+    attachmentUrl?: true
     creatorId?: true
+    reaction?: true
     followers?: true
     following?: true
+    hashtags?: true
     created?: true
     updated?: true
     _all?: true
@@ -2417,9 +2457,13 @@ export namespace Prisma {
     creator?: boolean | UserArgs
     slogan?: boolean
     attachmentType?: boolean
+    attachmentMeta?: boolean
+    attachmentUrl?: boolean
     creatorId?: boolean
+    reaction?: boolean
     followers?: boolean
     following?: boolean
+    hashtags?: boolean
     created?: boolean
     updated?: boolean
   }
@@ -2982,7 +3026,11 @@ export namespace Prisma {
     id: number
     postId: number
     comment: string | null
+    attachmentMeta: JsonValue | null
+    attachmentType: AttahmentType | null
+    attachmentUrl: string | null
     userId: number
+    reaction: JsonValue | null
     created: Date | null
     updated: Date | null
   }
@@ -2991,7 +3039,11 @@ export namespace Prisma {
     id: number
     postId: number
     comment: string | null
+    attachmentMeta: JsonValue | null
+    attachmentType: AttahmentType | null
+    attachmentUrl: string | null
     userId: number
+    reaction: JsonValue | null
     created: Date | null
     updated: Date | null
   }
@@ -3000,7 +3052,11 @@ export namespace Prisma {
     id: number
     postId: number
     comment: number | null
+    attachmentMeta: number | null
+    attachmentType: number | null
+    attachmentUrl: number | null
     userId: number
+    reaction: number | null
     created: number | null
     updated: number | null
     _all: number
@@ -3023,7 +3079,11 @@ export namespace Prisma {
     id?: true
     postId?: true
     comment?: true
+    attachmentMeta?: true
+    attachmentType?: true
+    attachmentUrl?: true
     userId?: true
+    reaction?: true
     created?: true
     updated?: true
   }
@@ -3032,7 +3092,11 @@ export namespace Prisma {
     id?: true
     postId?: true
     comment?: true
+    attachmentMeta?: true
+    attachmentType?: true
+    attachmentUrl?: true
     userId?: true
+    reaction?: true
     created?: true
     updated?: true
   }
@@ -3041,7 +3105,11 @@ export namespace Prisma {
     id?: true
     postId?: true
     comment?: true
+    attachmentMeta?: true
+    attachmentType?: true
+    attachmentUrl?: true
     userId?: true
+    reaction?: true
     created?: true
     updated?: true
     _all?: true
@@ -3123,7 +3191,11 @@ export namespace Prisma {
     postId?: boolean
     post?: boolean | PostArgs
     comment?: boolean
+    attachmentMeta?: boolean
+    attachmentType?: boolean
+    attachmentUrl?: boolean
     userId?: boolean
+    reaction?: boolean
     user?: boolean | UserArgs
     created?: boolean
     updated?: boolean
@@ -3697,6 +3769,9 @@ export namespace Prisma {
     challenge: string | null
     creatorId: number
     attachmentType: AttahmentType | null
+    attachmentUrl: string | null
+    attachmentMeta: JsonValue | null
+    reaction: JsonValue | null
     start: Date | null
     end: Date | null
     created: Date | null
@@ -3708,6 +3783,9 @@ export namespace Prisma {
     challenge: string | null
     creatorId: number
     attachmentType: AttahmentType | null
+    attachmentUrl: string | null
+    attachmentMeta: JsonValue | null
+    reaction: JsonValue | null
     start: Date | null
     end: Date | null
     created: Date | null
@@ -3719,6 +3797,10 @@ export namespace Prisma {
     challenge: number | null
     creatorId: number
     attachmentType: number | null
+    attachmentUrl: number | null
+    attachmentMeta: number | null
+    reaction: number | null
+    hashtags: number | null
     followers: number | null
     following: number | null
     start: number | null
@@ -3748,6 +3830,9 @@ export namespace Prisma {
     challenge?: true
     creatorId?: true
     attachmentType?: true
+    attachmentUrl?: true
+    attachmentMeta?: true
+    reaction?: true
     start?: true
     end?: true
     created?: true
@@ -3759,6 +3844,9 @@ export namespace Prisma {
     challenge?: true
     creatorId?: true
     attachmentType?: true
+    attachmentUrl?: true
+    attachmentMeta?: true
+    reaction?: true
     start?: true
     end?: true
     created?: true
@@ -3770,6 +3858,10 @@ export namespace Prisma {
     challenge?: true
     creatorId?: true
     attachmentType?: true
+    attachmentUrl?: true
+    attachmentMeta?: true
+    reaction?: true
+    hashtags?: true
     followers?: true
     following?: true
     start?: true
@@ -3856,6 +3948,10 @@ export namespace Prisma {
     challenge?: boolean
     creatorId?: boolean
     attachmentType?: boolean
+    attachmentUrl?: boolean
+    attachmentMeta?: boolean
+    reaction?: boolean
+    hashtags?: boolean
     followers?: boolean
     following?: boolean
     start?: boolean
@@ -4420,6 +4516,7 @@ export namespace Prisma {
     id: 'id',
     userId: 'userId',
     attachmentUrl: 'attachmentUrl',
+    attachmentMeta: 'attachmentMeta',
     attachmentType: 'attachmentType',
     content: 'content',
     created: 'created',
@@ -4438,9 +4535,13 @@ export namespace Prisma {
     id: 'id',
     slogan: 'slogan',
     attachmentType: 'attachmentType',
+    attachmentMeta: 'attachmentMeta',
+    attachmentUrl: 'attachmentUrl',
     creatorId: 'creatorId',
+    reaction: 'reaction',
     followers: 'followers',
     following: 'following',
+    hashtags: 'hashtags',
     created: 'created',
     updated: 'updated'
   };
@@ -4452,7 +4553,11 @@ export namespace Prisma {
     id: 'id',
     postId: 'postId',
     comment: 'comment',
+    attachmentMeta: 'attachmentMeta',
+    attachmentType: 'attachmentType',
+    attachmentUrl: 'attachmentUrl',
     userId: 'userId',
+    reaction: 'reaction',
     created: 'created',
     updated: 'updated'
   };
@@ -4465,6 +4570,10 @@ export namespace Prisma {
     challenge: 'challenge',
     creatorId: 'creatorId',
     attachmentType: 'attachmentType',
+    attachmentUrl: 'attachmentUrl',
+    attachmentMeta: 'attachmentMeta',
+    reaction: 'reaction',
+    hashtags: 'hashtags',
     followers: 'followers',
     following: 'following',
     start: 'start',
@@ -4547,6 +4656,7 @@ export namespace Prisma {
     user?: XOR<UserWhereInput, UserRelationFilter>
     userId?: IntFilter | number
     attachmentUrl?: StringFilter | string
+    attachmentMeta?: JsonFilter
     attachmentType?: EnumAttahmentTypeFilter | AttahmentType
     content?: StringNullableFilter | string | null
     created?: DateTimeFilter | Date | string
@@ -4563,6 +4673,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     attachmentUrl?: SortOrder
+    attachmentMeta?: SortOrder
     attachmentType?: SortOrder
     content?: SortOrder
     created?: SortOrder
@@ -4586,9 +4697,13 @@ export namespace Prisma {
     creator?: XOR<UserWhereInput, UserRelationFilter>
     slogan?: StringFilter | string
     attachmentType?: EnumAttahmentTypeFilter | AttahmentType
+    attachmentMeta?: JsonFilter
+    attachmentUrl?: StringFilter | string
     creatorId?: IntFilter | number
+    reaction?: JsonNullableFilter
     followers?: IntNullableListFilter
     following?: IntNullableListFilter
+    hashtags?: StringNullableListFilter
     created?: DateTimeFilter | Date | string
     updated?: DateTimeFilter | Date | string
   }
@@ -4597,9 +4712,13 @@ export namespace Prisma {
     id?: SortOrder
     slogan?: SortOrder
     attachmentType?: SortOrder
+    attachmentMeta?: SortOrder
+    attachmentUrl?: SortOrder
     creatorId?: SortOrder
+    reaction?: SortOrder
     followers?: SortOrder
     following?: SortOrder
+    hashtags?: SortOrder
     created?: SortOrder
     updated?: SortOrder
   }
@@ -4616,7 +4735,11 @@ export namespace Prisma {
     postId?: IntFilter | number
     post?: XOR<PostWhereInput, PostRelationFilter>
     comment?: StringFilter | string
+    attachmentMeta?: JsonFilter
+    attachmentType?: EnumAttahmentTypeFilter | AttahmentType
+    attachmentUrl?: StringFilter | string
     userId?: IntFilter | number
+    reaction?: JsonNullableFilter
     user?: XOR<UserWhereInput, UserRelationFilter>
     created?: DateTimeFilter | Date | string
     updated?: DateTimeFilter | Date | string
@@ -4626,7 +4749,11 @@ export namespace Prisma {
     id?: SortOrder
     postId?: SortOrder
     comment?: SortOrder
+    attachmentMeta?: SortOrder
+    attachmentType?: SortOrder
+    attachmentUrl?: SortOrder
     userId?: SortOrder
+    reaction?: SortOrder
     created?: SortOrder
     updated?: SortOrder
   }
@@ -4644,6 +4771,10 @@ export namespace Prisma {
     challenge?: StringFilter | string
     creatorId?: IntFilter | number
     attachmentType?: EnumAttahmentTypeFilter | AttahmentType
+    attachmentUrl?: StringFilter | string
+    attachmentMeta?: JsonFilter
+    reaction?: JsonNullableFilter
+    hashtags?: StringNullableListFilter
     followers?: IntNullableListFilter
     following?: IntNullableListFilter
     start?: DateTimeFilter | Date | string
@@ -4657,6 +4788,10 @@ export namespace Prisma {
     challenge?: SortOrder
     creatorId?: SortOrder
     attachmentType?: SortOrder
+    attachmentUrl?: SortOrder
+    attachmentMeta?: SortOrder
+    reaction?: SortOrder
+    hashtags?: SortOrder
     followers?: SortOrder
     following?: SortOrder
     start?: SortOrder
@@ -4766,6 +4901,7 @@ export namespace Prisma {
 
   export type PostCreateInput = {
     attachmentUrl: string
+    attachmentMeta: InputJsonValue
     attachmentType: AttahmentType
     content?: string | null
     created?: Date | string
@@ -4783,6 +4919,7 @@ export namespace Prisma {
     id?: number
     userId: number
     attachmentUrl: string
+    attachmentMeta: InputJsonValue
     attachmentType: AttahmentType
     content?: string | null
     created?: Date | string
@@ -4797,6 +4934,7 @@ export namespace Prisma {
 
   export type PostUpdateInput = {
     attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
     content?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4814,6 +4952,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
     attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
     content?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4828,6 +4967,7 @@ export namespace Prisma {
 
   export type PostUpdateManyMutationInput = {
     attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
     content?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4843,6 +4983,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
     attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
     content?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4857,10 +4998,14 @@ export namespace Prisma {
   export type CruiseCreateInput = {
     slogan: string
     attachmentType: AttahmentType
+    attachmentMeta: InputJsonValue
+    attachmentUrl: string
+    reaction?: InputJsonValue | null
     created?: Date | string
     updated?: Date | string
     followers?: CruiseCreatefollowersInput | Enumerable<number>
     following?: CruiseCreatefollowingInput | Enumerable<number>
+    hashtags?: CruiseCreatehashtagsInput | Enumerable<string>
     creator: UserCreateOneWithoutCruiseInput
   }
 
@@ -4868,20 +5013,28 @@ export namespace Prisma {
     id?: number
     slogan: string
     attachmentType: AttahmentType
+    attachmentMeta: InputJsonValue
+    attachmentUrl: string
     creatorId: number
+    reaction?: InputJsonValue | null
     created?: Date | string
     updated?: Date | string
     followers?: CruiseCreatefollowersInput | Enumerable<number>
     following?: CruiseCreatefollowingInput | Enumerable<number>
+    hashtags?: CruiseCreatehashtagsInput | Enumerable<string>
   }
 
   export type CruiseUpdateInput = {
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentMeta?: InputJsonValue
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    reaction?: InputJsonValue | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     followers?: CruiseUpdatefollowersInput | Enumerable<number>
     following?: CruiseUpdatefollowingInput | Enumerable<number>
+    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
     creator?: UserUpdateOneRequiredWithoutCruiseInput
   }
 
@@ -4889,35 +5042,51 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentMeta?: InputJsonValue
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
     creatorId?: IntFieldUpdateOperationsInput | number
+    reaction?: InputJsonValue | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     followers?: CruiseUpdatefollowersInput | Enumerable<number>
     following?: CruiseUpdatefollowingInput | Enumerable<number>
+    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
   }
 
   export type CruiseUpdateManyMutationInput = {
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentMeta?: InputJsonValue
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    reaction?: InputJsonValue | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     followers?: CruiseUpdatefollowersInput | Enumerable<number>
     following?: CruiseUpdatefollowingInput | Enumerable<number>
+    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
   }
 
   export type CruiseUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentMeta?: InputJsonValue
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
     creatorId?: IntFieldUpdateOperationsInput | number
+    reaction?: InputJsonValue | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     followers?: CruiseUpdatefollowersInput | Enumerable<number>
     following?: CruiseUpdatefollowingInput | Enumerable<number>
+    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
   }
 
   export type CommentCreateInput = {
     comment: string
+    attachmentMeta: InputJsonValue
+    attachmentType: AttahmentType
+    attachmentUrl: string
+    reaction?: InputJsonValue | null
     created?: Date | string
     updated?: Date | string
     post: PostCreateOneWithoutCommentsInput
@@ -4928,13 +5097,21 @@ export namespace Prisma {
     id?: number
     postId: number
     comment: string
+    attachmentMeta: InputJsonValue
+    attachmentType: AttahmentType
+    attachmentUrl: string
     userId: number
+    reaction?: InputJsonValue | null
     created?: Date | string
     updated?: Date | string
   }
 
   export type CommentUpdateInput = {
     comment?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
+    attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    reaction?: InputJsonValue | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     post?: PostUpdateOneRequiredWithoutCommentsInput
@@ -4945,13 +5122,21 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     postId?: IntFieldUpdateOperationsInput | number
     comment?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
+    attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
     userId?: IntFieldUpdateOperationsInput | number
+    reaction?: InputJsonValue | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CommentUpdateManyMutationInput = {
     comment?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
+    attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    reaction?: InputJsonValue | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4960,7 +5145,11 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     postId?: IntFieldUpdateOperationsInput | number
     comment?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
+    attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
     userId?: IntFieldUpdateOperationsInput | number
+    reaction?: InputJsonValue | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4968,10 +5157,14 @@ export namespace Prisma {
   export type ChallengeCreateInput = {
     challenge: string
     attachmentType: AttahmentType
+    attachmentUrl: string
+    attachmentMeta: InputJsonValue
+    reaction?: InputJsonValue | null
     start: Date | string
     end: Date | string
     created?: Date | string
     updated?: Date | string
+    hashtags?: ChallengeCreatehashtagsInput | Enumerable<string>
     followers?: ChallengeCreatefollowersInput | Enumerable<number>
     following?: ChallengeCreatefollowingInput | Enumerable<number>
     creator: UserCreateOneWithoutChallengeInput
@@ -4982,10 +5175,14 @@ export namespace Prisma {
     challenge: string
     creatorId: number
     attachmentType: AttahmentType
+    attachmentUrl: string
+    attachmentMeta: InputJsonValue
+    reaction?: InputJsonValue | null
     start: Date | string
     end: Date | string
     created?: Date | string
     updated?: Date | string
+    hashtags?: ChallengeCreatehashtagsInput | Enumerable<string>
     followers?: ChallengeCreatefollowersInput | Enumerable<number>
     following?: ChallengeCreatefollowingInput | Enumerable<number>
   }
@@ -4993,10 +5190,14 @@ export namespace Prisma {
   export type ChallengeUpdateInput = {
     challenge?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
+    reaction?: InputJsonValue | null
     start?: DateTimeFieldUpdateOperationsInput | Date | string
     end?: DateTimeFieldUpdateOperationsInput | Date | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
     followers?: ChallengeUpdatefollowersInput | Enumerable<number>
     following?: ChallengeUpdatefollowingInput | Enumerable<number>
     creator?: UserUpdateOneRequiredWithoutChallengeInput
@@ -5007,10 +5208,14 @@ export namespace Prisma {
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: IntFieldUpdateOperationsInput | number
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
+    reaction?: InputJsonValue | null
     start?: DateTimeFieldUpdateOperationsInput | Date | string
     end?: DateTimeFieldUpdateOperationsInput | Date | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
     followers?: ChallengeUpdatefollowersInput | Enumerable<number>
     following?: ChallengeUpdatefollowingInput | Enumerable<number>
   }
@@ -5018,10 +5223,14 @@ export namespace Prisma {
   export type ChallengeUpdateManyMutationInput = {
     challenge?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
+    reaction?: InputJsonValue | null
     start?: DateTimeFieldUpdateOperationsInput | Date | string
     end?: DateTimeFieldUpdateOperationsInput | Date | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
     followers?: ChallengeUpdatefollowersInput | Enumerable<number>
     following?: ChallengeUpdatefollowingInput | Enumerable<number>
   }
@@ -5031,10 +5240,14 @@ export namespace Prisma {
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: IntFieldUpdateOperationsInput | number
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
+    reaction?: InputJsonValue | null
     start?: DateTimeFieldUpdateOperationsInput | Date | string
     end?: DateTimeFieldUpdateOperationsInput | Date | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
     followers?: ChallengeUpdatefollowersInput | Enumerable<number>
     following?: ChallengeUpdatefollowingInput | Enumerable<number>
   }
@@ -5129,6 +5342,11 @@ export namespace Prisma {
   export type UserRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
+  }
+
+  export type JsonFilter = {
+    equals?: InputJsonValue
+    not?: InputJsonValue
   }
 
   export type EnumAttahmentTypeFilter = {
@@ -5468,6 +5686,10 @@ export namespace Prisma {
     set: Enumerable<number>
   }
 
+  export type CruiseCreatehashtagsInput = {
+    set: Enumerable<string>
+  }
+
   export type UserCreateOneWithoutCruiseInput = {
     create?: XOR<UserUncheckedCreateWithoutCruiseInput, UserCreateWithoutCruiseInput>
     connect?: UserWhereUniqueInput
@@ -5480,6 +5702,10 @@ export namespace Prisma {
 
   export type CruiseUpdatefollowingInput = {
     set: Enumerable<number>
+  }
+
+  export type CruiseUpdatehashtagsInput = {
+    set: Enumerable<string>
   }
 
   export type UserUpdateOneRequiredWithoutCruiseInput = {
@@ -5518,6 +5744,10 @@ export namespace Prisma {
     connectOrCreate?: UserCreateOrConnectWithoutcommentInput
   }
 
+  export type ChallengeCreatehashtagsInput = {
+    set: Enumerable<string>
+  }
+
   export type ChallengeCreatefollowersInput = {
     set: Enumerable<number>
   }
@@ -5530,6 +5760,10 @@ export namespace Prisma {
     create?: XOR<UserUncheckedCreateWithoutChallengeInput, UserCreateWithoutChallengeInput>
     connect?: UserWhereUniqueInput
     connectOrCreate?: UserCreateOrConnectWithoutchallengeInput
+  }
+
+  export type ChallengeUpdatehashtagsInput = {
+    set: Enumerable<string>
   }
 
   export type ChallengeUpdatefollowersInput = {
@@ -5696,6 +5930,7 @@ export namespace Prisma {
 
   export type PostCreateWithoutUserInput = {
     attachmentUrl: string
+    attachmentMeta: InputJsonValue
     attachmentType: AttahmentType
     content?: string | null
     created?: Date | string
@@ -5711,6 +5946,7 @@ export namespace Prisma {
   export type PostUncheckedCreateWithoutUserInput = {
     id?: number
     attachmentUrl: string
+    attachmentMeta: InputJsonValue
     attachmentType: AttahmentType
     content?: string | null
     created?: Date | string
@@ -5731,20 +5967,28 @@ export namespace Prisma {
   export type CruiseCreateWithoutCreatorInput = {
     slogan: string
     attachmentType: AttahmentType
+    attachmentMeta: InputJsonValue
+    attachmentUrl: string
+    reaction?: InputJsonValue | null
     created?: Date | string
     updated?: Date | string
     followers?: CruiseCreatefollowersInput | Enumerable<number>
     following?: CruiseCreatefollowingInput | Enumerable<number>
+    hashtags?: CruiseCreatehashtagsInput | Enumerable<string>
   }
 
   export type CruiseUncheckedCreateWithoutCreatorInput = {
     id?: number
     slogan: string
     attachmentType: AttahmentType
+    attachmentMeta: InputJsonValue
+    attachmentUrl: string
+    reaction?: InputJsonValue | null
     created?: Date | string
     updated?: Date | string
     followers?: CruiseCreatefollowersInput | Enumerable<number>
     following?: CruiseCreatefollowingInput | Enumerable<number>
+    hashtags?: CruiseCreatehashtagsInput | Enumerable<string>
   }
 
   export type CruiseCreateOrConnectWithoutcreatorInput = {
@@ -5754,6 +5998,10 @@ export namespace Prisma {
 
   export type CommentCreateWithoutUserInput = {
     comment: string
+    attachmentMeta: InputJsonValue
+    attachmentType: AttahmentType
+    attachmentUrl: string
+    reaction?: InputJsonValue | null
     created?: Date | string
     updated?: Date | string
     post: PostCreateOneWithoutCommentsInput
@@ -5763,6 +6011,10 @@ export namespace Prisma {
     id?: number
     postId: number
     comment: string
+    attachmentMeta: InputJsonValue
+    attachmentType: AttahmentType
+    attachmentUrl: string
+    reaction?: InputJsonValue | null
     created?: Date | string
     updated?: Date | string
   }
@@ -5775,10 +6027,14 @@ export namespace Prisma {
   export type ChallengeCreateWithoutCreatorInput = {
     challenge: string
     attachmentType: AttahmentType
+    attachmentUrl: string
+    attachmentMeta: InputJsonValue
+    reaction?: InputJsonValue | null
     start: Date | string
     end: Date | string
     created?: Date | string
     updated?: Date | string
+    hashtags?: ChallengeCreatehashtagsInput | Enumerable<string>
     followers?: ChallengeCreatefollowersInput | Enumerable<number>
     following?: ChallengeCreatefollowingInput | Enumerable<number>
   }
@@ -5787,10 +6043,14 @@ export namespace Prisma {
     id?: number
     challenge: string
     attachmentType: AttahmentType
+    attachmentUrl: string
+    attachmentMeta: InputJsonValue
+    reaction?: InputJsonValue | null
     start: Date | string
     end: Date | string
     created?: Date | string
     updated?: Date | string
+    hashtags?: ChallengeCreatehashtagsInput | Enumerable<string>
     followers?: ChallengeCreatefollowersInput | Enumerable<number>
     following?: ChallengeCreatefollowingInput | Enumerable<number>
   }
@@ -5865,6 +6125,7 @@ export namespace Prisma {
     id?: IntFilter | number
     userId?: IntFilter | number
     attachmentUrl?: StringFilter | string
+    attachmentMeta?: JsonFilter
     attachmentType?: EnumAttahmentTypeFilter | AttahmentType
     content?: StringNullableFilter | string | null
     created?: DateTimeFilter | Date | string
@@ -5899,9 +6160,13 @@ export namespace Prisma {
     id?: IntFilter | number
     slogan?: StringFilter | string
     attachmentType?: EnumAttahmentTypeFilter | AttahmentType
+    attachmentMeta?: JsonFilter
+    attachmentUrl?: StringFilter | string
     creatorId?: IntFilter | number
+    reaction?: JsonNullableFilter
     followers?: IntNullableListFilter
     following?: IntNullableListFilter
+    hashtags?: StringNullableListFilter
     created?: DateTimeFilter | Date | string
     updated?: DateTimeFilter | Date | string
   }
@@ -5929,7 +6194,11 @@ export namespace Prisma {
     id?: IntFilter | number
     postId?: IntFilter | number
     comment?: StringFilter | string
+    attachmentMeta?: JsonFilter
+    attachmentType?: EnumAttahmentTypeFilter | AttahmentType
+    attachmentUrl?: StringFilter | string
     userId?: IntFilter | number
+    reaction?: JsonNullableFilter
     created?: DateTimeFilter | Date | string
     updated?: DateTimeFilter | Date | string
   }
@@ -5958,6 +6227,10 @@ export namespace Prisma {
     challenge?: StringFilter | string
     creatorId?: IntFilter | number
     attachmentType?: EnumAttahmentTypeFilter | AttahmentType
+    attachmentUrl?: StringFilter | string
+    attachmentMeta?: JsonFilter
+    reaction?: JsonNullableFilter
+    hashtags?: StringNullableListFilter
     followers?: IntNullableListFilter
     following?: IntNullableListFilter
     start?: DateTimeFilter | Date | string
@@ -6012,6 +6285,10 @@ export namespace Prisma {
 
   export type CommentCreateWithoutPostInput = {
     comment: string
+    attachmentMeta: InputJsonValue
+    attachmentType: AttahmentType
+    attachmentUrl: string
+    reaction?: InputJsonValue | null
     created?: Date | string
     updated?: Date | string
     user: UserCreateOneWithoutCommentInput
@@ -6020,7 +6297,11 @@ export namespace Prisma {
   export type CommentUncheckedCreateWithoutPostInput = {
     id?: number
     comment: string
+    attachmentMeta: InputJsonValue
+    attachmentType: AttahmentType
+    attachmentUrl: string
     userId: number
+    reaction?: InputJsonValue | null
     created?: Date | string
     updated?: Date | string
   }
@@ -6162,6 +6443,7 @@ export namespace Prisma {
 
   export type PostCreateWithoutCommentsInput = {
     attachmentUrl: string
+    attachmentMeta: InputJsonValue
     attachmentType: AttahmentType
     content?: string | null
     created?: Date | string
@@ -6178,6 +6460,7 @@ export namespace Prisma {
     id?: number
     userId: number
     attachmentUrl: string
+    attachmentMeta: InputJsonValue
     attachmentType: AttahmentType
     content?: string | null
     created?: Date | string
@@ -6234,6 +6517,7 @@ export namespace Prisma {
 
   export type PostUpdateWithoutCommentsInput = {
     attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
     content?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6250,6 +6534,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     userId?: IntFieldUpdateOperationsInput | number
     attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
     content?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6476,6 +6761,7 @@ export namespace Prisma {
 
   export type PostUpdateWithoutUserInput = {
     attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
     content?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6491,6 +6777,7 @@ export namespace Prisma {
   export type PostUncheckedUpdateWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
     attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
     content?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6506,6 +6793,7 @@ export namespace Prisma {
   export type PostUncheckedUpdateManyWithoutPostsInput = {
     id?: IntFieldUpdateOperationsInput | number
     attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
     content?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6520,34 +6808,50 @@ export namespace Prisma {
   export type CruiseUpdateWithoutCreatorInput = {
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentMeta?: InputJsonValue
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    reaction?: InputJsonValue | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     followers?: CruiseUpdatefollowersInput | Enumerable<number>
     following?: CruiseUpdatefollowingInput | Enumerable<number>
+    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
   }
 
   export type CruiseUncheckedUpdateWithoutCreatorInput = {
     id?: IntFieldUpdateOperationsInput | number
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentMeta?: InputJsonValue
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    reaction?: InputJsonValue | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     followers?: CruiseUpdatefollowersInput | Enumerable<number>
     following?: CruiseUpdatefollowingInput | Enumerable<number>
+    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
   }
 
   export type CruiseUncheckedUpdateManyWithoutCruiseInput = {
     id?: IntFieldUpdateOperationsInput | number
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentMeta?: InputJsonValue
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    reaction?: InputJsonValue | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     followers?: CruiseUpdatefollowersInput | Enumerable<number>
     following?: CruiseUpdatefollowingInput | Enumerable<number>
+    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
   }
 
   export type CommentUpdateWithoutUserInput = {
     comment?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
+    attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    reaction?: InputJsonValue | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     post?: PostUpdateOneRequiredWithoutCommentsInput
@@ -6557,6 +6861,10 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     postId?: IntFieldUpdateOperationsInput | number
     comment?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
+    attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    reaction?: InputJsonValue | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6565,6 +6873,10 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     postId?: IntFieldUpdateOperationsInput | number
     comment?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
+    attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    reaction?: InputJsonValue | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6572,10 +6884,14 @@ export namespace Prisma {
   export type ChallengeUpdateWithoutCreatorInput = {
     challenge?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
+    reaction?: InputJsonValue | null
     start?: DateTimeFieldUpdateOperationsInput | Date | string
     end?: DateTimeFieldUpdateOperationsInput | Date | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
     followers?: ChallengeUpdatefollowersInput | Enumerable<number>
     following?: ChallengeUpdatefollowingInput | Enumerable<number>
   }
@@ -6584,10 +6900,14 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     challenge?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
+    reaction?: InputJsonValue | null
     start?: DateTimeFieldUpdateOperationsInput | Date | string
     end?: DateTimeFieldUpdateOperationsInput | Date | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
     followers?: ChallengeUpdatefollowersInput | Enumerable<number>
     following?: ChallengeUpdatefollowingInput | Enumerable<number>
   }
@@ -6596,16 +6916,24 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     challenge?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
+    reaction?: InputJsonValue | null
     start?: DateTimeFieldUpdateOperationsInput | Date | string
     end?: DateTimeFieldUpdateOperationsInput | Date | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
     followers?: ChallengeUpdatefollowersInput | Enumerable<number>
     following?: ChallengeUpdatefollowingInput | Enumerable<number>
   }
 
   export type CommentUpdateWithoutPostInput = {
     comment?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
+    attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    reaction?: InputJsonValue | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutCommentInput
@@ -6614,7 +6942,11 @@ export namespace Prisma {
   export type CommentUncheckedUpdateWithoutPostInput = {
     id?: IntFieldUpdateOperationsInput | number
     comment?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
+    attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
     userId?: IntFieldUpdateOperationsInput | number
+    reaction?: InputJsonValue | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6622,7 +6954,11 @@ export namespace Prisma {
   export type CommentUncheckedUpdateManyWithoutCommentsInput = {
     id?: IntFieldUpdateOperationsInput | number
     comment?: StringFieldUpdateOperationsInput | string
+    attachmentMeta?: InputJsonValue
+    attachmentType?: EnumAttahmentTypeFieldUpdateOperationsInput | AttahmentType
+    attachmentUrl?: StringFieldUpdateOperationsInput | string
     userId?: IntFieldUpdateOperationsInput | number
+    reaction?: InputJsonValue | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
   }
