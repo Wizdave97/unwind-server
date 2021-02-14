@@ -1,1 +1,1 @@
-declare module 'graphql-constraint-directive';
+declare type JsonValue = string | number | boolean | null | JsonObject | JsonArray

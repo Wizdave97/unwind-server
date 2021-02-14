@@ -4,7 +4,7 @@ import fs from 'fs'
 import path from 'path'
 import { verifyToken } from 'unwind-server/auth'
 import { PrismaClient } from 'unwind-server/prisma/src/generated/client'
-import { mutations, Post, Cruise, Comment, Challenge } from 'unwind-server/resolvers'
+import { mutations, Post, Cruise, Comment, Challenge, User } from 'unwind-server/resolvers'
 import { dateScalar } from './utils/scalars';
 
 
@@ -23,7 +23,8 @@ const resolvers = {
   Post,
   Cruise,
   Comment,
-  Challenge
+  Challenge,
+  User
 }
 
 // 3

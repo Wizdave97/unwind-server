@@ -8,6 +8,9 @@ type Mutation {
     createPost(input: CreatePostInput!): Post!
     createChallenge(input: CreateChallengeInput!): Challenge!
     createCruise(input: CreateCruiseInput!): Cruise!
+    createComment(input: CreateCommentInput!): Comment!
+    createReaction(input: CreateReactionInput!): Reaction
+    deleteReaction(input: DeleteReactionInput!) : Reaction
 }
 
 input CreateUserInput {
@@ -54,6 +57,29 @@ input CreateCruiseInput {
     fileAttachment: FileInput!
 }
 
+input CreateCommentInput {
+    entityId: Int!
+    uid: String!
+    comment: String!
+    attachmentType: AttachmentType
+    fileAttachment: FileInput
+    entityType: EntityType!
+}
+
+input CreateReactionInput {
+    uid: String!
+    entityId: Int!
+    entityType: EntityType!
+    reactionType: ReactionType!
+}
+
+input DeleteReactionInput {
+    uid: String!
+    entityId: Int!
+    entityType: EntityType!
+    reactionType: ReactionType!
+}
+
 input FileInput {
     mimetype: String!
     filename: String!
@@ -61,9 +87,9 @@ input FileInput {
     url: String!
 }
 
-type Location {
-    lat: Float!
-    long: Float!
+type LatLng {
+    lat: Float
+    long: Float
 }
 
 type File {
@@ -76,22 +102,42 @@ type File {
 type Reaction {
     hearts: Int!
     kisses: Int!
-    fire: Int!
+    hot: Int!
 }
 enum AttachmentType {
     VIDEO
     IMAGE
+    AUDIO
+}
+enum EntityType {
+    POST
+    CHALLENGE
+    CRUISE
+}
+
+enum ReactionType {
+    KISSES
+    HEARTS
+    HOT
 }
 
 type User {
     userId: Int!
+    uid: String!
     firstName: String!
     lastName: String!
     userName: String
     email: String!
-    created: String!
-    updated: String!
-    location: Location
+    created: Date!  
+    updated: Date!
+    location: LatLng
+    posts: [Post]!
+    followers: [User]!
+    following: [User]!
+    cruises: [Cruise]!
+    cruiseFollowing: [Cruise]!
+    challenges: [Challenge]!
+    challengeFollowing: [Challenge]!
 }
 
 type Post {
@@ -99,17 +145,17 @@ type Post {
     attachmentType: AttachmentType!   
     attachmentMeta: File    
     user: User       
-    userId: Int!    
-    imgUrl: String     
-    videoUrl: String  
-    content: String 
-    created: String!    
-    updated: String!    
+    userId: String!    
+    attachmentUrl: String     
+    content: String  
+    hashtags: [String]    
     reaction: Reaction!  
-    location: Location  
+    location: LatLng 
     comments: [Comment]!  
     cruiseId: Int   
     challengeId: Int
+    created: Date!  
+    updated: Date!
 }
 
 type Challenge {
@@ -119,27 +165,36 @@ type Challenge {
     attachmentType: AttachmentType
     attachmentUrl: String!
     attachmentMeta: File
-    creatorId: Int!
-    followers: [Int]!
-    following: [Int]!
-    start: String!    
-    end: String!      
-    created: String!  
-    updated: String!  
+    creatorId: String!
+    followers: [User]!
+    start: String!  
+    hashtags: [String] 
+    reaction: Reaction! 
+    kisses: [String]!
+    hearts: [String]!
+    hot: [String]!  
+    end: String! 
+    comments: [Comment]!      
+    created: Date!  
+    updated: Date! 
 }
 
 type Comment {
     id: Int!     
-    postId: Int! 
-    post: Post!   
+    entityId: Int!  
     comment: String!
     attachmentType: AttachmentType
-    attachmentUrl: String!
+    attachmentUrl: String
     attachmentMeta: File
-    userId: Int! 
-    user: User!  
-    created: String!
-    updated: String!
+    userId: String! 
+    hashtags: [String] 
+    user: User! 
+    reaction: Reaction!  
+    kisses: [String]!
+    hearts: [String]!
+    hot: [String]!
+    created: Date!  
+    updated: Date!
 }
 
 type Cruise {
@@ -150,8 +205,13 @@ type Cruise {
     attachmentUrl: String!
     attachmentMeta: File
     creatorId: Int!
-    followers: [Int]!
-    following: [Int]!
-    created: String!  
-    updated: String!  
+    reaction: Reaction! 
+    kisses: [String]!
+    hearts: [String]!
+    hot: [String]!
+    hashtags: [String] 
+    followers: [User]!
+    comments: [Comment]! 
+    created: Date!  
+    updated: Date! 
 }

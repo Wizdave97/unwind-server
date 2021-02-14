@@ -12,92 +12,136 @@ generator client {
 }
 
 model User {
-  userId    Int         @id @default(autoincrement()) @map("user_id")
-  uid       String?     @unique
-  firstName String      @map("first_name")
-  lastName  String      @map("last_name")
-  userName  String?     @unique @map("user_name")
-  email     String      @unique
-  imgUrl    String?     @map("img_url")
-  following User[]      @relation("User")
-  followers User[]      @relation("User")
-  created   DateTime    @default(now())
-  updated   DateTime    @updatedAt
-  location  Json?
-  posts     Post[]
-  cruise    Cruise[]
-  comment   Comment[]
-  challenge Challenge[]
+  userId             Int         @id @default(autoincrement()) @map("user_id")
+  uid                String      @unique
+  firstName          String      @map("first_name")
+  lastName           String      @map("last_name")
+  userName           String?     @unique @map("user_name")
+  email              String      @unique
+  imgUrl             String?     @map("img_url")
+  following          User[]      @relation("User")
+  followers          User[]      @relation("User")
+  created            DateTime    @default(now())
+  updated            DateTime    @updatedAt
+  location           Json?
+  posts              Post[]
+  cruises            Cruise[]    @relation("UserCruises")
+  comment            Comment[]   @relation("UserComments")
+  challenges         Challenge[] @relation("UserChallenges")
+  cruiseFollowing    Cruise[]    @relation("CruiseFollowing")
+  challengeFollowing Challenge[] @relation("ChallengeFollowing")
+  Cruise             Cruise[]
+  Comment            Comment[]
+  Challenge          Challenge[]
 }
 
-enum AttahmentType {
+enum AttachmentType {
   VIDEO
   IMAGE
+  AUDIO
+}
+
+enum ReactionType {
+  KISS
+  HEART
+  HOT
+}
+
+enum EntityType {
+  POST
+  CRUISE
+  CHALLENGE
 }
 
 model Post {
-  id             Int           @id @default(autoincrement())
-  user           User          @relation(fields: [userId], references: [userId])
-  userId         Int           @map("user_id")
-  attachmentUrl  String        @map("attachment_url")
+  id             Int            @id @default(autoincrement())
+  user           User           @relation(fields: [userId], references: [uid])
+  userId         String         @map("user_id")
+  attachmentUrl  String         @map("attachment_url")
   attachmentMeta Json
-  attachmentType AttahmentType
+  attachmentType AttachmentType
   content        String?
-  created        DateTime      @default(now())
-  updated        DateTime      @updatedAt
+  created        DateTime       @default(now())
+  updated        DateTime       @updatedAt
   reaction       Json?
   location       Json?
   hashtags       String[]
   comments       Comment[]
-  cruiseId       Int[]
+  cruises        Cruise[]
+  kisses         String[]
+  hearts         String[]
+  hot            String[]
   challengeId    Int?
 }
 
 model Cruise {
-  id             Int           @id @default(autoincrement())
-  creator        User          @relation(fields: [creatorId], references: [userId])
+  id             Int            @id @default(autoincrement())
+  creator        User           @relation(fields: [creatorId], references: [uid])
   slogan         String
-  attachmentType AttahmentType
+  attachmentType AttachmentType
   attachmentMeta Json
-  attachmentUrl  String        @map("attachment_url")
-  creatorId      Int
-  reaction       Json?
-  followers      Int[]
-  following      Int[]
+  attachmentUrl  String         @map("attachment_url")
+  creatorId      String
+  reaction       Json
+  followers      User[]         @relation("CruiseFollowing")
+  kisses         String[]
+  hearts         String[]
+  hot            String[]
   hashtags       String[]
-  created        DateTime      @default(now())
-  updated        DateTime      @updatedAt
+  created        DateTime       @default(now())
+  updated        DateTime       @updatedAt
+  User           User?          @relation("UserCruises", fields: [userUserId], references: [userId])
+  userUserId     Int?
+  Post           Post?          @relation(fields: [postId], references: [id])
+  postId         Int?
+  comments       Comment[]
 }
 
 model Comment {
-  id             Int           @id @default(autoincrement())
-  postId         Int
-  post           Post          @relation(fields: [postId], references: [id])
+  id             Int             @id @default(autoincrement())
+  entityId       Int
+  entityType     EntityType
   comment        String
-  attachmentMeta Json
-  attachmentType AttahmentType 
-  attachmentUrl  String        @map("attachment_url")
-  userId         Int
-  reaction       Json?
-  user           User          @relation(fields: [userId], references: [userId])
-  created        DateTime      @default(now())
-  updated        DateTime      @updatedAt
+  attachmentMeta Json?
+  attachmentType AttachmentType?
+  attachmentUrl  String?         @map("attachment_url")
+  userId         String
+  reaction       Json
+  kisses         String[]
+  hearts         String[]
+  hot            String[]
+  user           User            @relation(fields: [userId], references: [uid])
+  created        DateTime        @default(now())
+  updated        DateTime        @updatedAt
+  Post           Post?           @relation(fields: [postId], references: [id])
+  postId         Int?
+  challenge      Challenge?      @relation(fields: [challengeId], references: [id])
+  challengeId    Int?
+  cruise         Cruise?         @relation(fields: [cruiseId], references: [id])
+  cruiseId       Int?
+  User           User?           @relation("UserComments", fields: [userUserId], references: [userId])
+  userUserId     Int?
 }
 
 model Challenge {
-  id             Int           @id @default(autoincrement())
-  creator        User          @relation(fields: [creatorId], references: [userId])
+  id             Int            @id @default(autoincrement())
+  creator        User           @relation(fields: [creatorId], references: [uid])
   challenge      String
-  creatorId      Int
-  attachmentType AttahmentType
-  attachmentUrl  String        @map("attachment_url")
+  creatorId      String
+  attachmentType AttachmentType
+  attachmentUrl  String         @map("attachment_url")
   attachmentMeta Json
-  reaction       Json?
+  reaction       Json
   hashtags       String[]
-  followers      Int[]
-  following      Int[]
-  start          DateTime
-  end            DateTime
-  created        DateTime      @default(now())
-  updated        DateTime      @updatedAt
+  followers      User[]         @relation("ChallengeFollowing")
+  kisses         String[]
+  hearts         String[]
+  hot            String[]
+  start          DateTime?
+  end            DateTime?
+  created        DateTime       @default(now())
+  updated        DateTime       @updatedAt
+  User           User?          @relation("UserChallenges", fields: [userUserId], references: [userId])
+  userUserId     Int?
+  comments       Comment[]
 }

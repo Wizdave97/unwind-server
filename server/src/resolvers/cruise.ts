@@ -7,3 +7,19 @@ export const creator = async (parent: ParentInterface, args: any, context: Conte
         }
     }).creator()
 }
+
+export const comments = async (parent: ParentInterface, args: any, context: ContextInterface) => {
+    return await context.prisma.cruise.findUnique({
+        where: {
+            id: parent.id
+        }
+    }).comments()
+}
+
+export const followers = async (parent: ParentInterface, args: any, context: ContextInterface) => {
+    return await context.prisma.cruise.findUnique({
+        where: {
+            id: parent.id
+        }
+    }).followers()
+}

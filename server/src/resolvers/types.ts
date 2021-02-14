@@ -2,8 +2,20 @@
 export enum AttachmentType {
     VIDEO = 'VIDEO',
     IMAGE = 'IMAGE',
+    AUDIO = 'AUDIO'
 }
 
+export enum EntityType {
+    POST = 'POST',
+    CHALLENGE = 'CHALLENGE',
+    CRUISE = 'CRUISE',
+}
+
+export enum ReactionType {
+    KISSES = 'KISSES',
+    HEARTS = 'HEARTS',
+    HOT = 'HOT'
+}
 type LocationInput = {
     lat: number;
     long: number
@@ -15,6 +27,7 @@ type FileInput = {
     encoding: string;
     url: string;
 }
+
 export type CreateUserArgs = {
     email: string;
     firstName: string;
@@ -55,5 +68,18 @@ export type CreateCruiseArgs = {
 }
 
 export type CreateCommentArgs = {
-
+    uid: string;
+    comment: string;
+    attachmentType?: AttachmentType
+    fileAttachment?: FileInput
+    entityId: number;
+    entityType: EntityType;
 }
+
+export  type CreateReactionArgs =  {
+    uid: string
+    entityId: number;
+    entityType: EntityType
+    reactionType: ReactionType
+}
+

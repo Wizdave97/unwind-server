@@ -94,7 +94,9 @@ exports.Prisma.PostScalarFieldEnum = makeEnum({
   reaction: 'reaction',
   location: 'location',
   hashtags: 'hashtags',
-  cruiseId: 'cruiseId',
+  kisses: 'kisses',
+  hearts: 'hearts',
+  hot: 'hot',
   challengeId: 'challengeId'
 });
 
@@ -106,24 +108,35 @@ exports.Prisma.CruiseScalarFieldEnum = makeEnum({
   attachmentUrl: 'attachmentUrl',
   creatorId: 'creatorId',
   reaction: 'reaction',
-  followers: 'followers',
-  following: 'following',
+  kisses: 'kisses',
+  hearts: 'hearts',
+  hot: 'hot',
   hashtags: 'hashtags',
   created: 'created',
-  updated: 'updated'
+  updated: 'updated',
+  userUserId: 'userUserId',
+  postId: 'postId'
 });
 
 exports.Prisma.CommentScalarFieldEnum = makeEnum({
   id: 'id',
-  postId: 'postId',
+  entityId: 'entityId',
+  entityType: 'entityType',
   comment: 'comment',
   attachmentMeta: 'attachmentMeta',
   attachmentType: 'attachmentType',
   attachmentUrl: 'attachmentUrl',
   userId: 'userId',
   reaction: 'reaction',
+  kisses: 'kisses',
+  hearts: 'hearts',
+  hot: 'hot',
   created: 'created',
-  updated: 'updated'
+  updated: 'updated',
+  postId: 'postId',
+  challengeId: 'challengeId',
+  cruiseId: 'cruiseId',
+  userUserId: 'userUserId'
 });
 
 exports.Prisma.ChallengeScalarFieldEnum = makeEnum({
@@ -135,12 +148,14 @@ exports.Prisma.ChallengeScalarFieldEnum = makeEnum({
   attachmentMeta: 'attachmentMeta',
   reaction: 'reaction',
   hashtags: 'hashtags',
-  followers: 'followers',
-  following: 'following',
+  kisses: 'kisses',
+  hearts: 'hearts',
+  hot: 'hot',
   start: 'start',
   end: 'end',
   created: 'created',
-  updated: 'updated'
+  updated: 'updated',
+  userUserId: 'userUserId'
 });
 
 exports.Prisma.SortOrder = makeEnum({
@@ -152,9 +167,16 @@ exports.Prisma.QueryMode = makeEnum({
   default: 'default',
   insensitive: 'insensitive'
 });
-exports.AttahmentType = makeEnum({
+exports.AttachmentType = makeEnum({
   VIDEO: 'VIDEO',
-  IMAGE: 'IMAGE'
+  IMAGE: 'IMAGE',
+  AUDIO: 'AUDIO'
+});
+
+exports.EntityType = makeEnum({
+  POST: 'POST',
+  CRUISE: 'CRUISE',
+  CHALLENGE: 'CHALLENGE'
 });
 
 exports.Prisma.ModelName = makeEnum({
