@@ -1,16 +1,81 @@
 scalar Date
 type Query {
-    info:String!
+    posts: String!
+    challenges: String!
+    cruises: String!
+    comments: String!
+    users: String!
+    user: String!
+    post: String!
+    cruise: String!
+    challenge: String!
 }
 type Mutation {
-    createUser(input: CreateUserInput!): User!
-    updateUser(input: UpdateUserInput!): User!
-    createPost(input: CreatePostInput!): Post!
-    createChallenge(input: CreateChallengeInput!): Challenge!
-    createCruise(input: CreateCruiseInput!): Cruise!
-    createComment(input: CreateCommentInput!): Comment!
-    createReaction(input: CreateReactionInput!): Reaction
-    deleteReaction(input: DeleteReactionInput!) : Reaction
+    createUser(input: CreateUserInput!): UserMutationResponse!
+    updateUser(input: UpdateUserInput!): UserMutationResponse!
+    createPost(input: CreatePostInput!): CreatePostMutationResponse!
+    createChallenge(input: CreateChallengeInput!): CreateChallengeMutationResponse!
+    createCruise(input: CreateCruiseInput!): CreateCruiseMutationResponse!
+    createComment(input: CreateCommentInput!): CreateCommentMutationResponse!
+    createReaction(input: CreateReactionInput!): CreateReactionMutationResponse!
+    deleteReaction(input: DeleteReactionInput!) : CreateReactionMutationResponse!
+    followEntity(input: FollowEntityInput!): FollowEntityMutationResponse!
+    unfollowEntity(input: FollowEntityInput!): FollowEntityMutationResponse!
+}
+
+interface MutationResponse {
+  code: String!
+  success: Boolean!
+  message: String!
+}
+
+type UserMutationResponse implements MutationResponse{
+  code: String!
+  success: Boolean!
+  message: String!
+  user: User
+}
+
+type CreatePostMutationResponse implements MutationResponse {
+  code: String!
+  success: Boolean!
+  message: String!
+  post: Post
+}
+
+type CreateCruiseMutationResponse implements MutationResponse {
+   code: String!
+   success: Boolean!
+   message: String!
+   cruise: Cruise
+}
+
+type CreateChallengeMutationResponse implements MutationResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    challenge: Challenge
+}
+
+type CreateCommentMutationResponse implements MutationResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    comment: Comment
+}
+
+type CreateReactionMutationResponse implements MutationResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    reaction: Reaction
+}
+
+type FollowEntityMutationResponse implements MutationResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    entityId: Int
 }
 
 input CreateUserInput {
@@ -85,6 +150,12 @@ input FileInput {
     filename: String!
     encoding: String!
     url: String!
+}
+
+input FollowEntityInput {
+    id: Int!
+    uid: String!
+    entityType: EntityType!
 }
 
 type LatLng {
@@ -177,6 +248,7 @@ type Challenge {
     comments: [Comment]!      
     created: Date!  
     updated: Date! 
+    posts: [Post]!
 }
 
 type Comment {
@@ -195,6 +267,9 @@ type Comment {
     hot: [String]!
     created: Date!  
     updated: Date!
+    cruise:  Cruise
+    post: Post
+    challenge: Challenge
 }
 
 type Cruise {
@@ -213,5 +288,6 @@ type Cruise {
     followers: [User]!
     comments: [Comment]! 
     created: Date!  
-    updated: Date! 
+    updated: Date!
+    posts: [Post]! 
 }

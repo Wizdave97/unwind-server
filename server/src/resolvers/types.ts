@@ -83,3 +83,9 @@ export  type CreateReactionArgs =  {
     reactionType: ReactionType
 }
 
+export type FollowEntityArgs = {
+    uid: string;
+    id: number;
+    entityType: EntityType;
+}
+

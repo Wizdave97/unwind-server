@@ -72,6 +72,10 @@ model Post {
   hearts         String[]
   hot            String[]
   challengeId    Int?
+  challenge      Challenge?     @relation(fields: [challengeId], references: [id])
+  Cruise         Cruise?        @relation("TaggedCruisePosts", fields: [cruiseId], references: [id])
+  cruiseId       Int?
+  Challenge      Challenge?     @relation("TaggedChallengePosts", fields: [challengeId], references: [id])
 }
 
 model Cruise {
@@ -95,6 +99,7 @@ model Cruise {
   Post           Post?          @relation(fields: [postId], references: [id])
   postId         Int?
   comments       Comment[]
+  posts          Post[]         @relation("TaggedCruisePosts")
 }
 
 model Comment {
@@ -113,7 +118,7 @@ model Comment {
   user           User            @relation(fields: [userId], references: [uid])
   created        DateTime        @default(now())
   updated        DateTime        @updatedAt
-  Post           Post?           @relation(fields: [postId], references: [id])
+  post           Post?           @relation(fields: [postId], references: [id])
   postId         Int?
   challenge      Challenge?      @relation(fields: [challengeId], references: [id])
   challengeId    Int?
@@ -144,4 +149,6 @@ model Challenge {
   User           User?          @relation("UserChallenges", fields: [userUserId], references: [userId])
   userUserId     Int?
   comments       Comment[]
+  posts          Post[]         @relation("TaggedChallengePosts")
+  Post           Post[]
 }

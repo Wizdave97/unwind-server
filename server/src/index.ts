@@ -1,10 +1,10 @@
 import 'module-alias/register';
-import { ApolloServer } from 'apollo-server'
+import { ApolloServer, makeExecutableSchema } from 'apollo-server'
 import fs from 'fs'
 import path from 'path'
 import { verifyToken } from 'unwind-server/auth'
 import { PrismaClient } from 'unwind-server/prisma/src/generated/client'
-import { mutations, Post, Cruise, Comment, Challenge, User } from 'unwind-server/resolvers'
+import { Mutation, Query, Post, Cruise, Comment, Challenge, User } from 'unwind-server/resolvers'
 import { dateScalar } from './utils/scalars';
 
 
@@ -14,12 +14,8 @@ const prisma = new PrismaClient()
 // 2
 const resolvers = {
   Date: dateScalar,
-  Query: {
-    info: () => `This is the API of a Hackernews Clone App`,
-  },
-  Mutation: {
-    ...mutations
-  }, 
+  Query,
+  Mutation,
   Post,
   Cruise,
   Comment,
@@ -28,12 +24,18 @@ const resolvers = {
 }
 
 // 3
-const server = new ApolloServer({
+
+const schema = makeExecutableSchema({
   typeDefs: fs.readFileSync(
     path.join(__dirname, 'schema/schema.graphql'),
     'utf8'
   ),
   resolvers,
+  resolverValidationOptions: { requireResolversForResolveType: false },
+})
+
+const server = new ApolloServer({
+  schema,
   context: async ({ req }) => {
     const token = req.headers.authorization || ''
     const decodedToken = await verifyToken(token)

@@ -97,7 +97,8 @@ exports.Prisma.PostScalarFieldEnum = makeEnum({
   kisses: 'kisses',
   hearts: 'hearts',
   hot: 'hot',
-  challengeId: 'challengeId'
+  challengeId: 'challengeId',
+  cruiseId: 'cruiseId'
 });
 
 exports.Prisma.CruiseScalarFieldEnum = makeEnum({

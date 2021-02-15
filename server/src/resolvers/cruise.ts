@@ -23,3 +23,11 @@ export const followers = async (parent: ParentInterface, args: any, context: Con
         }
     }).followers()
 }
+
+export const posts = async (parent: ParentInterface, args: any, context: ContextInterface) => {
+    return await context.prisma.cruise.findUnique({
+        where: {
+            id: parent.id
+        }
+    }).posts()
+}

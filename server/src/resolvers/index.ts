@@ -1,5 +1,5 @@
-export * as mutations from './Mutations'
-export * as query from './Query' 
+export * as Mutation from './Mutation'
+export * as Query from './Query'
 export * as Post from './posts'
 export * as Cruise from './cruise'
 export * as Comment from './comment'
