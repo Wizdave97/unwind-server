@@ -72,9 +72,11 @@ function makeEnum(x) { return x; }
 exports.Prisma.UserScalarFieldEnum = makeEnum({
   userId: 'userId',
   uid: 'uid',
+  cursor: 'cursor',
   firstName: 'firstName',
   lastName: 'lastName',
   userName: 'userName',
+  bio: 'bio',
   email: 'email',
   imgUrl: 'imgUrl',
   created: 'created',
@@ -84,6 +86,7 @@ exports.Prisma.UserScalarFieldEnum = makeEnum({
 
 exports.Prisma.PostScalarFieldEnum = makeEnum({
   id: 'id',
+  cursor: 'cursor',
   userId: 'userId',
   attachmentUrl: 'attachmentUrl',
   attachmentMeta: 'attachmentMeta',
@@ -103,6 +106,7 @@ exports.Prisma.PostScalarFieldEnum = makeEnum({
 
 exports.Prisma.CruiseScalarFieldEnum = makeEnum({
   id: 'id',
+  cursor: 'cursor',
   slogan: 'slogan',
   attachmentType: 'attachmentType',
   attachmentMeta: 'attachmentMeta',
@@ -121,6 +125,7 @@ exports.Prisma.CruiseScalarFieldEnum = makeEnum({
 
 exports.Prisma.CommentScalarFieldEnum = makeEnum({
   id: 'id',
+  cursor: 'cursor',
   entityId: 'entityId',
   entityType: 'entityType',
   comment: 'comment',
@@ -142,6 +147,7 @@ exports.Prisma.CommentScalarFieldEnum = makeEnum({
 
 exports.Prisma.ChallengeScalarFieldEnum = makeEnum({
   id: 'id',
+  cursor: 'cursor',
   challenge: 'challenge',
   creatorId: 'creatorId',
   attachmentType: 'attachmentType',
@@ -157,6 +163,14 @@ exports.Prisma.ChallengeScalarFieldEnum = makeEnum({
   created: 'created',
   updated: 'updated',
   userUserId: 'userUserId'
+});
+
+exports.Prisma.PeekScalarFieldEnum = makeEnum({
+  id: 'id',
+  userId: 'userId',
+  expiresUTC: 'expiresUTC',
+  active: 'active',
+  peeks: 'peeks'
 });
 
 exports.Prisma.SortOrder = makeEnum({
@@ -185,7 +199,8 @@ exports.Prisma.ModelName = makeEnum({
   Post: 'Post',
   Cruise: 'Cruise',
   Comment: 'Comment',
-  Challenge: 'Challenge'
+  Challenge: 'Challenge',
+  Peek: 'Peek'
 });
 
 /**

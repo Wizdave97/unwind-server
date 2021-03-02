@@ -1,14 +1,16 @@
 scalar Date
+scalar IntString
 type Query {
-    posts: String!
-    challenges: String!
-    cruises: String!
-    comments: String!
-    users: String!
-    user: String!
-    post: String!
-    cruise: String!
-    challenge: String!
+    posts(filters: PostInputFilter, first: Int, last: Int, after: String, before: String): PostConnection!
+    challenges(filters: ChallengeInputFilter, first: Int, last: Int, after: String, before: String): ChallengeConnection!
+    cruises(filters:CruiseInputFilter, first: Int, last: Int, after: String, before: String): CruiseConnection!
+    comments(filters: CommentInputFilter, first: Int, last: Int, after: String, before: String): CommentConnection!
+    users(filters:UserInputFilter, first: Int, last: Int, after: String, before: String): UserConnection!
+    user(id: String!): User!
+    post(id: Int!): Post!
+    cruise(id: Int!): Cruise!
+    challenge(id: String!): Challenge!
+    fetchAppLockStatus: AppLockStatus!
 }
 type Mutation {
     createUser(input: CreateUserInput!): UserMutationResponse!
@@ -21,12 +23,21 @@ type Mutation {
     deleteReaction(input: DeleteReactionInput!) : CreateReactionMutationResponse!
     followEntity(input: FollowEntityInput!): FollowEntityMutationResponse!
     unfollowEntity(input: FollowEntityInput!): FollowEntityMutationResponse!
+    followUser(input: UserFollowInput!): UserFollowMutationResponse!
+    unfollowUser(input: UserFollowInput!): UserFollowMutationResponse!
 }
 
 interface MutationResponse {
   code: String!
   success: Boolean!
   message: String!
+}
+
+type PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: String
+    endCursor: String
 }
 
 type UserMutationResponse implements MutationResponse{
@@ -78,6 +89,15 @@ type FollowEntityMutationResponse implements MutationResponse {
     entityId: Int
 }
 
+type UserFollowMutationResponse implements MutationResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    user: User
+}
+
+## Input types
+
 input CreateUserInput {
     email: String! 
     firstName: String! 
@@ -90,6 +110,7 @@ input UpdateUserInput {
     lastName: String  
     imgUrl: String 
     userName: String 
+    bio: String
     uid: String!
 }
 
@@ -158,6 +179,14 @@ input FollowEntityInput {
     entityType: EntityType!
 }
 
+input UserFollowInput {
+    currentUid: String!
+    followUid: String!
+}
+
+## Object types
+
+
 type LatLng {
     lat: Float
     long: Float
@@ -186,10 +215,19 @@ enum EntityType {
     CRUISE
 }
 
+enum AppLock {
+    UNLOCKED
+    LOCKED
+}
+
 enum ReactionType {
     KISSES
     HEARTS
     HOT
+}
+
+type AppLockStatus {
+    status: AppLock!
 }
 
 type User {
@@ -202,13 +240,13 @@ type User {
     created: Date!  
     updated: Date!
     location: LatLng
-    posts: [Post]!
-    followers: [User]!
-    following: [User]!
-    cruises: [Cruise]!
-    cruiseFollowing: [Cruise]!
-    challenges: [Challenge]!
-    challengeFollowing: [Challenge]!
+    posts(filters: PostInputFilter, first: Int, last: Int, after: String, before: String): PostConnection!
+    followers(filters:UserInputFilter, first: Int, last: Int, after: String, before: String): UserConnection!
+    following(filters:UserInputFilter, first: Int, last: Int, after: String, before: String): UserConnection!
+    cruises(filters:CruiseInputFilter, first: Int, last: Int, after: String, before: String): CruiseConnection!
+    cruiseFollowing(filters:CruiseInputFilter, first: Int, last: Int, after: String, before: String): CruiseConnection!
+    challenges(filters: ChallengeInputFilter, first: Int, last: Int, after: String, before: String): ChallengeConnection!
+    challengeFollowing(filters: ChallengeInputFilter, first: Int, last: Int, after: String, before: String): ChallengeConnection!
 }
 
 type Post {
@@ -222,7 +260,7 @@ type Post {
     hashtags: [String]    
     reaction: Reaction!  
     location: LatLng 
-    comments: [Comment]!  
+    comments(filters: CommentInputFilter, first: Int, last: Int, after: String, before: String): CommentConnection!  
     cruiseId: Int   
     challengeId: Int
     created: Date!  
@@ -237,7 +275,7 @@ type Challenge {
     attachmentUrl: String!
     attachmentMeta: File
     creatorId: String!
-    followers: [User]!
+    followers(filters:UserInputFilter, first: Int, last: Int, after: String, before: String): UserConnection!
     start: String!  
     hashtags: [String] 
     reaction: Reaction! 
@@ -245,13 +283,13 @@ type Challenge {
     hearts: [String]!
     hot: [String]!  
     end: String! 
-    comments: [Comment]!      
+    comments(filters: CommentInputFilter, first: Int, last: Int, after: String, before: String): CommentConnection!     
     created: Date!  
     updated: Date! 
-    posts: [Post]!
+    posts(filters: PostInputFilter, first: Int, last: Int, after: String, before: String): PostConnection!
 }
 
-type Comment {
+type Comment  {
     id: Int!     
     entityId: Int!  
     comment: String!
@@ -285,9 +323,164 @@ type Cruise {
     hearts: [String]!
     hot: [String]!
     hashtags: [String] 
-    followers: [User]!
-    comments: [Comment]! 
+    followers(filters:UserInputFilter, first: Int, last: Int, after: String, before: String): UserConnection!
+    comments(filters: CommentInputFilter, first: Int, last: Int, after: String, before: String): CommentConnection! 
     created: Date!  
     updated: Date!
-    posts: [Post]! 
+    posts(filters: PostInputFilter, first: Int, last: Int, after: String, before: String): PostConnection!
 }
+
+# Edges and Connection Definitions
+
+type UserConnection{
+    pageInfo: PageInfo!
+    edges: [UserEdge]!
+}
+
+type UserEdge {
+    cursor: String!
+    node: User!
+}
+
+type PostConnection{
+    pageInfo: PageInfo!
+    edges: [PostEdge]!
+}
+
+type PostEdge {
+    cursor: String!
+    node: Post!
+}
+
+type CruiseConnection {
+    pageInfo: PageInfo!
+    edges: [CruiseEdge]!
+}
+
+type CruiseEdge {
+    cursor: String!
+    node: Cruise!
+}
+
+type ChallengeConnection {
+    pageInfo: PageInfo!
+    edges: [ChallengeEdge]!
+}
+
+type ChallengeEdge {
+    cursor: String!
+    node: Challenge!
+}
+
+type CommentConnection {
+    pageInfo: PageInfo!
+    edges: [CommentEdge]!
+}
+
+type CommentEdge {
+    cursor: String!
+    node: Comment!
+}
+
+
+# Query Input Filters Definitions
+input FieldExpressionInput {
+    gte: Int
+    gt: Int
+    lt: Int
+    lte: Int
+    contains: String
+    startsWith: String
+    endsWith: String
+    equals: IntString
+    in: [IntString!]
+    notIn: [IntString!]
+}
+
+input PostInputFilter {
+    id: FieldExpressionInput
+    user: UserInputFilter
+    content: FieldExpressionInput
+    hashtags: FieldExpressionInput
+    comments: CommentRelationFilter
+    cruises: CruiseRelationFilter
+    challenge: ChallengeInputFilter
+    AND: [PostInputFilter!]
+    OR: [PostInputFilter!]
+}
+
+input UserInputFilter {
+    uid: FieldExpressionInput
+    firstName: FieldExpressionInput
+    lastName: FieldExpressionInput
+    userName: FieldExpressionInput
+    bio: FieldExpressionInput
+    cruiseFollowing: CruiseRelationFilter
+    challengeFollowing: ChallengeRelationFilter
+    following: UserRelationFilter
+    followers: UserRelationFilter
+    AND: [UserInputFilter!]
+    OR: [UserInputFilter!]
+
+}
+input UserRelationFilter {
+    every: UserInputFilter
+}
+
+input ChallengeInputFilter {
+    id: FieldExpressionInput
+    challenge: FieldExpressionInput
+    creator: UserInputFilter
+    hashtags: FieldExpressionInput
+    created: FieldExpressionInput
+    updated: FieldExpressionInput
+    kisses: FieldExpressionInput
+    hot: FieldExpressionInput
+    hearts: FieldExpressionInput
+    post: PostInputFilter
+    AND: [ChallengeInputFilter!]
+    OR: [ChallengeInputFilter!]
+}
+
+input CommentInputFilter {
+    id: FieldExpressionInput
+    comment: FieldExpressionInput
+    user: UserInputFilter
+    post: PostInputFilter
+    challenge: ChallengeInputFilter
+    cruise: CruiseInputFilter
+    kisses: FieldExpressionInput
+    hot: FieldExpressionInput
+    hearts: FieldExpressionInput
+    AND: [CommentInputFilter!]
+    OR: [CommentInputFilter!]
+}
+
+input CommentRelationFilter {
+    every: CommentInputFilter
+}
+input PostRelationFilter {
+    every: PostInputFilter
+}
+
+input CruiseInputFilter {
+    id: FieldExpressionInput
+    slogan: FieldExpressionInput
+    creator: UserInputFilter
+    hashtags: FieldExpressionInput
+    posts: PostRelationFilter
+    kisses: FieldExpressionInput
+    hot: FieldExpressionInput
+    hearts: FieldExpressionInput
+    AND: [CruiseInputFilter!]
+    OR: [CruiseInputFilter!]
+}
+input CruiseRelationFilter {
+    every: CruiseInputFilter
+}
+
+input ChallengeRelationFilter {
+    every: ChallengeInputFilter
+}
+
+

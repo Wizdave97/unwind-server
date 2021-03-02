@@ -1,11 +1,11 @@
-import { AuthenticationError, UserInputError } from "apollo-server";
+import { ApolloError, UserInputError } from "apollo-server-express";
 import { ContextInterface, ParentInterface, Partial } from "unwind-server/types";
-import { CreateChallengeArgs, CreateCommentArgs, CreateCruiseArgs, CreatePostArgs, CreateReactionArgs, CreateUserArgs, EntityType, FollowEntityArgs, ReactionType, UpdateUserArgs } from "./types";
+import { AppLockStatus, resolveTimezoneAndPeeks } from "unwind-server/utils/helpers";
+import { CreateChallengeArgs, CreateCommentArgs, CreateCruiseArgs, CreatePostArgs, CreateReactionArgs, CreateUserArgs, EntityType, FollowEntityArgs, ReactionType, UpdateUserArgs, UserFollowArgs } from "./types";
 
 
 export const createUser = async (parent: ParentInterface, { input }: { input: CreateUserArgs }, context: ContextInterface) => {
-    const { decodedToken, prisma } = context
-    //if(!decodedToken) throw new AuthenticationError('User not authenticated')
+    const { prisma } = context
     const errors: Partial<CreateUserArgs> = {}
     const { email, lastName, firstName, uid } = input
     if (email.length > 255) errors.email = 'Too many characters'
@@ -44,10 +44,9 @@ export const updateUser = async (
     parent: ParentInterface,
     { input }: { input: UpdateUserArgs },
     context: ContextInterface) => {
-    const { decodedToken, prisma } = context
-    if (!decodedToken) throw new AuthenticationError('User not authenticated')
+    const { prisma } = context
     const errors: Partial<UpdateUserArgs> = {}
-    const { lastName, firstName, userName, imgUrl, uid } = input
+    const { lastName, firstName, userName, imgUrl, uid, bio } = input
     if (firstName && firstName.length > 255) errors.firstName = 'Too many characters'
     if (lastName && lastName.length > 255) errors.lastName = 'Too many characters'
     if (userName && userName.length > 255) errors.userName = 'Too many characters'
@@ -63,7 +62,8 @@ export const updateUser = async (
                 ...(firstName && { firstName }),
                 ...(lastName && { lastName }),
                 ...(imgUrl && { imgUrl }),
-                ...(userName && { userName })
+                ...(userName && { userName }),
+                ...(bio && { bio })
             }
         })
         return {
@@ -80,12 +80,13 @@ export const updateUser = async (
             message: 'Error updating user',
         }
     }
-   
+
 }
 
 export const createPost = async (parent: ParentInterface, { input }: { input: CreatePostArgs }, context: ContextInterface) => {
-    const { prisma, decodedToken } = context
-    //if(!decodedToken) throw new AuthenticationError('User not authenticated')
+    const { headers: { timezone }, prisma, uid: loggedInUser } = context
+    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
+    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
     const { attachmentType, content, uid, location, fileAttachment } = input
 
     let hashtags = content?.match(/#\w*/gi)
@@ -120,8 +121,9 @@ export const createPost = async (parent: ParentInterface, { input }: { input: Cr
 }
 
 export const createCruise = async (parent: ParentInterface, { input }: { input: CreateCruiseArgs }, context: ContextInterface) => {
-    const { prisma, decodedToken } = context
-    //if(!decodedToken) throw new AuthenticationError('User not authenticated')
+    const { headers: { timezone }, prisma, uid: loggedInUser } = context
+    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
+    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
     const { attachmentType, slogan, uid, fileAttachment } = input
 
     let hashtags = slogan?.match(/#\w*/gi)
@@ -138,7 +140,7 @@ export const createCruise = async (parent: ParentInterface, { input }: { input: 
                 reaction
             }
         })
-    
+
         return {
             code: '200',
             success: true,
@@ -157,8 +159,9 @@ export const createCruise = async (parent: ParentInterface, { input }: { input: 
 }
 
 export const createChallenge = async (parent: ParentInterface, { input }: { input: CreateChallengeArgs }, context: ContextInterface) => {
-    const { prisma, decodedToken } = context
-    //if(!decodedToken) throw new AuthenticationError('User not authenticated')
+    const { headers: { timezone }, prisma, uid: loggedInUser } = context
+    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
+    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
     const { attachmentType, challenge, uid, fileAttachment, start, end } = input
 
     let hashtags = challenge?.match(/#\w*/gi)
@@ -177,7 +180,7 @@ export const createChallenge = async (parent: ParentInterface, { input }: { inpu
                 end
             }
         })
-    
+
         return {
             code: '200',
             success: true,
@@ -196,8 +199,9 @@ export const createChallenge = async (parent: ParentInterface, { input }: { inpu
 }
 
 export const createComment = async (parent: ParentInterface, { input }: { input: CreateCommentArgs }, context: ContextInterface) => {
-    const { prisma, decodedToken } = context
-    //if(!decodedToken) throw new AuthenticationError('User not authenticated')
+    const { headers: { timezone }, prisma, uid: loggedInUser } = context
+    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
+    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
     const { attachmentType, comment, uid, fileAttachment, entityId, entityType } = input
 
     let hashtags = comment?.match(/#\w*/gi)
@@ -213,15 +217,15 @@ export const createComment = async (parent: ParentInterface, { input }: { input:
                 reaction,
                 entityType,
                 entityId,
-                ...(entityType === EntityType.CHALLENGE && { challenge : {connect : { id : entityId}}}),
-                ...(entityType === EntityType.POST && { post : {connect : { id : entityId}}}),
-                ...(entityType === EntityType.CRUISE && { cruise : {connect : { id : entityId}}}),
+                ...(entityType === EntityType.CHALLENGE && { challenge: { connect: { id: entityId } } }),
+                ...(entityType === EntityType.POST && { post: { connect: { id: entityId } } }),
+                ...(entityType === EntityType.CRUISE && { cruise: { connect: { id: entityId } } }),
             }
         })
-    
+
         return {
             code: '200',
-            success:  true,
+            success: true,
             message: 'Comment created successfully',
             comment: newComment
         }
@@ -229,7 +233,7 @@ export const createComment = async (parent: ParentInterface, { input }: { input:
     catch {
         return {
             code: '500',
-            success:  false,
+            success: false,
             message: 'Error creating comment',
         }
     }
@@ -237,8 +241,9 @@ export const createComment = async (parent: ParentInterface, { input }: { input:
 }
 
 export const createReaction = async (parent: ParentInterface, { input }: { input: CreateReactionArgs }, context: ContextInterface) => {
-    const { prisma, decodedToken } = context
-    //if(!decodedToken) throw new AuthenticationError('User not authenticated')
+    const { headers: { timezone }, prisma, uid: loggedInUser } = context
+    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
+    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
     const { reactionType, entityType, entityId, uid } = input
     let entity
     try {
@@ -308,7 +313,7 @@ export const createReaction = async (parent: ParentInterface, { input }: { input
                     }
                 }
             }
-    
+
         }
         if (entityType === EntityType.CRUISE) {
             entity = await prisma.cruise.findUnique({
@@ -448,15 +453,16 @@ export const createReaction = async (parent: ParentInterface, { input }: { input
     catch {
         return {
             code: "500",
-            success:  false,
+            success: false,
             message: 'Failed to add reaction'
         }
     }
 }
 
 export const deleteReaction = async (parent: ParentInterface, { input }: { input: CreateReactionArgs }, context: ContextInterface) => {
-    const { prisma, decodedToken } = context
-    //if(!decodedToken) throw new AuthenticationError('User not authenticated')
+    const { headers: { timezone }, prisma, uid: loggedInUser } = context
+    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
+    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
     const { reactionType, entityType, entityId, uid } = input
     let entity
     try {
@@ -526,7 +532,7 @@ export const deleteReaction = async (parent: ParentInterface, { input }: { input
                     }
                 }
             }
-    
+
         }
         if (entityType === EntityType.CRUISE) {
             entity = await prisma.cruise.findUnique({
@@ -673,8 +679,9 @@ export const deleteReaction = async (parent: ParentInterface, { input }: { input
 }
 
 export const followEntity = async (parent: ParentInterface, { input }: { input: FollowEntityArgs }, context: ContextInterface) => {
-    const { prisma, decodedToken } = context
-    //if(!decodedToken) throw new AuthenticationError('User not authenticated')
+    const { headers: { timezone }, prisma, uid: loggedInUser } = context
+    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
+    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
     const { id, entityType, uid } = input
     try {
         if (entityType === EntityType.CRUISE) {
@@ -689,7 +696,7 @@ export const followEntity = async (parent: ParentInterface, { input }: { input: 
                 }
             })
         }
-    
+
         if (entityType === EntityType.CHALLENGE) {
             await prisma.challenge.update({
                 where: {
@@ -720,8 +727,9 @@ export const followEntity = async (parent: ParentInterface, { input }: { input: 
 }
 
 export const unfollowEntity = async (parent: ParentInterface, { input }: { input: FollowEntityArgs }, context: ContextInterface) => {
-    const { prisma, decodedToken } = context
-    //if(!decodedToken) throw new AuthenticationError('User not authenticated')
+    const { headers: { timezone }, prisma, uid: loggedInUser } = context
+    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
+    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
     const { id, entityType, uid } = input
     try {
         if (entityType === EntityType.CRUISE) {
@@ -734,9 +742,9 @@ export const unfollowEntity = async (parent: ParentInterface, { input }: { input
                         disconnect: { uid }
                     }
                 }
-            }).catch(() => {})
+            }).catch(() => { })
         }
-    
+
         if (entityType === EntityType.CHALLENGE) {
             await prisma.challenge.update({
                 where: {
@@ -747,7 +755,7 @@ export const unfollowEntity = async (parent: ParentInterface, { input }: { input
                         disconnect: { uid }
                     }
                 }
-            }).catch(() => {})
+            }).catch(() => { })
         }
         return {
             code: "200",
@@ -762,5 +770,80 @@ export const unfollowEntity = async (parent: ParentInterface, { input }: { input
             message: 'Failed to unfollow entity'
         }
     }
+}
 
+export const followUser = async (parent: ParentInterface, { input }: { input: UserFollowArgs }, context: ContextInterface) => {
+    const { headers: { timezone }, prisma, uid: loggedInUser } = context
+    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
+    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+    const { currentUid, followUid } = input
+    try {
+        const user = await prisma.user.update({
+            where: {
+                uid: currentUid
+            },
+            data: {
+                following: { connect: { uid: followUid } }
+            }
+        })
+        await prisma.user.update({
+            where: {
+                uid: followUid
+            },
+            data: {
+                followers: { connect: { uid: currentUid } }
+            }
+        })
+        return {
+            code: '200',
+            success: true,
+            message: 'Successfully followed user',
+            user
+        }
+    }
+    catch {
+        return {
+            code: '500',
+            success: false,
+            message: 'Error following user'
+        }
+    }
+}
+
+export const unfollowUser = async (parent: ParentInterface, { input }: { input: UserFollowArgs }, context: ContextInterface) => {
+    const { headers: { timezone }, prisma, uid: loggedInUser } = context
+    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
+    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+    const { currentUid, followUid } = input
+    try {
+        const user = await prisma.user.update({
+            where: {
+                uid: currentUid
+            },
+            data: {
+                following: { disconnect: { uid: followUid } }
+            }
+        })
+        await prisma.user.update({
+            where: {
+                uid: followUid
+            },
+            data: {
+                followers: { disconnect: { uid: currentUid } }
+            }
+        })
+        return {
+            code: '200',
+            success: true,
+            message: 'Unfollowed user',
+            user
+        }
+    }
+    catch {
+        return {
+            code: '500',
+            success: false,
+            message: 'Error unfollowing user'
+        }
+    }
 }

@@ -13,9 +13,11 @@ import * as runtime from './runtime';
 export type User = {
   userId: number
   uid: string
+  cursor: string
   firstName: string
   lastName: string
   userName: string | null
+  bio: string | null
   email: string
   imgUrl: string | null
   created: Date
@@ -29,6 +31,7 @@ export type User = {
 
 export type Post = {
   id: number
+  cursor: string
   userId: string
   attachmentUrl: string
   attachmentMeta: Prisma.JsonValue
@@ -52,6 +55,7 @@ export type Post = {
 
 export type Cruise = {
   id: number
+  cursor: string
   slogan: string
   attachmentType: AttachmentType
   attachmentMeta: Prisma.JsonValue
@@ -74,6 +78,7 @@ export type Cruise = {
 
 export type Comment = {
   id: number
+  cursor: string
   entityId: number
   entityType: EntityType
   comment: string
@@ -99,6 +104,7 @@ export type Comment = {
 
 export type Challenge = {
   id: number
+  cursor: string
   challenge: string
   creatorId: string
   attachmentType: AttachmentType
@@ -114,6 +120,18 @@ export type Challenge = {
   created: Date
   updated: Date
   userUserId: number | null
+}
+
+/**
+ * Model Peek
+ */
+
+export type Peek = {
+  id: number
+  userId: string
+  expiresUTC: BigInt | null
+  active: boolean
+  peeks: number
 }
 
 
@@ -308,6 +326,16 @@ export class PrismaClient<
     * ```
     */
   get challenge(): Prisma.ChallengeDelegate;
+
+  /**
+   * `prisma.peek`: Exposes CRUD operations for the **Peek** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Peeks
+    * const peeks = await prisma.peek.findMany()
+    * ```
+    */
+  get peek(): Prisma.PeekDelegate;
 }
 
 export namespace Prisma {
@@ -632,7 +660,8 @@ export namespace Prisma {
     Post: 'Post',
     Cruise: 'Cruise',
     Comment: 'Comment',
-    Challenge: 'Challenge'
+    Challenge: 'Challenge',
+    Peek: 'Peek'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -788,9 +817,11 @@ export namespace Prisma {
   export type UserMinAggregateOutputType = {
     userId: number
     uid: string | null
+    cursor: string | null
     firstName: string | null
     lastName: string | null
     userName: string | null
+    bio: string | null
     email: string | null
     imgUrl: string | null
     created: Date | null
@@ -801,9 +832,11 @@ export namespace Prisma {
   export type UserMaxAggregateOutputType = {
     userId: number
     uid: string | null
+    cursor: string | null
     firstName: string | null
     lastName: string | null
     userName: string | null
+    bio: string | null
     email: string | null
     imgUrl: string | null
     created: Date | null
@@ -814,9 +847,11 @@ export namespace Prisma {
   export type UserCountAggregateOutputType = {
     userId: number
     uid: number | null
+    cursor: number | null
     firstName: number | null
     lastName: number | null
     userName: number | null
+    bio: number | null
     email: number | null
     imgUrl: number | null
     created: number | null
@@ -837,9 +872,11 @@ export namespace Prisma {
   export type UserMinAggregateInputType = {
     userId?: true
     uid?: true
+    cursor?: true
     firstName?: true
     lastName?: true
     userName?: true
+    bio?: true
     email?: true
     imgUrl?: true
     created?: true
@@ -850,9 +887,11 @@ export namespace Prisma {
   export type UserMaxAggregateInputType = {
     userId?: true
     uid?: true
+    cursor?: true
     firstName?: true
     lastName?: true
     userName?: true
+    bio?: true
     email?: true
     imgUrl?: true
     created?: true
@@ -863,9 +902,11 @@ export namespace Prisma {
   export type UserCountAggregateInputType = {
     userId?: true
     uid?: true
+    cursor?: true
     firstName?: true
     lastName?: true
     userName?: true
+    bio?: true
     email?: true
     imgUrl?: true
     created?: true
@@ -948,9 +989,11 @@ export namespace Prisma {
   export type UserSelect = {
     userId?: boolean
     uid?: boolean
+    cursor?: boolean
     firstName?: boolean
     lastName?: boolean
     userName?: boolean
+    bio?: boolean
     email?: boolean
     imgUrl?: boolean
     following?: boolean | UserFindManyArgs
@@ -967,6 +1010,7 @@ export namespace Prisma {
     Cruise?: boolean | CruiseFindManyArgs
     Comment?: boolean | CommentFindManyArgs
     Challenge?: boolean | ChallengeFindManyArgs
+    Peek?: boolean | PeekFindManyArgs
   }
 
   export type UserInclude = {
@@ -981,6 +1025,7 @@ export namespace Prisma {
     Cruise?: boolean | CruiseFindManyArgs
     Comment?: boolean | CommentFindManyArgs
     Challenge?: boolean | ChallengeFindManyArgs
+    Peek?: boolean | PeekFindManyArgs
   }
 
   export type UserGetPayload<
@@ -1015,7 +1060,9 @@ export namespace Prisma {
         P extends 'Comment'
         ? Array < CommentGetPayload<S['include'][P]>>  :
         P extends 'Challenge'
-        ? Array < ChallengeGetPayload<S['include'][P]>>  : never
+        ? Array < ChallengeGetPayload<S['include'][P]>>  :
+        P extends 'Peek'
+        ? Array < PeekGetPayload<S['include'][P]>>  : never
   } 
     : 'select' extends U
     ? {
@@ -1042,7 +1089,9 @@ export namespace Prisma {
         P extends 'Comment'
         ? Array < CommentGetPayload<S['select'][P]>>  :
         P extends 'Challenge'
-        ? Array < ChallengeGetPayload<S['select'][P]>>  : never
+        ? Array < ChallengeGetPayload<S['select'][P]>>  :
+        P extends 'Peek'
+        ? Array < PeekGetPayload<S['select'][P]>>  : never
   } 
     : User
   : User
@@ -1301,6 +1350,8 @@ export namespace Prisma {
     Comment<T extends CommentFindManyArgs = {}>(args?: Subset<T, CommentFindManyArgs>): CheckSelect<T, Promise<Array<Comment>>, Promise<Array<CommentGetPayload<T>>>>;
 
     Challenge<T extends ChallengeFindManyArgs = {}>(args?: Subset<T, ChallengeFindManyArgs>): CheckSelect<T, Promise<Array<Challenge>>, Promise<Array<ChallengeGetPayload<T>>>>;
+
+    Peek<T extends PeekFindManyArgs = {}>(args?: Subset<T, PeekFindManyArgs>): CheckSelect<T, Promise<Array<Peek>>, Promise<Array<PeekGetPayload<T>>>>;
 
     private get _document();
     /**
@@ -1595,6 +1646,7 @@ export namespace Prisma {
 
   export type PostMinAggregateOutputType = {
     id: number
+    cursor: string | null
     userId: string | null
     attachmentUrl: string | null
     attachmentMeta: JsonValue | null
@@ -1610,6 +1662,7 @@ export namespace Prisma {
 
   export type PostMaxAggregateOutputType = {
     id: number
+    cursor: string | null
     userId: string | null
     attachmentUrl: string | null
     attachmentMeta: JsonValue | null
@@ -1625,6 +1678,7 @@ export namespace Prisma {
 
   export type PostCountAggregateOutputType = {
     id: number
+    cursor: number | null
     userId: number | null
     attachmentUrl: number | null
     attachmentMeta: number | null
@@ -1658,6 +1712,7 @@ export namespace Prisma {
 
   export type PostMinAggregateInputType = {
     id?: true
+    cursor?: true
     userId?: true
     attachmentUrl?: true
     attachmentMeta?: true
@@ -1673,6 +1728,7 @@ export namespace Prisma {
 
   export type PostMaxAggregateInputType = {
     id?: true
+    cursor?: true
     userId?: true
     attachmentUrl?: true
     attachmentMeta?: true
@@ -1688,6 +1744,7 @@ export namespace Prisma {
 
   export type PostCountAggregateInputType = {
     id?: true
+    cursor?: true
     userId?: true
     attachmentUrl?: true
     attachmentMeta?: true
@@ -1780,6 +1837,7 @@ export namespace Prisma {
   export type PostSelect = {
     id?: boolean
     user?: boolean | UserArgs
+    cursor?: boolean
     userId?: boolean
     attachmentUrl?: boolean
     attachmentMeta?: boolean
@@ -2393,6 +2451,7 @@ export namespace Prisma {
 
   export type CruiseMinAggregateOutputType = {
     id: number
+    cursor: string | null
     slogan: string | null
     attachmentType: AttachmentType | null
     attachmentMeta: JsonValue | null
@@ -2407,6 +2466,7 @@ export namespace Prisma {
 
   export type CruiseMaxAggregateOutputType = {
     id: number
+    cursor: string | null
     slogan: string | null
     attachmentType: AttachmentType | null
     attachmentMeta: JsonValue | null
@@ -2421,6 +2481,7 @@ export namespace Prisma {
 
   export type CruiseCountAggregateOutputType = {
     id: number
+    cursor: number | null
     slogan: number | null
     attachmentType: number | null
     attachmentMeta: number | null
@@ -2453,6 +2514,7 @@ export namespace Prisma {
 
   export type CruiseMinAggregateInputType = {
     id?: true
+    cursor?: true
     slogan?: true
     attachmentType?: true
     attachmentMeta?: true
@@ -2467,6 +2529,7 @@ export namespace Prisma {
 
   export type CruiseMaxAggregateInputType = {
     id?: true
+    cursor?: true
     slogan?: true
     attachmentType?: true
     attachmentMeta?: true
@@ -2481,6 +2544,7 @@ export namespace Prisma {
 
   export type CruiseCountAggregateInputType = {
     id?: true
+    cursor?: true
     slogan?: true
     attachmentType?: true
     attachmentMeta?: true
@@ -2572,6 +2636,7 @@ export namespace Prisma {
   export type CruiseSelect = {
     id?: boolean
     creator?: boolean | UserArgs
+    cursor?: boolean
     slogan?: boolean
     attachmentType?: boolean
     attachmentMeta?: boolean
@@ -3190,6 +3255,7 @@ export namespace Prisma {
 
   export type CommentMinAggregateOutputType = {
     id: number
+    cursor: string | null
     entityId: number
     entityType: EntityType | null
     comment: string | null
@@ -3208,6 +3274,7 @@ export namespace Prisma {
 
   export type CommentMaxAggregateOutputType = {
     id: number
+    cursor: string | null
     entityId: number
     entityType: EntityType | null
     comment: string | null
@@ -3226,6 +3293,7 @@ export namespace Prisma {
 
   export type CommentCountAggregateOutputType = {
     id: number
+    cursor: number | null
     entityId: number
     entityType: number | null
     comment: number | null
@@ -3267,6 +3335,7 @@ export namespace Prisma {
 
   export type CommentMinAggregateInputType = {
     id?: true
+    cursor?: true
     entityId?: true
     entityType?: true
     comment?: true
@@ -3285,6 +3354,7 @@ export namespace Prisma {
 
   export type CommentMaxAggregateInputType = {
     id?: true
+    cursor?: true
     entityId?: true
     entityType?: true
     comment?: true
@@ -3303,6 +3373,7 @@ export namespace Prisma {
 
   export type CommentCountAggregateInputType = {
     id?: true
+    cursor?: true
     entityId?: true
     entityType?: true
     comment?: true
@@ -3396,6 +3467,7 @@ export namespace Prisma {
 
   export type CommentSelect = {
     id?: boolean
+    cursor?: boolean
     entityId?: boolean
     entityType?: boolean
     comment?: boolean
@@ -4002,6 +4074,7 @@ export namespace Prisma {
 
   export type ChallengeMinAggregateOutputType = {
     id: number
+    cursor: string | null
     challenge: string | null
     creatorId: string | null
     attachmentType: AttachmentType | null
@@ -4017,6 +4090,7 @@ export namespace Prisma {
 
   export type ChallengeMaxAggregateOutputType = {
     id: number
+    cursor: string | null
     challenge: string | null
     creatorId: string | null
     attachmentType: AttachmentType | null
@@ -4032,6 +4106,7 @@ export namespace Prisma {
 
   export type ChallengeCountAggregateOutputType = {
     id: number
+    cursor: number | null
     challenge: number | null
     creatorId: number | null
     attachmentType: number | null
@@ -4063,6 +4138,7 @@ export namespace Prisma {
 
   export type ChallengeMinAggregateInputType = {
     id?: true
+    cursor?: true
     challenge?: true
     creatorId?: true
     attachmentType?: true
@@ -4078,6 +4154,7 @@ export namespace Prisma {
 
   export type ChallengeMaxAggregateInputType = {
     id?: true
+    cursor?: true
     challenge?: true
     creatorId?: true
     attachmentType?: true
@@ -4093,6 +4170,7 @@ export namespace Prisma {
 
   export type ChallengeCountAggregateInputType = {
     id?: true
+    cursor?: true
     challenge?: true
     creatorId?: true
     attachmentType?: true
@@ -4185,6 +4263,7 @@ export namespace Prisma {
   export type ChallengeSelect = {
     id?: boolean
     creator?: boolean | UserArgs
+    cursor?: boolean
     challenge?: boolean
     creatorId?: boolean
     attachmentType?: boolean
@@ -4772,6 +4851,703 @@ export namespace Prisma {
 
 
   /**
+   * Model Peek
+   */
+
+
+  export type AggregatePeek = {
+    count: PeekCountAggregateOutputType | null
+    avg: PeekAvgAggregateOutputType | null
+    sum: PeekSumAggregateOutputType | null
+    min: PeekMinAggregateOutputType | null
+    max: PeekMaxAggregateOutputType | null
+  }
+
+  export type PeekAvgAggregateOutputType = {
+    id: number
+    expiresUTC: number | null
+    peeks: number
+  }
+
+  export type PeekSumAggregateOutputType = {
+    id: number
+    expiresUTC: BigInt | null
+    peeks: number
+  }
+
+  export type PeekMinAggregateOutputType = {
+    id: number
+    userId: string | null
+    expiresUTC: BigInt | null
+    active: boolean | null
+    peeks: number
+  }
+
+  export type PeekMaxAggregateOutputType = {
+    id: number
+    userId: string | null
+    expiresUTC: BigInt | null
+    active: boolean | null
+    peeks: number
+  }
+
+  export type PeekCountAggregateOutputType = {
+    id: number
+    userId: number | null
+    expiresUTC: number | null
+    active: number | null
+    peeks: number
+    _all: number
+  }
+
+
+  export type PeekAvgAggregateInputType = {
+    id?: true
+    expiresUTC?: true
+    peeks?: true
+  }
+
+  export type PeekSumAggregateInputType = {
+    id?: true
+    expiresUTC?: true
+    peeks?: true
+  }
+
+  export type PeekMinAggregateInputType = {
+    id?: true
+    userId?: true
+    expiresUTC?: true
+    active?: true
+    peeks?: true
+  }
+
+  export type PeekMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    expiresUTC?: true
+    active?: true
+    peeks?: true
+  }
+
+  export type PeekCountAggregateInputType = {
+    id?: true
+    userId?: true
+    expiresUTC?: true
+    active?: true
+    peeks?: true
+    _all?: true
+  }
+
+  export type PeekAggregateArgs = {
+    /**
+     * Filter which Peek to aggregate.
+    **/
+    where?: PeekWhereInput
+    /**
+     * @link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs
+     * 
+     * Determine the order of Peeks to fetch.
+    **/
+    orderBy?: Enumerable<PeekOrderByInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+    **/
+    cursor?: PeekWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Peeks from the position of the cursor.
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Peeks.
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Peeks
+    **/
+    count?: true | PeekCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    avg?: PeekAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    sum?: PeekSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    min?: PeekMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    max?: PeekMaxAggregateInputType
+  }
+
+  export type GetPeekAggregateType<T extends PeekAggregateArgs> = {
+    [P in keyof T & keyof AggregatePeek]: P extends 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePeek[P]>
+      : GetScalarType<T[P], AggregatePeek[P]>
+  }
+
+
+
+  export type PeekSelect = {
+    id?: boolean
+    userId?: boolean
+    user?: boolean | UserArgs
+    expiresUTC?: boolean
+    active?: boolean
+    peeks?: boolean
+  }
+
+  export type PeekInclude = {
+    user?: boolean | UserArgs
+  }
+
+  export type PeekGetPayload<
+    S extends boolean | null | undefined | PeekArgs,
+    U = keyof S
+      > = S extends true
+        ? Peek
+    : S extends undefined
+    ? never
+    : S extends PeekArgs | PeekFindManyArgs
+    ?'include' extends U
+    ? Peek  & {
+    [P in TrueKeys<S['include']>]: 
+          P extends 'user'
+        ? UserGetPayload<S['include'][P]> : never
+  } 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]: P extends keyof Peek ?Peek [P]
+  : 
+          P extends 'user'
+        ? UserGetPayload<S['select'][P]> : never
+  } 
+    : Peek
+  : Peek
+
+
+  type PeekCountArgs = Merge<
+    Omit<PeekFindManyArgs, 'select' | 'include'> & {
+      select?: PeekCountAggregateInputType | true
+    }
+  >
+
+  export interface PeekDelegate {
+    /**
+     * Find zero or one Peek that matches the filter.
+     * @param {PeekFindUniqueArgs} args - Arguments to find a Peek
+     * @example
+     * // Get one Peek
+     * const peek = await prisma.peek.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends PeekFindUniqueArgs>(
+      args: SelectSubset<T, PeekFindUniqueArgs>
+    ): CheckSelect<T, Prisma__PeekClient<Peek | null>, Prisma__PeekClient<PeekGetPayload<T> | null>>
+
+    /**
+     * Find the first Peek that matches the filter.
+     * @param {PeekFindFirstArgs} args - Arguments to find a Peek
+     * @example
+     * // Get one Peek
+     * const peek = await prisma.peek.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends PeekFindFirstArgs>(
+      args?: SelectSubset<T, PeekFindFirstArgs>
+    ): CheckSelect<T, Prisma__PeekClient<Peek | null>, Prisma__PeekClient<PeekGetPayload<T> | null>>
+
+    /**
+     * Find zero or more Peeks that matches the filter.
+     * @param {PeekFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Peeks
+     * const peeks = await prisma.peek.findMany()
+     * 
+     * // Get first 10 Peeks
+     * const peeks = await prisma.peek.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const peekWithIdOnly = await prisma.peek.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends PeekFindManyArgs>(
+      args?: SelectSubset<T, PeekFindManyArgs>
+    ): CheckSelect<T, Promise<Array<Peek>>, Promise<Array<PeekGetPayload<T>>>>
+
+    /**
+     * Create a Peek.
+     * @param {PeekCreateArgs} args - Arguments to create a Peek.
+     * @example
+     * // Create one Peek
+     * const Peek = await prisma.peek.create({
+     *   data: {
+     *     // ... data to create a Peek
+     *   }
+     * })
+     * 
+    **/
+    create<T extends PeekCreateArgs>(
+      args: SelectSubset<T, PeekCreateArgs>
+    ): CheckSelect<T, Prisma__PeekClient<Peek>, Prisma__PeekClient<PeekGetPayload<T>>>
+
+    /**
+     * Delete a Peek.
+     * @param {PeekDeleteArgs} args - Arguments to delete one Peek.
+     * @example
+     * // Delete one Peek
+     * const Peek = await prisma.peek.delete({
+     *   where: {
+     *     // ... filter to delete one Peek
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends PeekDeleteArgs>(
+      args: SelectSubset<T, PeekDeleteArgs>
+    ): CheckSelect<T, Prisma__PeekClient<Peek>, Prisma__PeekClient<PeekGetPayload<T>>>
+
+    /**
+     * Update one Peek.
+     * @param {PeekUpdateArgs} args - Arguments to update one Peek.
+     * @example
+     * // Update one Peek
+     * const peek = await prisma.peek.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends PeekUpdateArgs>(
+      args: SelectSubset<T, PeekUpdateArgs>
+    ): CheckSelect<T, Prisma__PeekClient<Peek>, Prisma__PeekClient<PeekGetPayload<T>>>
+
+    /**
+     * Delete zero or more Peeks.
+     * @param {PeekDeleteManyArgs} args - Arguments to filter Peeks to delete.
+     * @example
+     * // Delete a few Peeks
+     * const { count } = await prisma.peek.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends PeekDeleteManyArgs>(
+      args?: SelectSubset<T, PeekDeleteManyArgs>
+    ): Promise<BatchPayload>
+
+    /**
+     * Update zero or more Peeks.
+     * @param {PeekUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Peeks
+     * const peek = await prisma.peek.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends PeekUpdateManyArgs>(
+      args: SelectSubset<T, PeekUpdateManyArgs>
+    ): Promise<BatchPayload>
+
+    /**
+     * Create or update one Peek.
+     * @param {PeekUpsertArgs} args - Arguments to update or create a Peek.
+     * @example
+     * // Update or create a Peek
+     * const peek = await prisma.peek.upsert({
+     *   create: {
+     *     // ... data to create a Peek
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Peek we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends PeekUpsertArgs>(
+      args: SelectSubset<T, PeekUpsertArgs>
+    ): CheckSelect<T, Prisma__PeekClient<Peek>, Prisma__PeekClient<PeekGetPayload<T>>>
+
+    /**
+     * Count the number of Peeks.
+     * @param {PeekCountArgs} args - Arguments to filter Peeks to count.
+     * @example
+     * // Count the number of Peeks
+     * const count = await prisma.peek.count({
+     *   where: {
+     *     // ... the filter for the Peeks we want to count
+     *   }
+     * })
+    **/
+    count<T extends PeekCountArgs>(
+      args?: Subset<T, PeekCountArgs>,
+    ): Promise<
+      T extends Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PeekCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Peek.
+     * @param {PeekAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PeekAggregateArgs>(args: Subset<T, PeekAggregateArgs>): Promise<GetPeekAggregateType<T>>
+
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Peek.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in 
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__PeekClient<T> implements Promise<T> {
+    private readonly _dmmf;
+    private readonly _fetcher;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+    user<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | null>, Prisma__UserClient<UserGetPayload<T> | null>>;
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | Promise<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | Promise<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | Promise<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+  // Custom InputTypes
+
+  /**
+   * Peek findUnique
+   */
+  export type PeekFindUniqueArgs = {
+    /**
+     * Select specific fields to fetch from the Peek
+    **/
+    select?: PeekSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+    **/
+    include?: PeekInclude | null
+    /**
+     * Throw an Error if a Peek can't be found
+    **/
+    rejectOnNotFound?: RejectOnNotFound
+    /**
+     * Filter, which Peek to fetch.
+    **/
+    where: PeekWhereUniqueInput
+  }
+
+
+  /**
+   * Peek findFirst
+   */
+  export type PeekFindFirstArgs = {
+    /**
+     * Select specific fields to fetch from the Peek
+    **/
+    select?: PeekSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+    **/
+    include?: PeekInclude | null
+    /**
+     * Throw an Error if a Peek can't be found
+    **/
+    rejectOnNotFound?: RejectOnNotFound
+    /**
+     * Filter, which Peek to fetch.
+    **/
+    where?: PeekWhereInput
+    /**
+     * @link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs
+     * 
+     * Determine the order of Peeks to fetch.
+    **/
+    orderBy?: Enumerable<PeekOrderByInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Peeks.
+    **/
+    cursor?: PeekWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Peeks from the position of the cursor.
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Peeks.
+    **/
+    skip?: number
+    /**
+     * @link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs
+     * 
+     * Filter by unique combinations of Peeks.
+    **/
+    distinct?: Enumerable<PeekScalarFieldEnum>
+  }
+
+
+  /**
+   * Peek findMany
+   */
+  export type PeekFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the Peek
+    **/
+    select?: PeekSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+    **/
+    include?: PeekInclude | null
+    /**
+     * Filter, which Peeks to fetch.
+    **/
+    where?: PeekWhereInput
+    /**
+     * @link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs
+     * 
+     * Determine the order of Peeks to fetch.
+    **/
+    orderBy?: Enumerable<PeekOrderByInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Peeks.
+    **/
+    cursor?: PeekWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Peeks from the position of the cursor.
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Peeks.
+    **/
+    skip?: number
+    distinct?: Enumerable<PeekScalarFieldEnum>
+  }
+
+
+  /**
+   * Peek create
+   */
+  export type PeekCreateArgs = {
+    /**
+     * Select specific fields to fetch from the Peek
+    **/
+    select?: PeekSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+    **/
+    include?: PeekInclude | null
+    /**
+     * The data needed to create a Peek.
+    **/
+    data: XOR<PeekUncheckedCreateInput, PeekCreateInput>
+  }
+
+
+  /**
+   * Peek update
+   */
+  export type PeekUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the Peek
+    **/
+    select?: PeekSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+    **/
+    include?: PeekInclude | null
+    /**
+     * The data needed to update a Peek.
+    **/
+    data: XOR<PeekUncheckedUpdateInput, PeekUpdateInput>
+    /**
+     * Choose, which Peek to update.
+    **/
+    where: PeekWhereUniqueInput
+  }
+
+
+  /**
+   * Peek updateMany
+   */
+  export type PeekUpdateManyArgs = {
+    data: XOR<PeekUncheckedUpdateManyInput, PeekUpdateManyMutationInput>
+    where?: PeekWhereInput
+  }
+
+
+  /**
+   * Peek upsert
+   */
+  export type PeekUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the Peek
+    **/
+    select?: PeekSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+    **/
+    include?: PeekInclude | null
+    /**
+     * The filter to search for the Peek to update in case it exists.
+    **/
+    where: PeekWhereUniqueInput
+    /**
+     * In case the Peek found by the `where` argument doesn't exist, create a new Peek with this data.
+    **/
+    create: XOR<PeekUncheckedCreateInput, PeekCreateInput>
+    /**
+     * In case the Peek was found with the provided `where` argument, update it with this data.
+    **/
+    update: XOR<PeekUncheckedUpdateInput, PeekUpdateInput>
+  }
+
+
+  /**
+   * Peek delete
+   */
+  export type PeekDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the Peek
+    **/
+    select?: PeekSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+    **/
+    include?: PeekInclude | null
+    /**
+     * Filter which Peek to delete.
+    **/
+    where: PeekWhereUniqueInput
+  }
+
+
+  /**
+   * Peek deleteMany
+   */
+  export type PeekDeleteManyArgs = {
+    where?: PeekWhereInput
+  }
+
+
+  /**
+   * Peek without action
+   */
+  export type PeekArgs = {
+    /**
+     * Select specific fields to fetch from the Peek
+    **/
+    select?: PeekSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+    **/
+    include?: PeekInclude | null
+  }
+
+
+
+  /**
    * Enums
    */
 
@@ -4781,9 +5557,11 @@ export namespace Prisma {
   export const UserScalarFieldEnum: {
     userId: 'userId',
     uid: 'uid',
+    cursor: 'cursor',
     firstName: 'firstName',
     lastName: 'lastName',
     userName: 'userName',
+    bio: 'bio',
     email: 'email',
     imgUrl: 'imgUrl',
     created: 'created',
@@ -4796,6 +5574,7 @@ export namespace Prisma {
 
   export const PostScalarFieldEnum: {
     id: 'id',
+    cursor: 'cursor',
     userId: 'userId',
     attachmentUrl: 'attachmentUrl',
     attachmentMeta: 'attachmentMeta',
@@ -4818,6 +5597,7 @@ export namespace Prisma {
 
   export const CruiseScalarFieldEnum: {
     id: 'id',
+    cursor: 'cursor',
     slogan: 'slogan',
     attachmentType: 'attachmentType',
     attachmentMeta: 'attachmentMeta',
@@ -4839,6 +5619,7 @@ export namespace Prisma {
 
   export const CommentScalarFieldEnum: {
     id: 'id',
+    cursor: 'cursor',
     entityId: 'entityId',
     entityType: 'entityType',
     comment: 'comment',
@@ -4863,6 +5644,7 @@ export namespace Prisma {
 
   export const ChallengeScalarFieldEnum: {
     id: 'id',
+    cursor: 'cursor',
     challenge: 'challenge',
     creatorId: 'creatorId',
     attachmentType: 'attachmentType',
@@ -4881,6 +5663,17 @@ export namespace Prisma {
   };
 
   export type ChallengeScalarFieldEnum = (typeof ChallengeScalarFieldEnum)[keyof typeof ChallengeScalarFieldEnum]
+
+
+  export const PeekScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    expiresUTC: 'expiresUTC',
+    active: 'active',
+    peeks: 'peeks'
+  };
+
+  export type PeekScalarFieldEnum = (typeof PeekScalarFieldEnum)[keyof typeof PeekScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -4910,9 +5703,11 @@ export namespace Prisma {
     NOT?: Enumerable<UserWhereInput>
     userId?: IntFilter | number
     uid?: StringFilter | string
+    cursor?: StringFilter | string
     firstName?: StringFilter | string
     lastName?: StringFilter | string
     userName?: StringNullableFilter | string | null
+    bio?: StringNullableFilter | string | null
     email?: StringFilter | string
     imgUrl?: StringNullableFilter | string | null
     following?: UserListRelationFilter
@@ -4929,14 +5724,17 @@ export namespace Prisma {
     Cruise?: CruiseListRelationFilter
     Comment?: CommentListRelationFilter
     Challenge?: ChallengeListRelationFilter
+    Peek?: PeekListRelationFilter
   }
 
   export type UserOrderByInput = {
     userId?: SortOrder
     uid?: SortOrder
+    cursor?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     userName?: SortOrder
+    bio?: SortOrder
     email?: SortOrder
     imgUrl?: SortOrder
     created?: SortOrder
@@ -4947,6 +5745,7 @@ export namespace Prisma {
   export type UserWhereUniqueInput = {
     userId?: number
     uid?: string
+    cursor?: string
     userName?: string
     email?: string
   }
@@ -4957,6 +5756,7 @@ export namespace Prisma {
     NOT?: Enumerable<PostWhereInput>
     id?: IntFilter | number
     user?: XOR<UserWhereInput, UserRelationFilter>
+    cursor?: StringFilter | string
     userId?: StringFilter | string
     attachmentUrl?: StringFilter | string
     attachmentMeta?: JsonFilter
@@ -4981,6 +5781,7 @@ export namespace Prisma {
 
   export type PostOrderByInput = {
     id?: SortOrder
+    cursor?: SortOrder
     userId?: SortOrder
     attachmentUrl?: SortOrder
     attachmentMeta?: SortOrder
@@ -5000,6 +5801,7 @@ export namespace Prisma {
 
   export type PostWhereUniqueInput = {
     id?: number
+    cursor?: string
   }
 
   export type CruiseWhereInput = {
@@ -5008,6 +5810,7 @@ export namespace Prisma {
     NOT?: Enumerable<CruiseWhereInput>
     id?: IntFilter | number
     creator?: XOR<UserWhereInput, UserRelationFilter>
+    cursor?: StringFilter | string
     slogan?: StringFilter | string
     attachmentType?: EnumAttachmentTypeFilter | AttachmentType
     attachmentMeta?: JsonFilter
@@ -5031,6 +5834,7 @@ export namespace Prisma {
 
   export type CruiseOrderByInput = {
     id?: SortOrder
+    cursor?: SortOrder
     slogan?: SortOrder
     attachmentType?: SortOrder
     attachmentMeta?: SortOrder
@@ -5049,6 +5853,7 @@ export namespace Prisma {
 
   export type CruiseWhereUniqueInput = {
     id?: number
+    cursor?: string
   }
 
   export type CommentWhereInput = {
@@ -5056,6 +5861,7 @@ export namespace Prisma {
     OR?: Enumerable<CommentWhereInput>
     NOT?: Enumerable<CommentWhereInput>
     id?: IntFilter | number
+    cursor?: StringFilter | string
     entityId?: IntFilter | number
     entityType?: EnumEntityTypeFilter | EntityType
     comment?: StringFilter | string
@@ -5082,6 +5888,7 @@ export namespace Prisma {
 
   export type CommentOrderByInput = {
     id?: SortOrder
+    cursor?: SortOrder
     entityId?: SortOrder
     entityType?: SortOrder
     comment?: SortOrder
@@ -5103,6 +5910,7 @@ export namespace Prisma {
 
   export type CommentWhereUniqueInput = {
     id?: number
+    cursor?: string
   }
 
   export type ChallengeWhereInput = {
@@ -5111,6 +5919,7 @@ export namespace Prisma {
     NOT?: Enumerable<ChallengeWhereInput>
     id?: IntFilter | number
     creator?: XOR<UserWhereInput, UserRelationFilter>
+    cursor?: StringFilter | string
     challenge?: StringFilter | string
     creatorId?: StringFilter | string
     attachmentType?: EnumAttachmentTypeFilter | AttachmentType
@@ -5135,6 +5944,7 @@ export namespace Prisma {
 
   export type ChallengeOrderByInput = {
     id?: SortOrder
+    cursor?: SortOrder
     challenge?: SortOrder
     creatorId?: SortOrder
     attachmentType?: SortOrder
@@ -5154,13 +5964,40 @@ export namespace Prisma {
 
   export type ChallengeWhereUniqueInput = {
     id?: number
+    cursor?: string
+  }
+
+  export type PeekWhereInput = {
+    AND?: Enumerable<PeekWhereInput>
+    OR?: Enumerable<PeekWhereInput>
+    NOT?: Enumerable<PeekWhereInput>
+    id?: IntFilter | number
+    userId?: StringFilter | string
+    user?: XOR<UserWhereInput, UserRelationFilter>
+    expiresUTC?: BigIntNullableFilter | BigInt | number | null
+    active?: BoolFilter | boolean
+    peeks?: IntFilter | number
+  }
+
+  export type PeekOrderByInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    expiresUTC?: SortOrder
+    active?: SortOrder
+    peeks?: SortOrder
+  }
+
+  export type PeekWhereUniqueInput = {
+    id?: number
   }
 
   export type UserCreateInput = {
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -5177,14 +6014,17 @@ export namespace Prisma {
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Comment?: CommentCreateManyWithoutUserInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
+    Peek?: PeekCreateManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
     userId?: number
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -5197,13 +6037,16 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
+    Peek?: PeekUncheckedCreateManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5220,14 +6063,17 @@ export namespace Prisma {
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
+    Peek?: PeekUpdateManyWithoutUserInput
   }
 
   export type UserUncheckedUpdateInput = {
     userId?: IntFieldUpdateOperationsInput | number
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5240,13 +6086,16 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
+    Peek?: PeekUncheckedUpdateManyWithoutUserInput
   }
 
   export type UserUpdateManyMutationInput = {
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5257,9 +6106,11 @@ export namespace Prisma {
   export type UserUncheckedUpdateManyInput = {
     userId?: IntFieldUpdateOperationsInput | number
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5268,6 +6119,7 @@ export namespace Prisma {
   }
 
   export type PostCreateInput = {
+    cursor?: string
     attachmentUrl: string
     attachmentMeta: InputJsonValue
     attachmentType: AttachmentType
@@ -5290,6 +6142,7 @@ export namespace Prisma {
 
   export type PostUncheckedCreateInput = {
     id?: number
+    cursor?: string
     userId: string
     attachmentUrl: string
     attachmentMeta: InputJsonValue
@@ -5310,6 +6163,7 @@ export namespace Prisma {
   }
 
   export type PostUpdateInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     attachmentUrl?: StringFieldUpdateOperationsInput | string
     attachmentMeta?: InputJsonValue
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
@@ -5332,6 +6186,7 @@ export namespace Prisma {
 
   export type PostUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     attachmentUrl?: StringFieldUpdateOperationsInput | string
     attachmentMeta?: InputJsonValue
@@ -5352,6 +6207,7 @@ export namespace Prisma {
   }
 
   export type PostUpdateManyMutationInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     attachmentUrl?: StringFieldUpdateOperationsInput | string
     attachmentMeta?: InputJsonValue
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
@@ -5368,6 +6224,7 @@ export namespace Prisma {
 
   export type PostUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     attachmentUrl?: StringFieldUpdateOperationsInput | string
     attachmentMeta?: InputJsonValue
@@ -5386,6 +6243,7 @@ export namespace Prisma {
   }
 
   export type CruiseCreateInput = {
+    cursor?: string
     slogan: string
     attachmentType: AttachmentType
     attachmentMeta: InputJsonValue
@@ -5407,6 +6265,7 @@ export namespace Prisma {
 
   export type CruiseUncheckedCreateInput = {
     id?: number
+    cursor?: string
     slogan: string
     attachmentType: AttachmentType
     attachmentMeta: InputJsonValue
@@ -5426,6 +6285,7 @@ export namespace Prisma {
   }
 
   export type CruiseUpdateInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -5447,6 +6307,7 @@ export namespace Prisma {
 
   export type CruiseUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -5466,6 +6327,7 @@ export namespace Prisma {
   }
 
   export type CruiseUpdateManyMutationInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -5481,6 +6343,7 @@ export namespace Prisma {
 
   export type CruiseUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -5498,6 +6361,7 @@ export namespace Prisma {
   }
 
   export type CommentCreateInput = {
+    cursor?: string
     entityId: number
     entityType: EntityType
     comment: string
@@ -5519,6 +6383,7 @@ export namespace Prisma {
 
   export type CommentUncheckedCreateInput = {
     id?: number
+    cursor?: string
     entityId: number
     entityType: EntityType
     comment: string
@@ -5539,6 +6404,7 @@ export namespace Prisma {
   }
 
   export type CommentUpdateInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     entityId?: IntFieldUpdateOperationsInput | number
     entityType?: EnumEntityTypeFieldUpdateOperationsInput | EntityType
     comment?: StringFieldUpdateOperationsInput | string
@@ -5560,6 +6426,7 @@ export namespace Prisma {
 
   export type CommentUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     entityId?: IntFieldUpdateOperationsInput | number
     entityType?: EnumEntityTypeFieldUpdateOperationsInput | EntityType
     comment?: StringFieldUpdateOperationsInput | string
@@ -5580,6 +6447,7 @@ export namespace Prisma {
   }
 
   export type CommentUpdateManyMutationInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     entityId?: IntFieldUpdateOperationsInput | number
     entityType?: EnumEntityTypeFieldUpdateOperationsInput | EntityType
     comment?: StringFieldUpdateOperationsInput | string
@@ -5596,6 +6464,7 @@ export namespace Prisma {
 
   export type CommentUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     entityId?: IntFieldUpdateOperationsInput | number
     entityType?: EnumEntityTypeFieldUpdateOperationsInput | EntityType
     comment?: StringFieldUpdateOperationsInput | string
@@ -5616,6 +6485,7 @@ export namespace Prisma {
   }
 
   export type ChallengeCreateInput = {
+    cursor?: string
     challenge: string
     attachmentType: AttachmentType
     attachmentUrl: string
@@ -5639,6 +6509,7 @@ export namespace Prisma {
 
   export type ChallengeUncheckedCreateInput = {
     id?: number
+    cursor?: string
     challenge: string
     creatorId: string
     attachmentType: AttachmentType
@@ -5660,6 +6531,7 @@ export namespace Prisma {
   }
 
   export type ChallengeUpdateInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentUrl?: StringFieldUpdateOperationsInput | string
@@ -5683,6 +6555,7 @@ export namespace Prisma {
 
   export type ChallengeUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
@@ -5704,6 +6577,7 @@ export namespace Prisma {
   }
 
   export type ChallengeUpdateManyMutationInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentUrl?: StringFieldUpdateOperationsInput | string
@@ -5721,6 +6595,7 @@ export namespace Prisma {
 
   export type ChallengeUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
@@ -5736,6 +6611,50 @@ export namespace Prisma {
     kisses?: ChallengeUpdatekissesInput | Enumerable<string>
     hearts?: ChallengeUpdateheartsInput | Enumerable<string>
     hot?: ChallengeUpdatehotInput | Enumerable<string>
+  }
+
+  export type PeekCreateInput = {
+    expiresUTC?: BigInt | number | null
+    active: boolean
+    peeks: number
+    user: UserCreateOneWithoutPeekInput
+  }
+
+  export type PeekUncheckedCreateInput = {
+    id?: number
+    userId: string
+    expiresUTC?: BigInt | number | null
+    active: boolean
+    peeks: number
+  }
+
+  export type PeekUpdateInput = {
+    expiresUTC?: NullableBigIntFieldUpdateOperationsInput | BigInt | number | null
+    active?: BoolFieldUpdateOperationsInput | boolean
+    peeks?: IntFieldUpdateOperationsInput | number
+    user?: UserUpdateOneRequiredWithoutPeekInput
+  }
+
+  export type PeekUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
+    expiresUTC?: NullableBigIntFieldUpdateOperationsInput | BigInt | number | null
+    active?: BoolFieldUpdateOperationsInput | boolean
+    peeks?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type PeekUpdateManyMutationInput = {
+    expiresUTC?: NullableBigIntFieldUpdateOperationsInput | BigInt | number | null
+    active?: BoolFieldUpdateOperationsInput | boolean
+    peeks?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type PeekUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
+    expiresUTC?: NullableBigIntFieldUpdateOperationsInput | BigInt | number | null
+    active?: BoolFieldUpdateOperationsInput | boolean
+    peeks?: IntFieldUpdateOperationsInput | number
   }
 
   export type IntFilter = {
@@ -5825,6 +6744,12 @@ export namespace Prisma {
     none?: ChallengeWhereInput
   }
 
+  export type PeekListRelationFilter = {
+    every?: PeekWhereInput
+    some?: PeekWhereInput
+    none?: PeekWhereInput
+  }
+
   export type UserRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
@@ -5901,6 +6826,22 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter | Date | string | null
   }
 
+  export type BigIntNullableFilter = {
+    equals?: BigInt | number | null
+    in?: Enumerable<BigInt> | Enumerable<number> | null
+    notIn?: Enumerable<BigInt> | Enumerable<number> | null
+    lt?: BigInt | number
+    lte?: BigInt | number
+    gt?: BigInt | number
+    gte?: BigInt | number
+    not?: NestedBigIntNullableFilter | BigInt | number | null
+  }
+
+  export type BoolFilter = {
+    equals?: boolean
+    not?: NestedBoolFilter | boolean
+  }
+
   export type UserCreateManyWithoutFollowersInput = {
     create?: XOR<Enumerable<UserUncheckedCreateWithoutFollowersInput>, Enumerable<UserCreateWithoutFollowersInput>>
     connect?: Enumerable<UserWhereUniqueInput>
@@ -5961,6 +6902,12 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<ChallengeCreateOrConnectWithoutcreatorInput>
   }
 
+  export type PeekCreateManyWithoutUserInput = {
+    create?: XOR<Enumerable<PeekUncheckedCreateWithoutUserInput>, Enumerable<PeekCreateWithoutUserInput>>
+    connect?: Enumerable<PeekWhereUniqueInput>
+    connectOrCreate?: Enumerable<PeekCreateOrConnectWithoutuserInput>
+  }
+
   export type PostUncheckedCreateManyWithoutUserInput = {
     create?: XOR<Enumerable<PostUncheckedCreateWithoutUserInput>, Enumerable<PostCreateWithoutUserInput>>
     connect?: Enumerable<PostWhereUniqueInput>
@@ -5995,6 +6942,12 @@ export namespace Prisma {
     create?: XOR<Enumerable<ChallengeUncheckedCreateWithoutCreatorInput>, Enumerable<ChallengeCreateWithoutCreatorInput>>
     connect?: Enumerable<ChallengeWhereUniqueInput>
     connectOrCreate?: Enumerable<ChallengeCreateOrConnectWithoutcreatorInput>
+  }
+
+  export type PeekUncheckedCreateManyWithoutUserInput = {
+    create?: XOR<Enumerable<PeekUncheckedCreateWithoutUserInput>, Enumerable<PeekCreateWithoutUserInput>>
+    connect?: Enumerable<PeekWhereUniqueInput>
+    connectOrCreate?: Enumerable<PeekCreateOrConnectWithoutuserInput>
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -6139,6 +7092,19 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<ChallengeCreateOrConnectWithoutcreatorInput>
   }
 
+  export type PeekUpdateManyWithoutUserInput = {
+    create?: XOR<Enumerable<PeekUncheckedCreateWithoutUserInput>, Enumerable<PeekCreateWithoutUserInput>>
+    connect?: Enumerable<PeekWhereUniqueInput>
+    set?: Enumerable<PeekWhereUniqueInput>
+    disconnect?: Enumerable<PeekWhereUniqueInput>
+    delete?: Enumerable<PeekWhereUniqueInput>
+    update?: Enumerable<PeekUpdateWithWhereUniqueWithoutUserInput>
+    updateMany?: Enumerable<PeekUpdateManyWithWhereWithoutUserInput>
+    deleteMany?: Enumerable<PeekScalarWhereInput>
+    upsert?: Enumerable<PeekUpsertWithWhereUniqueWithoutUserInput>
+    connectOrCreate?: Enumerable<PeekCreateOrConnectWithoutuserInput>
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -6223,6 +7189,19 @@ export namespace Prisma {
     deleteMany?: Enumerable<ChallengeScalarWhereInput>
     upsert?: Enumerable<ChallengeUpsertWithWhereUniqueWithoutCreatorInput>
     connectOrCreate?: Enumerable<ChallengeCreateOrConnectWithoutcreatorInput>
+  }
+
+  export type PeekUncheckedUpdateManyWithoutUserInput = {
+    create?: XOR<Enumerable<PeekUncheckedCreateWithoutUserInput>, Enumerable<PeekCreateWithoutUserInput>>
+    connect?: Enumerable<PeekWhereUniqueInput>
+    set?: Enumerable<PeekWhereUniqueInput>
+    disconnect?: Enumerable<PeekWhereUniqueInput>
+    delete?: Enumerable<PeekWhereUniqueInput>
+    update?: Enumerable<PeekUpdateWithWhereUniqueWithoutUserInput>
+    updateMany?: Enumerable<PeekUpdateManyWithWhereWithoutUserInput>
+    deleteMany?: Enumerable<PeekScalarWhereInput>
+    upsert?: Enumerable<PeekUpsertWithWhereUniqueWithoutUserInput>
+    connectOrCreate?: Enumerable<PeekCreateOrConnectWithoutuserInput>
   }
 
   export type PostCreatehashtagsInput = {
@@ -6845,6 +7824,32 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<PostCreateOrConnectWithoutChallengeInput>
   }
 
+  export type UserCreateOneWithoutPeekInput = {
+    create?: XOR<UserUncheckedCreateWithoutPeekInput, UserCreateWithoutPeekInput>
+    connect?: UserWhereUniqueInput
+    connectOrCreate?: UserCreateOrConnectWithoutPeekInput
+  }
+
+  export type NullableBigIntFieldUpdateOperationsInput = {
+    set?: BigInt | number | null
+    increment?: BigInt | number
+    decrement?: BigInt | number
+    multiply?: BigInt | number
+    divide?: BigInt | number
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type UserUpdateOneRequiredWithoutPeekInput = {
+    create?: XOR<UserUncheckedCreateWithoutPeekInput, UserCreateWithoutPeekInput>
+    connect?: UserWhereUniqueInput
+    update?: XOR<UserUncheckedUpdateWithoutPeekInput, UserUpdateWithoutPeekInput>
+    upsert?: UserUpsertWithoutPeekInput
+    connectOrCreate?: UserCreateOrConnectWithoutPeekInput
+  }
+
   export type NestedIntFilter = {
     equals?: number
     in?: Enumerable<number>
@@ -6938,11 +7943,29 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter | Date | string | null
   }
 
+  export type NestedBigIntNullableFilter = {
+    equals?: BigInt | number | null
+    in?: Enumerable<BigInt> | Enumerable<number> | null
+    notIn?: Enumerable<BigInt> | Enumerable<number> | null
+    lt?: BigInt | number
+    lte?: BigInt | number
+    gt?: BigInt | number
+    gte?: BigInt | number
+    not?: NestedBigIntNullableFilter | BigInt | number | null
+  }
+
+  export type NestedBoolFilter = {
+    equals?: boolean
+    not?: NestedBoolFilter | boolean
+  }
+
   export type UserCreateWithoutFollowersInput = {
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -6958,14 +7981,17 @@ export namespace Prisma {
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Comment?: CommentCreateManyWithoutUserInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
+    Peek?: PeekCreateManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutFollowersInput = {
     userId?: number
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -6978,6 +8004,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
+    Peek?: PeekUncheckedCreateManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutfollowersInput = {
@@ -6987,9 +8014,11 @@ export namespace Prisma {
 
   export type UserCreateWithoutFollowingInput = {
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -7005,14 +8034,17 @@ export namespace Prisma {
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Comment?: CommentCreateManyWithoutUserInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
+    Peek?: PeekCreateManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutFollowingInput = {
     userId?: number
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -7025,6 +8057,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
+    Peek?: PeekUncheckedCreateManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutfollowingInput = {
@@ -7033,6 +8066,7 @@ export namespace Prisma {
   }
 
   export type PostCreateWithoutUserInput = {
+    cursor?: string
     attachmentUrl: string
     attachmentMeta: InputJsonValue
     attachmentType: AttachmentType
@@ -7054,6 +8088,7 @@ export namespace Prisma {
 
   export type PostUncheckedCreateWithoutUserInput = {
     id?: number
+    cursor?: string
     attachmentUrl: string
     attachmentMeta: InputJsonValue
     attachmentType: AttachmentType
@@ -7078,6 +8113,7 @@ export namespace Prisma {
   }
 
   export type CruiseCreateWithoutUserInput = {
+    cursor?: string
     slogan: string
     attachmentType: AttachmentType
     attachmentMeta: InputJsonValue
@@ -7098,6 +8134,7 @@ export namespace Prisma {
 
   export type CruiseUncheckedCreateWithoutUserInput = {
     id?: number
+    cursor?: string
     slogan: string
     attachmentType: AttachmentType
     attachmentMeta: InputJsonValue
@@ -7121,6 +8158,7 @@ export namespace Prisma {
   }
 
   export type CommentCreateWithoutUserInput = {
+    cursor?: string
     entityId: number
     entityType: EntityType
     comment: string
@@ -7141,6 +8179,7 @@ export namespace Prisma {
 
   export type CommentUncheckedCreateWithoutUserInput = {
     id?: number
+    cursor?: string
     entityId: number
     entityType: EntityType
     comment: string
@@ -7165,6 +8204,7 @@ export namespace Prisma {
   }
 
   export type ChallengeCreateWithoutUserInput = {
+    cursor?: string
     challenge: string
     attachmentType: AttachmentType
     attachmentUrl: string
@@ -7187,6 +8227,7 @@ export namespace Prisma {
 
   export type ChallengeUncheckedCreateWithoutUserInput = {
     id?: number
+    cursor?: string
     challenge: string
     creatorId: string
     attachmentType: AttachmentType
@@ -7212,6 +8253,7 @@ export namespace Prisma {
   }
 
   export type CruiseCreateWithoutFollowersInput = {
+    cursor?: string
     slogan: string
     attachmentType: AttachmentType
     attachmentMeta: InputJsonValue
@@ -7232,6 +8274,7 @@ export namespace Prisma {
 
   export type CruiseUncheckedCreateWithoutFollowersInput = {
     id?: number
+    cursor?: string
     slogan: string
     attachmentType: AttachmentType
     attachmentMeta: InputJsonValue
@@ -7256,6 +8299,7 @@ export namespace Prisma {
   }
 
   export type ChallengeCreateWithoutFollowersInput = {
+    cursor?: string
     challenge: string
     attachmentType: AttachmentType
     attachmentUrl: string
@@ -7278,6 +8322,7 @@ export namespace Prisma {
 
   export type ChallengeUncheckedCreateWithoutFollowersInput = {
     id?: number
+    cursor?: string
     challenge: string
     creatorId: string
     attachmentType: AttachmentType
@@ -7304,6 +8349,7 @@ export namespace Prisma {
   }
 
   export type CruiseCreateWithoutCreatorInput = {
+    cursor?: string
     slogan: string
     attachmentType: AttachmentType
     attachmentMeta: InputJsonValue
@@ -7324,6 +8370,7 @@ export namespace Prisma {
 
   export type CruiseUncheckedCreateWithoutCreatorInput = {
     id?: number
+    cursor?: string
     slogan: string
     attachmentType: AttachmentType
     attachmentMeta: InputJsonValue
@@ -7347,6 +8394,7 @@ export namespace Prisma {
   }
 
   export type ChallengeCreateWithoutCreatorInput = {
+    cursor?: string
     challenge: string
     attachmentType: AttachmentType
     attachmentUrl: string
@@ -7369,6 +8417,7 @@ export namespace Prisma {
 
   export type ChallengeUncheckedCreateWithoutCreatorInput = {
     id?: number
+    cursor?: string
     challenge: string
     attachmentType: AttachmentType
     attachmentUrl: string
@@ -7393,6 +8442,24 @@ export namespace Prisma {
     create: XOR<ChallengeUncheckedCreateWithoutCreatorInput, ChallengeCreateWithoutCreatorInput>
   }
 
+  export type PeekCreateWithoutUserInput = {
+    expiresUTC?: BigInt | number | null
+    active: boolean
+    peeks: number
+  }
+
+  export type PeekUncheckedCreateWithoutUserInput = {
+    id?: number
+    expiresUTC?: BigInt | number | null
+    active: boolean
+    peeks: number
+  }
+
+  export type PeekCreateOrConnectWithoutuserInput = {
+    where: PeekWhereUniqueInput
+    create: XOR<PeekUncheckedCreateWithoutUserInput, PeekCreateWithoutUserInput>
+  }
+
   export type UserUpdateWithWhereUniqueWithoutFollowersInput = {
     where: UserWhereUniqueInput
     data: XOR<UserUncheckedUpdateWithoutFollowersInput, UserUpdateWithoutFollowersInput>
@@ -7409,9 +8476,11 @@ export namespace Prisma {
     NOT?: Enumerable<UserScalarWhereInput>
     userId?: IntFilter | number
     uid?: StringFilter | string
+    cursor?: StringFilter | string
     firstName?: StringFilter | string
     lastName?: StringFilter | string
     userName?: StringNullableFilter | string | null
+    bio?: StringNullableFilter | string | null
     email?: StringFilter | string
     imgUrl?: StringNullableFilter | string | null
     created?: DateTimeFilter | Date | string
@@ -7456,6 +8525,7 @@ export namespace Prisma {
     OR?: Enumerable<PostScalarWhereInput>
     NOT?: Enumerable<PostScalarWhereInput>
     id?: IntFilter | number
+    cursor?: StringFilter | string
     userId?: StringFilter | string
     attachmentUrl?: StringFilter | string
     attachmentMeta?: JsonFilter
@@ -7494,6 +8564,7 @@ export namespace Prisma {
     OR?: Enumerable<CruiseScalarWhereInput>
     NOT?: Enumerable<CruiseScalarWhereInput>
     id?: IntFilter | number
+    cursor?: StringFilter | string
     slogan?: StringFilter | string
     attachmentType?: EnumAttachmentTypeFilter | AttachmentType
     attachmentMeta?: JsonFilter
@@ -7531,6 +8602,7 @@ export namespace Prisma {
     OR?: Enumerable<CommentScalarWhereInput>
     NOT?: Enumerable<CommentScalarWhereInput>
     id?: IntFilter | number
+    cursor?: StringFilter | string
     entityId?: IntFilter | number
     entityType?: EnumEntityTypeFilter | EntityType
     comment?: StringFilter | string
@@ -7571,6 +8643,7 @@ export namespace Prisma {
     OR?: Enumerable<ChallengeScalarWhereInput>
     NOT?: Enumerable<ChallengeScalarWhereInput>
     id?: IntFilter | number
+    cursor?: StringFilter | string
     challenge?: StringFilter | string
     creatorId?: StringFilter | string
     attachmentType?: EnumAttachmentTypeFilter | AttachmentType
@@ -7658,11 +8731,40 @@ export namespace Prisma {
     create: XOR<ChallengeUncheckedCreateWithoutCreatorInput, ChallengeCreateWithoutCreatorInput>
   }
 
+  export type PeekUpdateWithWhereUniqueWithoutUserInput = {
+    where: PeekWhereUniqueInput
+    data: XOR<PeekUncheckedUpdateWithoutUserInput, PeekUpdateWithoutUserInput>
+  }
+
+  export type PeekUpdateManyWithWhereWithoutUserInput = {
+    where: PeekScalarWhereInput
+    data: XOR<PeekUncheckedUpdateManyWithoutPeekInput, PeekUpdateManyMutationInput>
+  }
+
+  export type PeekScalarWhereInput = {
+    AND?: Enumerable<PeekScalarWhereInput>
+    OR?: Enumerable<PeekScalarWhereInput>
+    NOT?: Enumerable<PeekScalarWhereInput>
+    id?: IntFilter | number
+    userId?: StringFilter | string
+    expiresUTC?: BigIntNullableFilter | BigInt | number | null
+    active?: BoolFilter | boolean
+    peeks?: IntFilter | number
+  }
+
+  export type PeekUpsertWithWhereUniqueWithoutUserInput = {
+    where: PeekWhereUniqueInput
+    update: XOR<PeekUncheckedUpdateWithoutUserInput, PeekUpdateWithoutUserInput>
+    create: XOR<PeekUncheckedCreateWithoutUserInput, PeekCreateWithoutUserInput>
+  }
+
   export type UserCreateWithoutPostsInput = {
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -7678,14 +8780,17 @@ export namespace Prisma {
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Comment?: CommentCreateManyWithoutUserInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
+    Peek?: PeekCreateManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
     userId?: number
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -7697,6 +8802,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
+    Peek?: PeekUncheckedCreateManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutpostsInput = {
@@ -7705,6 +8811,7 @@ export namespace Prisma {
   }
 
   export type CommentCreateWithoutPostInput = {
+    cursor?: string
     entityId: number
     entityType: EntityType
     comment: string
@@ -7725,6 +8832,7 @@ export namespace Prisma {
 
   export type CommentUncheckedCreateWithoutPostInput = {
     id?: number
+    cursor?: string
     entityId: number
     entityType: EntityType
     comment: string
@@ -7749,6 +8857,7 @@ export namespace Prisma {
   }
 
   export type CruiseCreateWithoutPostInput = {
+    cursor?: string
     slogan: string
     attachmentType: AttachmentType
     attachmentMeta: InputJsonValue
@@ -7769,6 +8878,7 @@ export namespace Prisma {
 
   export type CruiseUncheckedCreateWithoutPostInput = {
     id?: number
+    cursor?: string
     slogan: string
     attachmentType: AttachmentType
     attachmentMeta: InputJsonValue
@@ -7792,6 +8902,7 @@ export namespace Prisma {
   }
 
   export type ChallengeCreateWithoutPostInput = {
+    cursor?: string
     challenge: string
     attachmentType: AttachmentType
     attachmentUrl: string
@@ -7814,6 +8925,7 @@ export namespace Prisma {
 
   export type ChallengeUncheckedCreateWithoutPostInput = {
     id?: number
+    cursor?: string
     challenge: string
     creatorId: string
     attachmentType: AttachmentType
@@ -7839,6 +8951,7 @@ export namespace Prisma {
   }
 
   export type CruiseCreateWithoutPostsInput = {
+    cursor?: string
     slogan: string
     attachmentType: AttachmentType
     attachmentMeta: InputJsonValue
@@ -7859,6 +8972,7 @@ export namespace Prisma {
 
   export type CruiseUncheckedCreateWithoutPostsInput = {
     id?: number
+    cursor?: string
     slogan: string
     attachmentType: AttachmentType
     attachmentMeta: InputJsonValue
@@ -7882,6 +8996,7 @@ export namespace Prisma {
   }
 
   export type ChallengeCreateWithoutPostsInput = {
+    cursor?: string
     challenge: string
     attachmentType: AttachmentType
     attachmentUrl: string
@@ -7904,6 +9019,7 @@ export namespace Prisma {
 
   export type ChallengeUncheckedCreateWithoutPostsInput = {
     id?: number
+    cursor?: string
     challenge: string
     creatorId: string
     attachmentType: AttachmentType
@@ -7930,9 +9046,11 @@ export namespace Prisma {
 
   export type UserUpdateWithoutPostsInput = {
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7948,14 +9066,17 @@ export namespace Prisma {
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
+    Peek?: PeekUpdateManyWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
     userId?: IntFieldUpdateOperationsInput | number
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7967,6 +9088,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
+    Peek?: PeekUncheckedUpdateManyWithoutUserInput
   }
 
   export type UserUpsertWithoutPostsInput = {
@@ -8007,6 +9129,7 @@ export namespace Prisma {
   }
 
   export type ChallengeUpdateWithoutPostInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentUrl?: StringFieldUpdateOperationsInput | string
@@ -8029,6 +9152,7 @@ export namespace Prisma {
 
   export type ChallengeUncheckedUpdateWithoutPostInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
@@ -8054,6 +9178,7 @@ export namespace Prisma {
   }
 
   export type CruiseUpdateWithoutPostsInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -8074,6 +9199,7 @@ export namespace Prisma {
 
   export type CruiseUncheckedUpdateWithoutPostsInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -8097,6 +9223,7 @@ export namespace Prisma {
   }
 
   export type ChallengeUpdateWithoutPostsInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentUrl?: StringFieldUpdateOperationsInput | string
@@ -8119,6 +9246,7 @@ export namespace Prisma {
 
   export type ChallengeUncheckedUpdateWithoutPostsInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
@@ -8145,9 +9273,11 @@ export namespace Prisma {
 
   export type UserCreateWithoutCruiseInput = {
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -8163,14 +9293,17 @@ export namespace Prisma {
     challengeFollowing?: ChallengeCreateManyWithoutFollowersInput
     Comment?: CommentCreateManyWithoutUserInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
+    Peek?: PeekCreateManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCruiseInput = {
     userId?: number
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -8182,6 +9315,7 @@ export namespace Prisma {
     challenges?: ChallengeUncheckedCreateManyWithoutUserInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
+    Peek?: PeekUncheckedCreateManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCruiseInput = {
@@ -8191,9 +9325,11 @@ export namespace Prisma {
 
   export type UserCreateWithoutCruiseFollowingInput = {
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -8209,14 +9345,17 @@ export namespace Prisma {
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Comment?: CommentCreateManyWithoutUserInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
+    Peek?: PeekCreateManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCruiseFollowingInput = {
     userId?: number
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -8229,6 +9368,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
+    Peek?: PeekUncheckedCreateManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutcruiseFollowingInput = {
@@ -8238,9 +9378,11 @@ export namespace Prisma {
 
   export type UserCreateWithoutCruisesInput = {
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -8256,14 +9398,17 @@ export namespace Prisma {
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Comment?: CommentCreateManyWithoutUserInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
+    Peek?: PeekCreateManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCruisesInput = {
     userId?: number
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -8275,6 +9420,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
+    Peek?: PeekUncheckedCreateManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutcruisesInput = {
@@ -8283,6 +9429,7 @@ export namespace Prisma {
   }
 
   export type PostCreateWithoutCruisesInput = {
+    cursor?: string
     attachmentUrl: string
     attachmentMeta: InputJsonValue
     attachmentType: AttachmentType
@@ -8304,6 +9451,7 @@ export namespace Prisma {
 
   export type PostUncheckedCreateWithoutCruisesInput = {
     id?: number
+    cursor?: string
     userId: string
     attachmentUrl: string
     attachmentMeta: InputJsonValue
@@ -8328,6 +9476,7 @@ export namespace Prisma {
   }
 
   export type CommentCreateWithoutCruiseInput = {
+    cursor?: string
     entityId: number
     entityType: EntityType
     comment: string
@@ -8348,6 +9497,7 @@ export namespace Prisma {
 
   export type CommentUncheckedCreateWithoutCruiseInput = {
     id?: number
+    cursor?: string
     entityId: number
     entityType: EntityType
     comment: string
@@ -8372,6 +9522,7 @@ export namespace Prisma {
   }
 
   export type PostCreateWithoutCruiseInput = {
+    cursor?: string
     attachmentUrl: string
     attachmentMeta: InputJsonValue
     attachmentType: AttachmentType
@@ -8393,6 +9544,7 @@ export namespace Prisma {
 
   export type PostUncheckedCreateWithoutCruiseInput = {
     id?: number
+    cursor?: string
     userId: string
     attachmentUrl: string
     attachmentMeta: InputJsonValue
@@ -8418,9 +9570,11 @@ export namespace Prisma {
 
   export type UserUpdateWithoutCruiseInput = {
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8436,14 +9590,17 @@ export namespace Prisma {
     challengeFollowing?: ChallengeUpdateManyWithoutFollowersInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
+    Peek?: PeekUpdateManyWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutCruiseInput = {
     userId?: IntFieldUpdateOperationsInput | number
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8455,6 +9612,7 @@ export namespace Prisma {
     challenges?: ChallengeUncheckedUpdateManyWithoutUserInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
+    Peek?: PeekUncheckedUpdateManyWithoutUserInput
   }
 
   export type UserUpsertWithoutCruiseInput = {
@@ -8480,9 +9638,11 @@ export namespace Prisma {
 
   export type UserUpdateWithoutCruisesInput = {
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8498,14 +9658,17 @@ export namespace Prisma {
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
+    Peek?: PeekUpdateManyWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutCruisesInput = {
     userId?: IntFieldUpdateOperationsInput | number
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8517,6 +9680,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
+    Peek?: PeekUncheckedUpdateManyWithoutUserInput
   }
 
   export type UserUpsertWithoutCruisesInput = {
@@ -8525,6 +9689,7 @@ export namespace Prisma {
   }
 
   export type PostUpdateWithoutCruisesInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     attachmentUrl?: StringFieldUpdateOperationsInput | string
     attachmentMeta?: InputJsonValue
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
@@ -8546,6 +9711,7 @@ export namespace Prisma {
 
   export type PostUncheckedUpdateWithoutCruisesInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     attachmentUrl?: StringFieldUpdateOperationsInput | string
     attachmentMeta?: InputJsonValue
@@ -8603,9 +9769,11 @@ export namespace Prisma {
 
   export type UserCreateWithoutCommentInput = {
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -8621,14 +9789,17 @@ export namespace Prisma {
     challengeFollowing?: ChallengeCreateManyWithoutFollowersInput
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
+    Peek?: PeekCreateManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCommentInput = {
     userId?: number
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -8640,6 +9811,7 @@ export namespace Prisma {
     challenges?: ChallengeUncheckedCreateManyWithoutUserInput
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
+    Peek?: PeekUncheckedCreateManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCommentInput = {
@@ -8648,6 +9820,7 @@ export namespace Prisma {
   }
 
   export type PostCreateWithoutCommentsInput = {
+    cursor?: string
     attachmentUrl: string
     attachmentMeta: InputJsonValue
     attachmentType: AttachmentType
@@ -8669,6 +9842,7 @@ export namespace Prisma {
 
   export type PostUncheckedCreateWithoutCommentsInput = {
     id?: number
+    cursor?: string
     userId: string
     attachmentUrl: string
     attachmentMeta: InputJsonValue
@@ -8693,6 +9867,7 @@ export namespace Prisma {
   }
 
   export type ChallengeCreateWithoutCommentsInput = {
+    cursor?: string
     challenge: string
     attachmentType: AttachmentType
     attachmentUrl: string
@@ -8715,6 +9890,7 @@ export namespace Prisma {
 
   export type ChallengeUncheckedCreateWithoutCommentsInput = {
     id?: number
+    cursor?: string
     challenge: string
     creatorId: string
     attachmentType: AttachmentType
@@ -8740,6 +9916,7 @@ export namespace Prisma {
   }
 
   export type CruiseCreateWithoutCommentsInput = {
+    cursor?: string
     slogan: string
     attachmentType: AttachmentType
     attachmentMeta: InputJsonValue
@@ -8760,6 +9937,7 @@ export namespace Prisma {
 
   export type CruiseUncheckedCreateWithoutCommentsInput = {
     id?: number
+    cursor?: string
     slogan: string
     attachmentType: AttachmentType
     attachmentMeta: InputJsonValue
@@ -8784,9 +9962,11 @@ export namespace Prisma {
 
   export type UserUpdateWithoutCommentInput = {
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8802,14 +9982,17 @@ export namespace Prisma {
     challengeFollowing?: ChallengeUpdateManyWithoutFollowersInput
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
+    Peek?: PeekUpdateManyWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutCommentInput = {
     userId?: IntFieldUpdateOperationsInput | number
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8821,6 +10004,7 @@ export namespace Prisma {
     challenges?: ChallengeUncheckedUpdateManyWithoutUserInput
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
+    Peek?: PeekUncheckedUpdateManyWithoutUserInput
   }
 
   export type UserUpsertWithoutCommentInput = {
@@ -8829,6 +10013,7 @@ export namespace Prisma {
   }
 
   export type PostUpdateWithoutCommentsInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     attachmentUrl?: StringFieldUpdateOperationsInput | string
     attachmentMeta?: InputJsonValue
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
@@ -8850,6 +10035,7 @@ export namespace Prisma {
 
   export type PostUncheckedUpdateWithoutCommentsInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     attachmentUrl?: StringFieldUpdateOperationsInput | string
     attachmentMeta?: InputJsonValue
@@ -8874,6 +10060,7 @@ export namespace Prisma {
   }
 
   export type ChallengeUpdateWithoutCommentsInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentUrl?: StringFieldUpdateOperationsInput | string
@@ -8896,6 +10083,7 @@ export namespace Prisma {
 
   export type ChallengeUncheckedUpdateWithoutCommentsInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
@@ -8921,6 +10109,7 @@ export namespace Prisma {
   }
 
   export type CruiseUpdateWithoutCommentsInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -8941,6 +10130,7 @@ export namespace Prisma {
 
   export type CruiseUncheckedUpdateWithoutCommentsInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -8970,9 +10160,11 @@ export namespace Prisma {
 
   export type UserCreateWithoutChallengeInput = {
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -8988,14 +10180,17 @@ export namespace Prisma {
     challengeFollowing?: ChallengeCreateManyWithoutFollowersInput
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Comment?: CommentCreateManyWithoutUserInput
+    Peek?: PeekCreateManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutChallengeInput = {
     userId?: number
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -9007,6 +10202,7 @@ export namespace Prisma {
     challenges?: ChallengeUncheckedCreateManyWithoutUserInput
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
+    Peek?: PeekUncheckedCreateManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutChallengeInput = {
@@ -9016,9 +10212,11 @@ export namespace Prisma {
 
   export type UserCreateWithoutChallengeFollowingInput = {
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -9034,14 +10232,17 @@ export namespace Prisma {
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Comment?: CommentCreateManyWithoutUserInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
+    Peek?: PeekCreateManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutChallengeFollowingInput = {
     userId?: number
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -9054,6 +10255,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
+    Peek?: PeekUncheckedCreateManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutchallengeFollowingInput = {
@@ -9063,9 +10265,11 @@ export namespace Prisma {
 
   export type UserCreateWithoutChallengesInput = {
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -9081,14 +10285,17 @@ export namespace Prisma {
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Comment?: CommentCreateManyWithoutUserInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
+    Peek?: PeekCreateManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutChallengesInput = {
     userId?: number
     uid: string
+    cursor?: string
     firstName: string
     lastName: string
     userName?: string | null
+    bio?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -9100,6 +10307,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
+    Peek?: PeekUncheckedCreateManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutchallengesInput = {
@@ -9108,6 +10316,7 @@ export namespace Prisma {
   }
 
   export type CommentCreateWithoutChallengeInput = {
+    cursor?: string
     entityId: number
     entityType: EntityType
     comment: string
@@ -9128,6 +10337,7 @@ export namespace Prisma {
 
   export type CommentUncheckedCreateWithoutChallengeInput = {
     id?: number
+    cursor?: string
     entityId: number
     entityType: EntityType
     comment: string
@@ -9152,6 +10362,7 @@ export namespace Prisma {
   }
 
   export type PostCreateWithoutChallengeInput = {
+    cursor?: string
     attachmentUrl: string
     attachmentMeta: InputJsonValue
     attachmentType: AttachmentType
@@ -9173,6 +10384,7 @@ export namespace Prisma {
 
   export type PostUncheckedCreateWithoutChallengeInput = {
     id?: number
+    cursor?: string
     userId: string
     attachmentUrl: string
     attachmentMeta: InputJsonValue
@@ -9198,9 +10410,11 @@ export namespace Prisma {
 
   export type UserUpdateWithoutChallengeInput = {
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9216,14 +10430,17 @@ export namespace Prisma {
     challengeFollowing?: ChallengeUpdateManyWithoutFollowersInput
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Comment?: CommentUpdateManyWithoutUserInput
+    Peek?: PeekUpdateManyWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutChallengeInput = {
     userId?: IntFieldUpdateOperationsInput | number
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9235,6 +10452,7 @@ export namespace Prisma {
     challenges?: ChallengeUncheckedUpdateManyWithoutUserInput
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
+    Peek?: PeekUncheckedUpdateManyWithoutUserInput
   }
 
   export type UserUpsertWithoutChallengeInput = {
@@ -9260,9 +10478,11 @@ export namespace Prisma {
 
   export type UserUpdateWithoutChallengesInput = {
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9278,14 +10498,17 @@ export namespace Prisma {
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
+    Peek?: PeekUpdateManyWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutChallengesInput = {
     userId?: IntFieldUpdateOperationsInput | number
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9297,6 +10520,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
+    Peek?: PeekUncheckedUpdateManyWithoutUserInput
   }
 
   export type UserUpsertWithoutChallengesInput = {
@@ -9336,11 +10560,117 @@ export namespace Prisma {
     create: XOR<PostUncheckedCreateWithoutChallengeInput, PostCreateWithoutChallengeInput>
   }
 
-  export type UserUpdateWithoutFollowersInput = {
+  export type UserCreateWithoutPeekInput = {
+    uid: string
+    cursor?: string
+    firstName: string
+    lastName: string
+    userName?: string | null
+    bio?: string | null
+    email: string
+    imgUrl?: string | null
+    created?: Date | string
+    updated?: Date | string
+    location?: InputJsonValue | null
+    following?: UserCreateManyWithoutFollowersInput
+    followers?: UserCreateManyWithoutFollowingInput
+    posts?: PostCreateManyWithoutUserInput
+    cruises?: CruiseCreateManyWithoutUserInput
+    comment?: CommentCreateManyWithoutUserInput
+    challenges?: ChallengeCreateManyWithoutUserInput
+    cruiseFollowing?: CruiseCreateManyWithoutFollowersInput
+    challengeFollowing?: ChallengeCreateManyWithoutFollowersInput
+    Cruise?: CruiseCreateManyWithoutCreatorInput
+    Comment?: CommentCreateManyWithoutUserInput
+    Challenge?: ChallengeCreateManyWithoutCreatorInput
+  }
+
+  export type UserUncheckedCreateWithoutPeekInput = {
+    userId?: number
+    uid: string
+    cursor?: string
+    firstName: string
+    lastName: string
+    userName?: string | null
+    bio?: string | null
+    email: string
+    imgUrl?: string | null
+    created?: Date | string
+    updated?: Date | string
+    location?: InputJsonValue | null
+    posts?: PostUncheckedCreateManyWithoutUserInput
+    cruises?: CruiseUncheckedCreateManyWithoutUserInput
+    comment?: CommentUncheckedCreateManyWithoutUserInput
+    challenges?: ChallengeUncheckedCreateManyWithoutUserInput
+    Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
+    Comment?: CommentUncheckedCreateManyWithoutUserInput
+    Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
+  }
+
+  export type UserCreateOrConnectWithoutPeekInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserUncheckedCreateWithoutPeekInput, UserCreateWithoutPeekInput>
+  }
+
+  export type UserUpdateWithoutPeekInput = {
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    created?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: InputJsonValue | null
+    following?: UserUpdateManyWithoutFollowersInput
+    followers?: UserUpdateManyWithoutFollowingInput
+    posts?: PostUpdateManyWithoutUserInput
+    cruises?: CruiseUpdateManyWithoutUserInput
+    comment?: CommentUpdateManyWithoutUserInput
+    challenges?: ChallengeUpdateManyWithoutUserInput
+    cruiseFollowing?: CruiseUpdateManyWithoutFollowersInput
+    challengeFollowing?: ChallengeUpdateManyWithoutFollowersInput
+    Cruise?: CruiseUpdateManyWithoutCreatorInput
+    Comment?: CommentUpdateManyWithoutUserInput
+    Challenge?: ChallengeUpdateManyWithoutCreatorInput
+  }
+
+  export type UserUncheckedUpdateWithoutPeekInput = {
+    userId?: IntFieldUpdateOperationsInput | number
+    uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    created?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: InputJsonValue | null
+    posts?: PostUncheckedUpdateManyWithoutUserInput
+    cruises?: CruiseUncheckedUpdateManyWithoutUserInput
+    comment?: CommentUncheckedUpdateManyWithoutUserInput
+    challenges?: ChallengeUncheckedUpdateManyWithoutUserInput
+    Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
+    Comment?: CommentUncheckedUpdateManyWithoutUserInput
+    Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
+  }
+
+  export type UserUpsertWithoutPeekInput = {
+    update: XOR<UserUncheckedUpdateWithoutPeekInput, UserUpdateWithoutPeekInput>
+    create: XOR<UserUncheckedCreateWithoutPeekInput, UserCreateWithoutPeekInput>
+  }
+
+  export type UserUpdateWithoutFollowersInput = {
+    uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9356,14 +10686,17 @@ export namespace Prisma {
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
+    Peek?: PeekUpdateManyWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutFollowersInput = {
     userId?: IntFieldUpdateOperationsInput | number
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9376,14 +10709,17 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
+    Peek?: PeekUncheckedUpdateManyWithoutUserInput
   }
 
   export type UserUncheckedUpdateManyWithoutFollowingInput = {
     userId?: IntFieldUpdateOperationsInput | number
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9393,9 +10729,11 @@ export namespace Prisma {
 
   export type UserUpdateWithoutFollowingInput = {
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9411,14 +10749,17 @@ export namespace Prisma {
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
+    Peek?: PeekUpdateManyWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutFollowingInput = {
     userId?: IntFieldUpdateOperationsInput | number
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9431,14 +10772,17 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
+    Peek?: PeekUncheckedUpdateManyWithoutUserInput
   }
 
   export type UserUncheckedUpdateManyWithoutFollowersInput = {
     userId?: IntFieldUpdateOperationsInput | number
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9447,6 +10791,7 @@ export namespace Prisma {
   }
 
   export type PostUpdateWithoutUserInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     attachmentUrl?: StringFieldUpdateOperationsInput | string
     attachmentMeta?: InputJsonValue
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
@@ -9468,6 +10813,7 @@ export namespace Prisma {
 
   export type PostUncheckedUpdateWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     attachmentUrl?: StringFieldUpdateOperationsInput | string
     attachmentMeta?: InputJsonValue
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
@@ -9488,6 +10834,7 @@ export namespace Prisma {
 
   export type PostUncheckedUpdateManyWithoutPostsInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     attachmentUrl?: StringFieldUpdateOperationsInput | string
     attachmentMeta?: InputJsonValue
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
@@ -9505,6 +10852,7 @@ export namespace Prisma {
   }
 
   export type CruiseUpdateWithoutUserInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -9525,6 +10873,7 @@ export namespace Prisma {
 
   export type CruiseUncheckedUpdateWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -9544,6 +10893,7 @@ export namespace Prisma {
 
   export type CruiseUncheckedUpdateManyWithoutCruisesInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -9560,6 +10910,7 @@ export namespace Prisma {
   }
 
   export type CommentUpdateWithoutUserInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     entityId?: IntFieldUpdateOperationsInput | number
     entityType?: EnumEntityTypeFieldUpdateOperationsInput | EntityType
     comment?: StringFieldUpdateOperationsInput | string
@@ -9580,6 +10931,7 @@ export namespace Prisma {
 
   export type CommentUncheckedUpdateWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     entityId?: IntFieldUpdateOperationsInput | number
     entityType?: EnumEntityTypeFieldUpdateOperationsInput | EntityType
     comment?: StringFieldUpdateOperationsInput | string
@@ -9600,6 +10952,7 @@ export namespace Prisma {
 
   export type CommentUncheckedUpdateManyWithoutCommentInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     entityId?: IntFieldUpdateOperationsInput | number
     entityType?: EnumEntityTypeFieldUpdateOperationsInput | EntityType
     comment?: StringFieldUpdateOperationsInput | string
@@ -9619,6 +10972,7 @@ export namespace Prisma {
   }
 
   export type ChallengeUpdateWithoutUserInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentUrl?: StringFieldUpdateOperationsInput | string
@@ -9641,6 +10995,7 @@ export namespace Prisma {
 
   export type ChallengeUncheckedUpdateWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
@@ -9662,6 +11017,7 @@ export namespace Prisma {
 
   export type ChallengeUncheckedUpdateManyWithoutChallengesInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
@@ -9679,6 +11035,7 @@ export namespace Prisma {
   }
 
   export type CruiseUpdateWithoutFollowersInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -9699,6 +11056,7 @@ export namespace Prisma {
 
   export type CruiseUncheckedUpdateWithoutFollowersInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -9719,6 +11077,7 @@ export namespace Prisma {
 
   export type CruiseUncheckedUpdateManyWithoutCruiseFollowingInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -9736,6 +11095,7 @@ export namespace Prisma {
   }
 
   export type ChallengeUpdateWithoutFollowersInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentUrl?: StringFieldUpdateOperationsInput | string
@@ -9758,6 +11118,7 @@ export namespace Prisma {
 
   export type ChallengeUncheckedUpdateWithoutFollowersInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
@@ -9780,6 +11141,7 @@ export namespace Prisma {
 
   export type ChallengeUncheckedUpdateManyWithoutChallengeFollowingInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
@@ -9798,6 +11160,7 @@ export namespace Prisma {
   }
 
   export type CruiseUpdateWithoutCreatorInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -9818,6 +11181,7 @@ export namespace Prisma {
 
   export type CruiseUncheckedUpdateWithoutCreatorInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -9837,6 +11201,7 @@ export namespace Prisma {
 
   export type CruiseUncheckedUpdateManyWithoutCruiseInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -9853,6 +11218,7 @@ export namespace Prisma {
   }
 
   export type ChallengeUpdateWithoutCreatorInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentUrl?: StringFieldUpdateOperationsInput | string
@@ -9875,6 +11241,7 @@ export namespace Prisma {
 
   export type ChallengeUncheckedUpdateWithoutCreatorInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentUrl?: StringFieldUpdateOperationsInput | string
@@ -9896,6 +11263,7 @@ export namespace Prisma {
 
   export type ChallengeUncheckedUpdateManyWithoutChallengeInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentUrl?: StringFieldUpdateOperationsInput | string
@@ -9912,7 +11280,28 @@ export namespace Prisma {
     hot?: ChallengeUpdatehotInput | Enumerable<string>
   }
 
+  export type PeekUpdateWithoutUserInput = {
+    expiresUTC?: NullableBigIntFieldUpdateOperationsInput | BigInt | number | null
+    active?: BoolFieldUpdateOperationsInput | boolean
+    peeks?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type PeekUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    expiresUTC?: NullableBigIntFieldUpdateOperationsInput | BigInt | number | null
+    active?: BoolFieldUpdateOperationsInput | boolean
+    peeks?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type PeekUncheckedUpdateManyWithoutPeekInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    expiresUTC?: NullableBigIntFieldUpdateOperationsInput | BigInt | number | null
+    active?: BoolFieldUpdateOperationsInput | boolean
+    peeks?: IntFieldUpdateOperationsInput | number
+  }
+
   export type CommentUpdateWithoutPostInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     entityId?: IntFieldUpdateOperationsInput | number
     entityType?: EnumEntityTypeFieldUpdateOperationsInput | EntityType
     comment?: StringFieldUpdateOperationsInput | string
@@ -9933,6 +11322,7 @@ export namespace Prisma {
 
   export type CommentUncheckedUpdateWithoutPostInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     entityId?: IntFieldUpdateOperationsInput | number
     entityType?: EnumEntityTypeFieldUpdateOperationsInput | EntityType
     comment?: StringFieldUpdateOperationsInput | string
@@ -9953,6 +11343,7 @@ export namespace Prisma {
 
   export type CommentUncheckedUpdateManyWithoutCommentsInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     entityId?: IntFieldUpdateOperationsInput | number
     entityType?: EnumEntityTypeFieldUpdateOperationsInput | EntityType
     comment?: StringFieldUpdateOperationsInput | string
@@ -9972,6 +11363,7 @@ export namespace Prisma {
   }
 
   export type CruiseUpdateWithoutPostInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -9992,6 +11384,7 @@ export namespace Prisma {
 
   export type CruiseUncheckedUpdateWithoutPostInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
     attachmentMeta?: InputJsonValue
@@ -10011,9 +11404,11 @@ export namespace Prisma {
 
   export type UserUpdateWithoutCruiseFollowingInput = {
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10029,14 +11424,17 @@ export namespace Prisma {
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
+    Peek?: PeekUpdateManyWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutCruiseFollowingInput = {
     userId?: IntFieldUpdateOperationsInput | number
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10049,9 +11447,11 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
+    Peek?: PeekUncheckedUpdateManyWithoutUserInput
   }
 
   export type CommentUpdateWithoutCruiseInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     entityId?: IntFieldUpdateOperationsInput | number
     entityType?: EnumEntityTypeFieldUpdateOperationsInput | EntityType
     comment?: StringFieldUpdateOperationsInput | string
@@ -10072,6 +11472,7 @@ export namespace Prisma {
 
   export type CommentUncheckedUpdateWithoutCruiseInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     entityId?: IntFieldUpdateOperationsInput | number
     entityType?: EnumEntityTypeFieldUpdateOperationsInput | EntityType
     comment?: StringFieldUpdateOperationsInput | string
@@ -10091,6 +11492,7 @@ export namespace Prisma {
   }
 
   export type PostUpdateWithoutCruiseInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     attachmentUrl?: StringFieldUpdateOperationsInput | string
     attachmentMeta?: InputJsonValue
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
@@ -10112,6 +11514,7 @@ export namespace Prisma {
 
   export type PostUncheckedUpdateWithoutCruiseInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     attachmentUrl?: StringFieldUpdateOperationsInput | string
     attachmentMeta?: InputJsonValue
@@ -10132,9 +11535,11 @@ export namespace Prisma {
 
   export type UserUpdateWithoutChallengeFollowingInput = {
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10150,14 +11555,17 @@ export namespace Prisma {
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
+    Peek?: PeekUpdateManyWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutChallengeFollowingInput = {
     userId?: IntFieldUpdateOperationsInput | number
     uid?: StringFieldUpdateOperationsInput | string
+    cursor?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10170,9 +11578,11 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
+    Peek?: PeekUncheckedUpdateManyWithoutUserInput
   }
 
   export type CommentUpdateWithoutChallengeInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     entityId?: IntFieldUpdateOperationsInput | number
     entityType?: EnumEntityTypeFieldUpdateOperationsInput | EntityType
     comment?: StringFieldUpdateOperationsInput | string
@@ -10193,6 +11603,7 @@ export namespace Prisma {
 
   export type CommentUncheckedUpdateWithoutChallengeInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     entityId?: IntFieldUpdateOperationsInput | number
     entityType?: EnumEntityTypeFieldUpdateOperationsInput | EntityType
     comment?: StringFieldUpdateOperationsInput | string
@@ -10212,6 +11623,7 @@ export namespace Prisma {
   }
 
   export type PostUpdateWithoutChallengeInput = {
+    cursor?: StringFieldUpdateOperationsInput | string
     attachmentUrl?: StringFieldUpdateOperationsInput | string
     attachmentMeta?: InputJsonValue
     attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
@@ -10233,6 +11645,7 @@ export namespace Prisma {
 
   export type PostUncheckedUpdateWithoutChallengeInput = {
     id?: IntFieldUpdateOperationsInput | number
+    cursor?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     attachmentUrl?: StringFieldUpdateOperationsInput | string
     attachmentMeta?: InputJsonValue

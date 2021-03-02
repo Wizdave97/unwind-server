@@ -1,19 +1,22 @@
 import 'module-alias/register';
-import { ApolloServer, makeExecutableSchema } from 'apollo-server'
+import { ApolloServer, makeExecutableSchema } from 'apollo-server-express'
+import express from 'express'
 import fs from 'fs'
 import path from 'path'
 import { verifyToken } from 'unwind-server/auth'
 import { PrismaClient } from 'unwind-server/prisma/src/generated/client'
 import { Mutation, Query, Post, Cruise, Comment, Challenge, User } from 'unwind-server/resolvers'
-import { dateScalar } from './utils/scalars';
+import { dateScalar, intString } from './utils/scalars';
+import { checkAuth } from './utils/helpers';
 
 
 const prisma = new PrismaClient()
-
-
+const app = express()
+//app.use(checkAuth)
 // 2
 const resolvers = {
   Date: dateScalar,
+  IntString: intString,
   Query,
   Mutation,
   Post,
@@ -37,12 +40,10 @@ const schema = makeExecutableSchema({
 const server = new ApolloServer({
   schema,
   context: async ({ req }) => {
-    const token = req.headers.authorization || ''
-    const decodedToken = await verifyToken(token)
+    
     return {
       ...req,
-      prisma,
-      decodedToken
+      prisma
     }
   },
   formatError: (err) => {
@@ -50,14 +51,18 @@ const server = new ApolloServer({
     if (err.message.startsWith("Database Error: ")) {
       return new Error('Internal server error');
     }
+    if(err.message.startsWith("AppLock")) {
+      return new Error('AppLocked')
+    }
     // Otherwise return the original error.  The error can also
     // be manipulated in other ways, so long as it's returned.
     return err;
   },
 })
 
-server
-  .listen({ port: 8000 })
-  .then(({ url }) =>
-    console.log(`Server is running on ${url}`)
-  );
+server.applyMiddleware({ app })
+
+app.listen({ port: 8000 }, () => {
+    console.log(`Server is running on ${server.graphqlPath}`)
+  })
+ 

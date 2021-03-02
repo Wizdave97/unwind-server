@@ -40,6 +40,7 @@ export type UpdateUserArgs = {
     lastName?: string;
     imgUrl?: string;
     userName?: string;
+    bio?: string;
     uid: string;
 }
 
@@ -89,3 +90,19 @@ export type FollowEntityArgs = {
     entityType: EntityType;
 }
 
+export type UserFollowArgs = {
+    currentUid: string;
+    followUid: string;
+}
+
+export interface PaginationInterface<T> {
+    filters: T;
+    first?: number;
+    last?: number;
+    after: string;
+    before: string;
+}
+
+export interface PostInputFilters {
+
+}

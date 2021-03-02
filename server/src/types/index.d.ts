@@ -1,8 +1,9 @@
 import { PrismaClient } from "unwind-server/prisma/src/generated/client";
+import express from 'express'
 
-export type ContextInterface = {
+export interface ContextInterface extends  express.Request {
     prisma: PrismaClient,
-    decodedToken:  {[key: string]: any} | null
+    uid: string
 }
 
 export type ParentInterface = {

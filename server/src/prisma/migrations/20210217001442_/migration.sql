@@ -11,9 +11,11 @@ CREATE TYPE "EntityType" AS ENUM ('POST', 'CRUISE', 'CHALLENGE');
 CREATE TABLE "User" (
     "user_id" SERIAL NOT NULL,
     "uid" TEXT NOT NULL,
+    "cursor" TEXT NOT NULL,
     "first_name" TEXT NOT NULL,
     "last_name" TEXT NOT NULL,
     "user_name" TEXT,
+    "bio" TEXT,
     "email" TEXT NOT NULL,
     "img_url" TEXT,
     "created" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -26,6 +28,7 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Post" (
     "id" SERIAL NOT NULL,
+    "cursor" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "attachment_url" TEXT NOT NULL,
     "attachmentMeta" JSONB NOT NULL,
@@ -40,6 +43,7 @@ CREATE TABLE "Post" (
     "hearts" TEXT[],
     "hot" TEXT[],
     "challengeId" INTEGER,
+    "cruiseId" INTEGER,
 
     PRIMARY KEY ("id")
 );
@@ -47,6 +51,7 @@ CREATE TABLE "Post" (
 -- CreateTable
 CREATE TABLE "Cruise" (
     "id" SERIAL NOT NULL,
+    "cursor" TEXT NOT NULL,
     "slogan" TEXT NOT NULL,
     "attachmentType" "AttachmentType" NOT NULL,
     "attachmentMeta" JSONB NOT NULL,
@@ -68,6 +73,7 @@ CREATE TABLE "Cruise" (
 -- CreateTable
 CREATE TABLE "Comment" (
     "id" SERIAL NOT NULL,
+    "cursor" TEXT NOT NULL,
     "entityId" INTEGER NOT NULL,
     "entityType" "EntityType" NOT NULL,
     "comment" TEXT NOT NULL,
@@ -92,6 +98,7 @@ CREATE TABLE "Comment" (
 -- CreateTable
 CREATE TABLE "Challenge" (
     "id" SERIAL NOT NULL,
+    "cursor" TEXT NOT NULL,
     "challenge" TEXT NOT NULL,
     "creatorId" TEXT NOT NULL,
     "attachmentType" "AttachmentType" NOT NULL,
@@ -133,10 +140,25 @@ CREATE TABLE "_ChallengeFollowing" (
 CREATE UNIQUE INDEX "User.uid_unique" ON "User"("uid");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User.cursor_unique" ON "User"("cursor");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "User.user_name_unique" ON "User"("user_name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User.email_unique" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Post.cursor_unique" ON "Post"("cursor");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Cruise.cursor_unique" ON "Cruise"("cursor");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Comment.cursor_unique" ON "Comment"("cursor");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Challenge.cursor_unique" ON "Challenge"("cursor");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_User_AB_unique" ON "_User"("A", "B");
@@ -158,6 +180,15 @@ CREATE INDEX "_ChallengeFollowing_B_index" ON "_ChallengeFollowing"("B");
 
 -- AddForeignKey
 ALTER TABLE "Post" ADD FOREIGN KEY ("user_id") REFERENCES "User"("uid") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Post" ADD FOREIGN KEY ("challengeId") REFERENCES "Challenge"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Post" ADD FOREIGN KEY ("cruiseId") REFERENCES "Cruise"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Post" ADD FOREIGN KEY ("challengeId") REFERENCES "Challenge"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Cruise" ADD FOREIGN KEY ("creatorId") REFERENCES "User"("uid") ON DELETE CASCADE ON UPDATE CASCADE;

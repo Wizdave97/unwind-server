@@ -7,16 +7,19 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "./src/generated/client"
+  provider        = "prisma-client-js"
+  output          = "./src/generated/client"
+  previewFeatures = ["nativeTypes"]
 }
 
 model User {
   userId             Int         @id @default(autoincrement()) @map("user_id")
   uid                String      @unique
+  cursor             String      @unique @default(uuid())
   firstName          String      @map("first_name")
   lastName           String      @map("last_name")
   userName           String?     @unique @map("user_name")
+  bio                String?
   email              String      @unique
   imgUrl             String?     @map("img_url")
   following          User[]      @relation("User")
@@ -56,6 +59,7 @@ enum EntityType {
 model Post {
   id             Int            @id @default(autoincrement())
   user           User           @relation(fields: [userId], references: [uid])
+  cursor         String         @unique @default(uuid())
   userId         String         @map("user_id")
   attachmentUrl  String         @map("attachment_url")
   attachmentMeta Json
@@ -81,6 +85,7 @@ model Post {
 model Cruise {
   id             Int            @id @default(autoincrement())
   creator        User           @relation(fields: [creatorId], references: [uid])
+  cursor         String         @unique @default(uuid())
   slogan         String
   attachmentType AttachmentType
   attachmentMeta Json
@@ -104,6 +109,7 @@ model Cruise {
 
 model Comment {
   id             Int             @id @default(autoincrement())
+  cursor         String          @unique @default(uuid())
   entityId       Int
   entityType     EntityType
   comment        String
@@ -131,6 +137,7 @@ model Comment {
 model Challenge {
   id             Int            @id @default(autoincrement())
   creator        User           @relation(fields: [creatorId], references: [uid])
+  cursor         String         @unique @default(uuid())
   challenge      String
   creatorId      String
   attachmentType AttachmentType
@@ -151,4 +158,13 @@ model Challenge {
   comments       Comment[]
   posts          Post[]         @relation("TaggedChallengePosts")
   Post           Post[]
+}
+
+model Peek {
+  id         Int     @id @default(autoincrement())
+  userId     String  @map("user_id")
+  user       User    @relation(fields: [userId], references: [uid])
+  expiresUTC BigInt?
+  active     Boolean
+  peeks      Int
 }
