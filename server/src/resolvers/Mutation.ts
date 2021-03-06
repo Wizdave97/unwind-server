@@ -84,9 +84,8 @@ export const updateUser = async (
 }
 
 export const createPost = async (parent: ParentInterface, { input }: { input: CreatePostArgs }, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid: loggedInUser } = context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
-    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+    const {  prisma  } = context
+    
     const { attachmentType, content, uid, location, fileAttachment } = input
 
     let hashtags = content?.match(/#\w*/gi)
@@ -121,9 +120,8 @@ export const createPost = async (parent: ParentInterface, { input }: { input: Cr
 }
 
 export const createCruise = async (parent: ParentInterface, { input }: { input: CreateCruiseArgs }, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid: loggedInUser } = context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
-    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+    const {  prisma  } = context
+    
     const { attachmentType, slogan, uid, fileAttachment } = input
 
     let hashtags = slogan?.match(/#\w*/gi)
@@ -159,9 +157,8 @@ export const createCruise = async (parent: ParentInterface, { input }: { input: 
 }
 
 export const createChallenge = async (parent: ParentInterface, { input }: { input: CreateChallengeArgs }, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid: loggedInUser } = context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
-    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+    const {  prisma  } = context
+    
     const { attachmentType, challenge, uid, fileAttachment, start, end } = input
 
     let hashtags = challenge?.match(/#\w*/gi)
@@ -199,9 +196,8 @@ export const createChallenge = async (parent: ParentInterface, { input }: { inpu
 }
 
 export const createComment = async (parent: ParentInterface, { input }: { input: CreateCommentArgs }, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid: loggedInUser } = context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
-    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+    const {  prisma  } = context
+    
     const { attachmentType, comment, uid, fileAttachment, entityId, entityType } = input
 
     let hashtags = comment?.match(/#\w*/gi)
@@ -241,9 +237,8 @@ export const createComment = async (parent: ParentInterface, { input }: { input:
 }
 
 export const createReaction = async (parent: ParentInterface, { input }: { input: CreateReactionArgs }, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid: loggedInUser } = context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
-    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+    const {  prisma  } = context
+    
     const { reactionType, entityType, entityId, uid } = input
     let entity
     try {
@@ -460,9 +455,8 @@ export const createReaction = async (parent: ParentInterface, { input }: { input
 }
 
 export const deleteReaction = async (parent: ParentInterface, { input }: { input: CreateReactionArgs }, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid: loggedInUser } = context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
-    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+    const {  prisma  } = context
+    
     const { reactionType, entityType, entityId, uid } = input
     let entity
     try {
@@ -679,9 +673,8 @@ export const deleteReaction = async (parent: ParentInterface, { input }: { input
 }
 
 export const followEntity = async (parent: ParentInterface, { input }: { input: FollowEntityArgs }, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid: loggedInUser } = context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
-    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+    const {  prisma  } = context
+    
     const { id, entityType, uid } = input
     try {
         if (entityType === EntityType.CRUISE) {
@@ -727,9 +720,8 @@ export const followEntity = async (parent: ParentInterface, { input }: { input: 
 }
 
 export const unfollowEntity = async (parent: ParentInterface, { input }: { input: FollowEntityArgs }, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid: loggedInUser } = context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
-    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+    const { prisma } = context
+    
     const { id, entityType, uid } = input
     try {
         if (entityType === EntityType.CRUISE) {
@@ -773,9 +765,8 @@ export const unfollowEntity = async (parent: ParentInterface, { input }: { input
 }
 
 export const followUser = async (parent: ParentInterface, { input }: { input: UserFollowArgs }, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid: loggedInUser } = context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
-    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+    const {  prisma  } = context
+    
     const { currentUid, followUid } = input
     try {
         const user = await prisma.user.update({
@@ -811,9 +802,8 @@ export const followUser = async (parent: ParentInterface, { input }: { input: Us
 }
 
 export const unfollowUser = async (parent: ParentInterface, { input }: { input: UserFollowArgs }, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid: loggedInUser } = context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid: loggedInUser, prisma })
-    if (status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+    const {  prisma  } = context
+    
     const { currentUid, followUid } = input
     try {
         const user = await prisma.user.update({
@@ -846,4 +836,8 @@ export const unfollowUser = async (parent: ParentInterface, { input }: { input: 
             message: 'Error unfollowing user'
         }
     }
+}
+
+export const updatePeekStatus = () => {
+
 }

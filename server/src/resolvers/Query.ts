@@ -1,12 +1,10 @@
 import { ApolloError } from "apollo-server-express"
 import { ContextInterface, ParentInterface } from "unwind-server/types"
 import { AppLockStatus, createPaginationOptions, resolveTimezoneAndPeeks } from "unwind-server/utils/helpers"
-import { PaginationInterface } from "./types"
+import { ChallengeInputFilter, CommentInputFilter, CruiseInputFilter, PaginationInterface, PostInputFilter, UserInputFilter } from "./types"
 
-export const posts = async (parent: ParentInterface, args: PaginationInterface<any>, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid } =  context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid, prisma})
-    if(status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+export const posts = async (parent: ParentInterface, args: PaginationInterface<PostInputFilter>, context: ContextInterface) => {
+    
     const { before, filters } = args
     const opts = createPaginationOptions(args)
     const posts = await context.prisma.post.findMany({
@@ -40,10 +38,8 @@ export const posts = async (parent: ParentInterface, args: PaginationInterface<a
 }
 
 
-export const comments = async (parent: ParentInterface, args: PaginationInterface<any>, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid } =  context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid, prisma})
-    if(status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+export const comments = async (parent: ParentInterface, args: PaginationInterface<CommentInputFilter>, context: ContextInterface) => {
+    
     const { before, filters } = args
     const opts = createPaginationOptions(args)
     const comments = await context.prisma.comment.findMany({
@@ -77,10 +73,8 @@ export const comments = async (parent: ParentInterface, args: PaginationInterfac
     }
 }
 
-export const challenges = async (parent: ParentInterface, args: PaginationInterface<any>, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid } =  context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid, prisma})
-    if(status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+export const challenges = async (parent: ParentInterface, args: PaginationInterface<ChallengeInputFilter>, context: ContextInterface) => {
+    
     const { before, filters } = args
     const opts = createPaginationOptions(args)
     const challenges = await context.prisma.challenge.findMany({
@@ -114,10 +108,8 @@ export const challenges = async (parent: ParentInterface, args: PaginationInterf
     }
 }
 
-export const cruises = async (parent: ParentInterface, args: PaginationInterface<any>, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid } =  context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid, prisma})
-    if(status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+export const cruises = async (parent: ParentInterface, args: PaginationInterface<CruiseInputFilter>, context: ContextInterface) => {
+    
     const { before, filters } = args
     const opts = createPaginationOptions(args)
 
@@ -152,10 +144,8 @@ export const cruises = async (parent: ParentInterface, args: PaginationInterface
     
 }
 
-export const users = async (parent: ParentInterface, args: PaginationInterface<any>, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid } =  context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid, prisma})
-    if(status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+export const users = async (parent: ParentInterface, args: PaginationInterface<UserInputFilter>, context: ContextInterface) => {
+    
     const { before, filters } = args
     const opts = createPaginationOptions(args)
     const users = await context.prisma.user.findMany({
@@ -189,9 +179,8 @@ export const users = async (parent: ParentInterface, args: PaginationInterface<a
 }
 
 export const user = async (parent: ParentInterface, args: { id: string}, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid } =  context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid, prisma})
-    if(status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+    const {  prisma  } =  context
+    
     return await prisma.user.findUnique({
         where: {
             uid: args.id
@@ -200,9 +189,8 @@ export const user = async (parent: ParentInterface, args: { id: string}, context
 }
 
 export const post = async (parent: ParentInterface, { id }: { id: number}, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid } =  context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid, prisma})
-    if(status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+    const {  prisma  } =  context
+    
     return await prisma.post.findUnique({
         where: {
             id
@@ -211,9 +199,8 @@ export const post = async (parent: ParentInterface, { id }: { id: number}, conte
 }
 
 export const cruise = async (parent: ParentInterface, { id }: { id: number}, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid } =  context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid, prisma})
-    if(status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+    const {  prisma  } =  context
+    
     return await prisma.cruise.findUnique({
         where: {
             id
@@ -221,9 +208,8 @@ export const cruise = async (parent: ParentInterface, { id }: { id: number}, con
     })
 }
 export const challenge = async (parent: ParentInterface, { id }: { id: number}, context: ContextInterface) => {
-    const { headers: { timezone }, prisma, uid } =  context
-    const status = await resolveTimezoneAndPeeks({ timezone: timezone as string, uid, prisma})
-    if(status === AppLockStatus.LOCKED) return new ApolloError('AppLock: Timezone not yet unlocked')
+    const {  prisma  } =  context
+    
     return await prisma.challenge.findUnique({
         where: {
             id

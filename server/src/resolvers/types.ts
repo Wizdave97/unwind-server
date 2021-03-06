@@ -103,6 +103,103 @@ export interface PaginationInterface<T> {
     before: string;
 }
 
-export interface PostInputFilters {
+type UserRelationFilter = {
+    every: UserInputFilter
+}
 
+type CommentRelationFilter = {
+    every: CommentInputFilter
+}
+type PostRelationFilter = {
+    every: PostInputFilter
+}
+
+type CruiseRelationFilter= {
+    every: CruiseInputFilter
+}
+
+type ChallengeRelationFilter = {
+    every: ChallengeInputFilter
+}
+
+export interface FieldExpressionInput {
+    gte: number
+    gt: number
+    lt: number
+    lte: number
+    contains: string
+    startsWith: string
+    endsWith: string
+    equals: number | string
+    in: (number | string)[]
+    notIn: (number | string) []
+}
+
+export interface PostInputFilter {
+    id: FieldExpressionInput
+    user: UserInputFilter
+    content: FieldExpressionInput
+    hashtags: FieldExpressionInput
+    comments: CommentRelationFilter
+    cruises: CruiseRelationFilter
+    challenge: ChallengeInputFilter
+    AND: PostInputFilter[]
+    OR: PostInputFilter[]
+}
+
+export interface UserInputFilter {
+    uid: FieldExpressionInput
+    firstName: FieldExpressionInput
+    lastName: FieldExpressionInput
+    userName: FieldExpressionInput
+    bio: FieldExpressionInput
+    cruiseFollowing: CruiseRelationFilter
+    challengeFollowing: ChallengeRelationFilter
+    following: UserRelationFilter
+    followers: UserRelationFilter
+    AND: UserInputFilter[]
+    OR: UserInputFilter[]
+
+}
+
+export interface ChallengeInputFilter {
+    id: FieldExpressionInput
+    challenge: FieldExpressionInput
+    creator: UserInputFilter
+    hashtags: FieldExpressionInput
+    created: FieldExpressionInput
+    updated: FieldExpressionInput
+    kisses: FieldExpressionInput
+    hot: FieldExpressionInput
+    hearts: FieldExpressionInput
+    post: PostInputFilter
+    AND: ChallengeInputFilter[]
+    OR: ChallengeInputFilter[]
+}
+
+export interface CommentInputFilter {
+    id: FieldExpressionInput
+    comment: FieldExpressionInput
+    user: UserInputFilter
+    post: PostInputFilter
+    challenge: ChallengeInputFilter
+    cruise: CruiseInputFilter
+    kisses: FieldExpressionInput
+    hot: FieldExpressionInput
+    hearts: FieldExpressionInput
+    AND: CommentInputFilter[]
+    OR: CommentInputFilter[]
+}
+
+export interface CruiseInputFilter {
+    id: FieldExpressionInput
+    slogan: FieldExpressionInput
+    creator: UserInputFilter
+    hashtags: FieldExpressionInput
+    posts: PostRelationFilter
+    kisses: FieldExpressionInput
+    hot: FieldExpressionInput
+    hearts: FieldExpressionInput
+    AND: CruiseInputFilter[]
+    OR: CruiseInputFilter[]
 }

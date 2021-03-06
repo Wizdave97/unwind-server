@@ -25,6 +25,7 @@ type Mutation {
     unfollowEntity(input: FollowEntityInput!): FollowEntityMutationResponse!
     followUser(input: UserFollowInput!): UserFollowMutationResponse!
     unfollowUser(input: UserFollowInput!): UserFollowMutationResponse!
+    updatePeekStatus(input: UpdatePeekInput!): AppLockStatus
 }
 
 interface MutationResponse {
@@ -182,6 +183,10 @@ input FollowEntityInput {
 input UserFollowInput {
     currentUid: String!
     followUid: String!
+}
+
+input UpdatePeekInput {
+    peekStatus:  Boolean!
 }
 
 ## Object types
