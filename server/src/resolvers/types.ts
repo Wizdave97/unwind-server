@@ -45,18 +45,18 @@ export type UpdateUserArgs = {
 }
 
 export type CreatePostArgs = {
-    attachmentType: AttachmentType;
+    attachmentType?: AttachmentType;
     uid: string;
     location?: LocationInput;
-    content?: string;
-    fileAttachment: FileInput;
+    content: string;
+    fileAttachment?: FileInput;
 }
 
 export type CreateChallengeArgs = {
     uid: string;
     challenge: string;
-    attachmentType: AttachmentType
-    fileAttachment: FileInput
+    attachmentType?: AttachmentType
+    fileAttachment?: FileInput
     start: Date
     end: Date
 }
@@ -64,8 +64,8 @@ export type CreateChallengeArgs = {
 export type CreateCruiseArgs = {
     uid: string
     slogan: string
-    attachmentType: AttachmentType
-    fileAttachment: FileInput
+    attachmentType?: AttachmentType
+    fileAttachment?: FileInput
 }
 
 export type CreateCommentArgs = {

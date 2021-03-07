@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-express'
 import { GraphQLRequestContext, GraphQLRequestListener, GraphQLResponse, WithRequired } from 'apollo-server-plugin-base'
 import { AppLockStatus, resolveTimezoneAndPeeks } from 'unwind-server/utils/helpers'
 
-const allowedQueries = ['fetchAppLockStatus', 'updatePeekStatus']
+const allowedQueries = ['fetchAppLockStatus', 'enablePeek']
 export default {
     requestDidStart(requestContext: WithRequired<
         GraphQLRequestContext<any>,

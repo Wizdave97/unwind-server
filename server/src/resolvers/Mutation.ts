@@ -1,6 +1,6 @@
-import { ApolloError, UserInputError } from "apollo-server-express";
+import { UserInputError } from "apollo-server-express";
 import { ContextInterface, ParentInterface, Partial } from "unwind-server/types";
-import { AppLockStatus, resolveTimezoneAndPeeks } from "unwind-server/utils/helpers";
+import { getNextUTCHours } from "unwind-server/utils/helpers";
 import { CreateChallengeArgs, CreateCommentArgs, CreateCruiseArgs, CreatePostArgs, CreateReactionArgs, CreateUserArgs, EntityType, FollowEntityArgs, ReactionType, UpdateUserArgs, UserFollowArgs } from "./types";
 
 
@@ -94,10 +94,10 @@ export const createPost = async (parent: ParentInterface, { input }: { input: Cr
         const post = await prisma.post.create({
             data: {
                 user: { connect: { uid: uid } },
-                attachmentType,
-                attachmentUrl: fileAttachment.url,
-                attachmentMeta: fileAttachment,
-                ...(content && { content }),
+                attachmentType: attachmentType ?? null,
+                attachmentUrl: fileAttachment?.url ?? null,
+                attachmentMeta: fileAttachment ?? null,
+                content,
                 ...(hashtags && { hashtags }),
                 reaction
             }
@@ -131,9 +131,9 @@ export const createCruise = async (parent: ParentInterface, { input }: { input: 
             data: {
                 creator: { connect: { uid: uid } },
                 slogan,
-                attachmentType: attachmentType,
-                attachmentUrl: fileAttachment.url,
-                attachmentMeta: fileAttachment,
+                attachmentType: attachmentType ?? null,
+                attachmentUrl: fileAttachment?.url ?? null,
+                attachmentMeta: fileAttachment ?? null,
                 ...(hashtags && { hashtags }),
                 reaction
             }
@@ -168,9 +168,9 @@ export const createChallenge = async (parent: ParentInterface, { input }: { inpu
             data: {
                 creator: { connect: { uid: uid } },
                 challenge,
-                attachmentType: attachmentType,
-                attachmentUrl: fileAttachment.url,
-                attachmentMeta: fileAttachment,
+                attachmentType: attachmentType ?? null,
+                attachmentUrl: fileAttachment?.url ?? null,
+                attachmentMeta: fileAttachment ?? null,
                 ...(hashtags && { hashtags }),
                 reaction,
                 start,
@@ -838,6 +838,46 @@ export const unfollowUser = async (parent: ParentInterface, { input }: { input: 
     }
 }
 
-export const updatePeekStatus = () => {
+export const enablePeek = async (parent: ParentInterface, args: any, context: ContextInterface) => {
+    const { uid, prisma } = context
+    const peeks = await prisma.peek.findMany({
+        where: {
+            userId: uid
+        }
+    })
+    if(peeks?.length >= 1 && peeks[0].active) {
+        return {
+            code: '400',
+            message: 'Peek already active',
+            success: false
+        }
+    }
+    if(peeks?.length >= 1) {
+        await prisma.peek.update({
+            where: {
+                id: peeks[0].id
+            },
+            data: {
+                expiresUTC: getNextUTCHours(),
+                active: true
+            }
+        })
+    }
+
+    if(peeks?.length <= 0) {
+        await prisma.peek.create({
+            data: {
+                userId: uid,
+                active: true,
+                expiresUTC: getNextUTCHours(),
+                peeks: 1
+            }
+        })
+    }
+    return {
+        code: '200',
+        message: 'Peek activated',
+        success: true 
+    }
 
 }

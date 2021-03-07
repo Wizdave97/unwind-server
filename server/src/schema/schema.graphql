@@ -25,7 +25,7 @@ type Mutation {
     unfollowEntity(input: FollowEntityInput!): FollowEntityMutationResponse!
     followUser(input: UserFollowInput!): UserFollowMutationResponse!
     unfollowUser(input: UserFollowInput!): UserFollowMutationResponse!
-    updatePeekStatus(input: UpdatePeekInput!): AppLockStatus
+    enablePeek: EnablePeekMutationResponse!
 }
 
 interface MutationResponse {
@@ -97,6 +97,12 @@ type UserFollowMutationResponse implements MutationResponse {
     user: User
 }
 
+type EnablePeekMutationResponse implements MutationResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+}
+
 ## Input types
 
 input CreateUserInput {
@@ -121,18 +127,18 @@ input LocationInput {
 }
 
 input CreatePostInput {
-    attachmentType: AttachmentType!
+    attachmentType: AttachmentType
     uid: String!
     location: LocationInput
-    content: String
-    fileAttachment: FileInput!
+    content: String!
+    fileAttachment: FileInput
 }
 
 input CreateChallengeInput {
     uid: String!
     challenge: String!
-    attachmentType: AttachmentType!
-    fileAttachment: FileInput!
+    attachmentType: AttachmentType
+    fileAttachment: FileInput
     start: Date
     end: Date
 }
@@ -140,8 +146,8 @@ input CreateChallengeInput {
 input CreateCruiseInput {
     uid: String!
     slogan: String!
-    attachmentType: AttachmentType!
-    fileAttachment: FileInput!
+    attachmentType: AttachmentType
+    fileAttachment: FileInput
 }
 
 input CreateCommentInput {
@@ -185,9 +191,6 @@ input UserFollowInput {
     followUid: String!
 }
 
-input UpdatePeekInput {
-    peekStatus:  Boolean!
-}
 
 ## Object types
 
@@ -256,12 +259,12 @@ type User {
 
 type Post {
     id: Int!         
-    attachmentType: AttachmentType!   
+    attachmentType: AttachmentType   
     attachmentMeta: File    
-    user: User       
+    user: User!       
     userId: String!    
     attachmentUrl: String     
-    content: String  
+    content: String!  
     hashtags: [String]    
     reaction: Reaction!  
     location: LatLng 
@@ -277,7 +280,7 @@ type Challenge {
     creator: User!  
     challenge: String!
     attachmentType: AttachmentType
-    attachmentUrl: String!
+    attachmentUrl: String
     attachmentMeta: File
     creatorId: String!
     followers(filters:UserInputFilter, first: Int, last: Int, after: String, before: String): UserConnection!
@@ -320,7 +323,7 @@ type Cruise {
     creator: User! 
     slogan: String!  
     attachmentType: AttachmentType
-    attachmentUrl: String!
+    attachmentUrl: String
     attachmentMeta: File
     creatorId: Int!
     reaction: Reaction! 

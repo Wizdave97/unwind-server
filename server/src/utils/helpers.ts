@@ -60,28 +60,27 @@ export const resolveTimezoneAndPeeks = async ({ uid, prisma, timezone }: { uid: 
     const clientHourOffset = Number(clientTimezoneArray[0])
     const clientMinuteOffset = clientHourOffset < 0 ? (clientHourOffset * 60) - Number(clientTimezoneArray[1])
         : (clientHourOffset * 60) + Number(clientTimezoneArray[1])
-    const minutesPassedFromUTC = time + clientMinuteOffset
+    const rawMinuteOffset = time + clientMinuteOffset
+    let minutesPassedFromUTC
     let clientDay
-    if(minutesPassedFromUTC <= 0) {
-        clientDay = day === 0 ? 6 : day - 1
+    if(rawMinuteOffset > (24 * 60)) {
+        clientDay = day === 6 ? 0 : day + 1
+        minutesPassedFromUTC = clientMinuteOffset - ((24 * 60) - time)
     }
-    else if(minutesPassedFromUTC > 0 && minutesPassedFromUTC <= (24 * 60)) {
+    else if(rawMinuteOffset < (24 * 60) && rawMinuteOffset > 0) {
         clientDay = day
+        minutesPassedFromUTC = rawMinuteOffset
     }
     else {
-
-        clientDay = day === 6 ? 0 : day + 1
+        clientDay = day === 0 ? 6 : day - 1
+        minutesPassedFromUTC = (24 * 60) + rawMinuteOffset
     }
     if(clientDay === 0 || clientDay === 5 || clientDay === 6) {
         return AppLockStatus.UNLOCKED
     }
     else {
-        if((minutesPassedFromUTC > 0  && minutesPassedFromUTC < minutesPassedBeforeTwoAm) 
-        || (minutesPassedFromUTC > 0  && minutesPassedFromUTC > minutesPassedBeforeSixPM)) return AppLockStatus.UNLOCKED
-        if(minutesPassedFromUTC < 0 && (minutesPassedFromUTC + (24 * 60)) > minutesPassedBeforeSixPM) return AppLockStatus.UNLOCKED
-        if((minutesPassedFromUTC > 0  && minutesPassedFromUTC > minutesPassedBeforeTwoAm) 
-        || (minutesPassedFromUTC > 0  && minutesPassedFromUTC < minutesPassedBeforeSixPM)
-        || (minutesPassedFromUTC < 0 && (minutesPassedFromUTC + (24 * 60)) < minutesPassedBeforeSixPM)) {
+        if((minutesPassedFromUTC < minutesPassedBeforeTwoAm) || (minutesPassedFromUTC > minutesPassedBeforeSixPM)) return AppLockStatus.UNLOCKED
+        if((minutesPassedFromUTC > minutesPassedBeforeTwoAm) || (minutesPassedFromUTC < minutesPassedBeforeSixPM)) {
             const peek = await prisma.peek.findMany({
                 where: {
                     userId: uid
@@ -94,3 +93,8 @@ export const resolveTimezoneAndPeeks = async ({ uid, prisma, timezone }: { uid: 
     }
 }
 
+export const getNextUTCHours = () => {
+    const serverDate = new Date()
+    const utcHours = serverDate.getUTCHours()
+    return (utcHours * 60) + 60
+}

@@ -36,6 +36,7 @@ model User {
   Cruise             Cruise[]
   Comment            Comment[]
   Challenge          Challenge[]
+  peek               Peek?
 }
 
 enum AttachmentType {
@@ -61,10 +62,10 @@ model Post {
   user           User           @relation(fields: [userId], references: [uid])
   cursor         String         @unique @default(uuid())
   userId         String         @map("user_id")
-  attachmentUrl  String         @map("attachment_url")
-  attachmentMeta Json
-  attachmentType AttachmentType
-  content        String?
+  attachmentUrl  String?         @map("attachment_url")
+  attachmentMeta Json?
+  attachmentType AttachmentType?
+  content        String
   created        DateTime       @default(now())
   updated        DateTime       @updatedAt
   reaction       Json?
@@ -87,9 +88,9 @@ model Cruise {
   creator        User           @relation(fields: [creatorId], references: [uid])
   cursor         String         @unique @default(uuid())
   slogan         String
-  attachmentType AttachmentType
-  attachmentMeta Json
-  attachmentUrl  String         @map("attachment_url")
+  attachmentType AttachmentType?
+  attachmentMeta Json?
+  attachmentUrl  String?         @map("attachment_url")
   creatorId      String
   reaction       Json
   followers      User[]         @relation("CruiseFollowing")
@@ -140,9 +141,9 @@ model Challenge {
   cursor         String         @unique @default(uuid())
   challenge      String
   creatorId      String
-  attachmentType AttachmentType
-  attachmentUrl  String         @map("attachment_url")
-  attachmentMeta Json
+  attachmentType AttachmentType?
+  attachmentUrl  String?         @map("attachment_url")
+  attachmentMeta Json?
   reaction       Json
   hashtags       String[]
   followers      User[]         @relation("ChallengeFollowing")

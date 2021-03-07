@@ -33,10 +33,10 @@ export type Post = {
   id: number
   cursor: string
   userId: string
-  attachmentUrl: string
-  attachmentMeta: Prisma.JsonValue
-  attachmentType: AttachmentType
-  content: string | null
+  attachmentUrl: string | null
+  attachmentMeta: Prisma.JsonValue | null
+  attachmentType: AttachmentType | null
+  content: string
   created: Date
   updated: Date
   reaction: Prisma.JsonValue | null
@@ -57,9 +57,9 @@ export type Cruise = {
   id: number
   cursor: string
   slogan: string
-  attachmentType: AttachmentType
-  attachmentMeta: Prisma.JsonValue
-  attachmentUrl: string
+  attachmentType: AttachmentType | null
+  attachmentMeta: Prisma.JsonValue | null
+  attachmentUrl: string | null
   creatorId: string
   reaction: Prisma.JsonValue
   kisses: string[]
@@ -107,9 +107,9 @@ export type Challenge = {
   cursor: string
   challenge: string
   creatorId: string
-  attachmentType: AttachmentType
-  attachmentUrl: string
-  attachmentMeta: Prisma.JsonValue
+  attachmentType: AttachmentType | null
+  attachmentUrl: string | null
+  attachmentMeta: Prisma.JsonValue | null
   reaction: Prisma.JsonValue
   hashtags: string[]
   kisses: string[]
@@ -1010,7 +1010,7 @@ export namespace Prisma {
     Cruise?: boolean | CruiseFindManyArgs
     Comment?: boolean | CommentFindManyArgs
     Challenge?: boolean | ChallengeFindManyArgs
-    Peek?: boolean | PeekFindManyArgs
+    peek?: boolean | PeekArgs
   }
 
   export type UserInclude = {
@@ -1025,7 +1025,7 @@ export namespace Prisma {
     Cruise?: boolean | CruiseFindManyArgs
     Comment?: boolean | CommentFindManyArgs
     Challenge?: boolean | ChallengeFindManyArgs
-    Peek?: boolean | PeekFindManyArgs
+    peek?: boolean | PeekArgs
   }
 
   export type UserGetPayload<
@@ -1061,8 +1061,8 @@ export namespace Prisma {
         ? Array < CommentGetPayload<S['include'][P]>>  :
         P extends 'Challenge'
         ? Array < ChallengeGetPayload<S['include'][P]>>  :
-        P extends 'Peek'
-        ? Array < PeekGetPayload<S['include'][P]>>  : never
+        P extends 'peek'
+        ? PeekGetPayload<S['include'][P]> | null : never
   } 
     : 'select' extends U
     ? {
@@ -1090,8 +1090,8 @@ export namespace Prisma {
         ? Array < CommentGetPayload<S['select'][P]>>  :
         P extends 'Challenge'
         ? Array < ChallengeGetPayload<S['select'][P]>>  :
-        P extends 'Peek'
-        ? Array < PeekGetPayload<S['select'][P]>>  : never
+        P extends 'peek'
+        ? PeekGetPayload<S['select'][P]> | null : never
   } 
     : User
   : User
@@ -1351,7 +1351,7 @@ export namespace Prisma {
 
     Challenge<T extends ChallengeFindManyArgs = {}>(args?: Subset<T, ChallengeFindManyArgs>): CheckSelect<T, Promise<Array<Challenge>>, Promise<Array<ChallengeGetPayload<T>>>>;
 
-    Peek<T extends PeekFindManyArgs = {}>(args?: Subset<T, PeekFindManyArgs>): CheckSelect<T, Promise<Array<Peek>>, Promise<Array<PeekGetPayload<T>>>>;
+    peek<T extends PeekArgs = {}>(args?: Subset<T, PeekArgs>): CheckSelect<T, Prisma__PeekClient<Peek | null>, Prisma__PeekClient<PeekGetPayload<T> | null>>;
 
     private get _document();
     /**
@@ -5724,7 +5724,7 @@ export namespace Prisma {
     Cruise?: CruiseListRelationFilter
     Comment?: CommentListRelationFilter
     Challenge?: ChallengeListRelationFilter
-    Peek?: PeekListRelationFilter
+    peek?: XOR<PeekWhereInput, PeekRelationFilter> | null
   }
 
   export type UserOrderByInput = {
@@ -5758,10 +5758,10 @@ export namespace Prisma {
     user?: XOR<UserWhereInput, UserRelationFilter>
     cursor?: StringFilter | string
     userId?: StringFilter | string
-    attachmentUrl?: StringFilter | string
-    attachmentMeta?: JsonFilter
-    attachmentType?: EnumAttachmentTypeFilter | AttachmentType
-    content?: StringNullableFilter | string | null
+    attachmentUrl?: StringNullableFilter | string | null
+    attachmentMeta?: JsonNullableFilter
+    attachmentType?: EnumAttachmentTypeNullableFilter | AttachmentType | null
+    content?: StringFilter | string
     created?: DateTimeFilter | Date | string
     updated?: DateTimeFilter | Date | string
     reaction?: JsonNullableFilter
@@ -5812,9 +5812,9 @@ export namespace Prisma {
     creator?: XOR<UserWhereInput, UserRelationFilter>
     cursor?: StringFilter | string
     slogan?: StringFilter | string
-    attachmentType?: EnumAttachmentTypeFilter | AttachmentType
-    attachmentMeta?: JsonFilter
-    attachmentUrl?: StringFilter | string
+    attachmentType?: EnumAttachmentTypeNullableFilter | AttachmentType | null
+    attachmentMeta?: JsonNullableFilter
+    attachmentUrl?: StringNullableFilter | string | null
     creatorId?: StringFilter | string
     reaction?: JsonFilter
     followers?: UserListRelationFilter
@@ -5922,9 +5922,9 @@ export namespace Prisma {
     cursor?: StringFilter | string
     challenge?: StringFilter | string
     creatorId?: StringFilter | string
-    attachmentType?: EnumAttachmentTypeFilter | AttachmentType
-    attachmentUrl?: StringFilter | string
-    attachmentMeta?: JsonFilter
+    attachmentType?: EnumAttachmentTypeNullableFilter | AttachmentType | null
+    attachmentUrl?: StringNullableFilter | string | null
+    attachmentMeta?: JsonNullableFilter
     reaction?: JsonFilter
     hashtags?: StringNullableListFilter
     followers?: UserListRelationFilter
@@ -6014,7 +6014,7 @@ export namespace Prisma {
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Comment?: CommentCreateManyWithoutUserInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
-    Peek?: PeekCreateManyWithoutUserInput
+    peek?: PeekCreateOneWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -6037,7 +6037,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
-    Peek?: PeekUncheckedCreateManyWithoutUserInput
+    peek?: PeekUncheckedCreateOneWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -6063,7 +6063,7 @@ export namespace Prisma {
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
-    Peek?: PeekUpdateManyWithoutUserInput
+    peek?: PeekUpdateOneWithoutUserInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -6086,7 +6086,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
-    Peek?: PeekUncheckedUpdateManyWithoutUserInput
+    peek?: PeekUncheckedUpdateOneWithoutUserInput
   }
 
   export type UserUpdateManyMutationInput = {
@@ -6120,10 +6120,10 @@ export namespace Prisma {
 
   export type PostCreateInput = {
     cursor?: string
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
-    attachmentType: AttachmentType
-    content?: string | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: AttachmentType | null
+    content: string
     created?: Date | string
     updated?: Date | string
     reaction?: InputJsonValue | null
@@ -6144,10 +6144,10 @@ export namespace Prisma {
     id?: number
     cursor?: string
     userId: string
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
-    attachmentType: AttachmentType
-    content?: string | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: AttachmentType | null
+    content: string
     created?: Date | string
     updated?: Date | string
     reaction?: InputJsonValue | null
@@ -6164,10 +6164,10 @@ export namespace Prisma {
 
   export type PostUpdateInput = {
     cursor?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
@@ -6188,10 +6188,10 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
@@ -6208,10 +6208,10 @@ export namespace Prisma {
 
   export type PostUpdateManyMutationInput = {
     cursor?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
@@ -6226,10 +6226,10 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
@@ -6245,9 +6245,9 @@ export namespace Prisma {
   export type CruiseCreateInput = {
     cursor?: string
     slogan: string
-    attachmentType: AttachmentType
-    attachmentMeta: InputJsonValue
-    attachmentUrl: string
+    attachmentType?: AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: string | null
     reaction: InputJsonValue
     created?: Date | string
     updated?: Date | string
@@ -6267,9 +6267,9 @@ export namespace Prisma {
     id?: number
     cursor?: string
     slogan: string
-    attachmentType: AttachmentType
-    attachmentMeta: InputJsonValue
-    attachmentUrl: string
+    attachmentType?: AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: string | null
     creatorId: string
     reaction: InputJsonValue
     created?: Date | string
@@ -6287,9 +6287,9 @@ export namespace Prisma {
   export type CruiseUpdateInput = {
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6309,9 +6309,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     creatorId?: StringFieldUpdateOperationsInput | string
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6329,9 +6329,9 @@ export namespace Prisma {
   export type CruiseUpdateManyMutationInput = {
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6345,9 +6345,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     creatorId?: StringFieldUpdateOperationsInput | string
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6487,9 +6487,9 @@ export namespace Prisma {
   export type ChallengeCreateInput = {
     cursor?: string
     challenge: string
-    attachmentType: AttachmentType
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
+    attachmentType?: AttachmentType | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
     reaction: InputJsonValue
     start?: Date | string | null
     end?: Date | string | null
@@ -6512,9 +6512,9 @@ export namespace Prisma {
     cursor?: string
     challenge: string
     creatorId: string
-    attachmentType: AttachmentType
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
+    attachmentType?: AttachmentType | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
     reaction: InputJsonValue
     start?: Date | string | null
     end?: Date | string | null
@@ -6533,9 +6533,9 @@ export namespace Prisma {
   export type ChallengeUpdateInput = {
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6558,9 +6558,9 @@ export namespace Prisma {
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6579,9 +6579,9 @@ export namespace Prisma {
   export type ChallengeUpdateManyMutationInput = {
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6598,9 +6598,9 @@ export namespace Prisma {
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6744,10 +6744,9 @@ export namespace Prisma {
     none?: ChallengeWhereInput
   }
 
-  export type PeekListRelationFilter = {
-    every?: PeekWhereInput
-    some?: PeekWhereInput
-    none?: PeekWhereInput
+  export type PeekRelationFilter = {
+    is?: PeekWhereInput | null
+    isNot?: PeekWhereInput | null
   }
 
   export type UserRelationFilter = {
@@ -6755,16 +6754,11 @@ export namespace Prisma {
     isNot?: UserWhereInput
   }
 
-  export type JsonFilter = {
-    equals?: InputJsonValue
-    not?: InputJsonValue
-  }
-
-  export type EnumAttachmentTypeFilter = {
-    equals?: AttachmentType
-    in?: Enumerable<AttachmentType>
-    notIn?: Enumerable<AttachmentType>
-    not?: NestedEnumAttachmentTypeFilter | AttachmentType
+  export type EnumAttachmentTypeNullableFilter = {
+    equals?: AttachmentType | null
+    in?: Enumerable<AttachmentType> | null
+    notIn?: Enumerable<AttachmentType> | null
+    not?: NestedEnumAttachmentTypeNullableFilter | AttachmentType | null
   }
 
   export type StringNullableListFilter = {
@@ -6796,6 +6790,11 @@ export namespace Prisma {
     isNot?: CruiseWhereInput | null
   }
 
+  export type JsonFilter = {
+    equals?: InputJsonValue
+    not?: InputJsonValue
+  }
+
   export type PostRelationFilter = {
     is?: PostWhereInput | null
     isNot?: PostWhereInput | null
@@ -6806,13 +6805,6 @@ export namespace Prisma {
     in?: Enumerable<EntityType>
     notIn?: Enumerable<EntityType>
     not?: NestedEnumEntityTypeFilter | EntityType
-  }
-
-  export type EnumAttachmentTypeNullableFilter = {
-    equals?: AttachmentType | null
-    in?: Enumerable<AttachmentType> | null
-    notIn?: Enumerable<AttachmentType> | null
-    not?: NestedEnumAttachmentTypeNullableFilter | AttachmentType | null
   }
 
   export type DateTimeNullableFilter = {
@@ -6902,10 +6894,10 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<ChallengeCreateOrConnectWithoutcreatorInput>
   }
 
-  export type PeekCreateManyWithoutUserInput = {
-    create?: XOR<Enumerable<PeekUncheckedCreateWithoutUserInput>, Enumerable<PeekCreateWithoutUserInput>>
-    connect?: Enumerable<PeekWhereUniqueInput>
-    connectOrCreate?: Enumerable<PeekCreateOrConnectWithoutuserInput>
+  export type PeekCreateOneWithoutUserInput = {
+    create?: XOR<PeekUncheckedCreateWithoutUserInput, PeekCreateWithoutUserInput>
+    connect?: PeekWhereUniqueInput
+    connectOrCreate?: PeekCreateOrConnectWithoutuserInput
   }
 
   export type PostUncheckedCreateManyWithoutUserInput = {
@@ -6944,10 +6936,10 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<ChallengeCreateOrConnectWithoutcreatorInput>
   }
 
-  export type PeekUncheckedCreateManyWithoutUserInput = {
-    create?: XOR<Enumerable<PeekUncheckedCreateWithoutUserInput>, Enumerable<PeekCreateWithoutUserInput>>
-    connect?: Enumerable<PeekWhereUniqueInput>
-    connectOrCreate?: Enumerable<PeekCreateOrConnectWithoutuserInput>
+  export type PeekUncheckedCreateOneWithoutUserInput = {
+    create?: XOR<PeekUncheckedCreateWithoutUserInput, PeekCreateWithoutUserInput>
+    connect?: PeekWhereUniqueInput
+    connectOrCreate?: PeekCreateOrConnectWithoutuserInput
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -7092,17 +7084,14 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<ChallengeCreateOrConnectWithoutcreatorInput>
   }
 
-  export type PeekUpdateManyWithoutUserInput = {
-    create?: XOR<Enumerable<PeekUncheckedCreateWithoutUserInput>, Enumerable<PeekCreateWithoutUserInput>>
-    connect?: Enumerable<PeekWhereUniqueInput>
-    set?: Enumerable<PeekWhereUniqueInput>
-    disconnect?: Enumerable<PeekWhereUniqueInput>
-    delete?: Enumerable<PeekWhereUniqueInput>
-    update?: Enumerable<PeekUpdateWithWhereUniqueWithoutUserInput>
-    updateMany?: Enumerable<PeekUpdateManyWithWhereWithoutUserInput>
-    deleteMany?: Enumerable<PeekScalarWhereInput>
-    upsert?: Enumerable<PeekUpsertWithWhereUniqueWithoutUserInput>
-    connectOrCreate?: Enumerable<PeekCreateOrConnectWithoutuserInput>
+  export type PeekUpdateOneWithoutUserInput = {
+    create?: XOR<PeekUncheckedCreateWithoutUserInput, PeekCreateWithoutUserInput>
+    connect?: PeekWhereUniqueInput
+    disconnect?: boolean
+    delete?: boolean
+    update?: XOR<PeekUncheckedUpdateWithoutUserInput, PeekUpdateWithoutUserInput>
+    upsert?: PeekUpsertWithoutUserInput
+    connectOrCreate?: PeekCreateOrConnectWithoutuserInput
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -7191,17 +7180,14 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<ChallengeCreateOrConnectWithoutcreatorInput>
   }
 
-  export type PeekUncheckedUpdateManyWithoutUserInput = {
-    create?: XOR<Enumerable<PeekUncheckedCreateWithoutUserInput>, Enumerable<PeekCreateWithoutUserInput>>
-    connect?: Enumerable<PeekWhereUniqueInput>
-    set?: Enumerable<PeekWhereUniqueInput>
-    disconnect?: Enumerable<PeekWhereUniqueInput>
-    delete?: Enumerable<PeekWhereUniqueInput>
-    update?: Enumerable<PeekUpdateWithWhereUniqueWithoutUserInput>
-    updateMany?: Enumerable<PeekUpdateManyWithWhereWithoutUserInput>
-    deleteMany?: Enumerable<PeekScalarWhereInput>
-    upsert?: Enumerable<PeekUpsertWithWhereUniqueWithoutUserInput>
-    connectOrCreate?: Enumerable<PeekCreateOrConnectWithoutuserInput>
+  export type PeekUncheckedUpdateOneWithoutUserInput = {
+    create?: XOR<PeekUncheckedCreateWithoutUserInput, PeekCreateWithoutUserInput>
+    connect?: PeekWhereUniqueInput
+    disconnect?: boolean
+    delete?: boolean
+    update?: XOR<PeekUncheckedUpdateWithoutUserInput, PeekUpdateWithoutUserInput>
+    upsert?: PeekUpsertWithoutUserInput
+    connectOrCreate?: PeekCreateOrConnectWithoutuserInput
   }
 
   export type PostCreatehashtagsInput = {
@@ -7268,8 +7254,8 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<CruiseCreateOrConnectWithoutPostInput>
   }
 
-  export type EnumAttachmentTypeFieldUpdateOperationsInput = {
-    set?: AttachmentType
+  export type NullableEnumAttachmentTypeFieldUpdateOperationsInput = {
+    set?: AttachmentType | null
   }
 
   export type PostUpdatehashtagsInput = {
@@ -7599,10 +7585,6 @@ export namespace Prisma {
     set?: EntityType
   }
 
-  export type NullableEnumAttachmentTypeFieldUpdateOperationsInput = {
-    set?: AttachmentType | null
-  }
-
   export type CommentUpdatekissesInput = {
     set: Enumerable<string>
   }
@@ -7827,7 +7809,7 @@ export namespace Prisma {
   export type UserCreateOneWithoutPeekInput = {
     create?: XOR<UserUncheckedCreateWithoutPeekInput, UserCreateWithoutPeekInput>
     connect?: UserWhereUniqueInput
-    connectOrCreate?: UserCreateOrConnectWithoutPeekInput
+    connectOrCreate?: UserCreateOrConnectWithoutpeekInput
   }
 
   export type NullableBigIntFieldUpdateOperationsInput = {
@@ -7847,7 +7829,7 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
     update?: XOR<UserUncheckedUpdateWithoutPeekInput, UserUpdateWithoutPeekInput>
     upsert?: UserUpsertWithoutPeekInput
-    connectOrCreate?: UserCreateOrConnectWithoutPeekInput
+    connectOrCreate?: UserCreateOrConnectWithoutpeekInput
   }
 
   export type NestedIntFilter = {
@@ -7900,11 +7882,11 @@ export namespace Prisma {
     not?: NestedDateTimeFilter | Date | string
   }
 
-  export type NestedEnumAttachmentTypeFilter = {
-    equals?: AttachmentType
-    in?: Enumerable<AttachmentType>
-    notIn?: Enumerable<AttachmentType>
-    not?: NestedEnumAttachmentTypeFilter | AttachmentType
+  export type NestedEnumAttachmentTypeNullableFilter = {
+    equals?: AttachmentType | null
+    in?: Enumerable<AttachmentType> | null
+    notIn?: Enumerable<AttachmentType> | null
+    not?: NestedEnumAttachmentTypeNullableFilter | AttachmentType | null
   }
 
   export type NestedIntNullableFilter = {
@@ -7923,13 +7905,6 @@ export namespace Prisma {
     in?: Enumerable<EntityType>
     notIn?: Enumerable<EntityType>
     not?: NestedEnumEntityTypeFilter | EntityType
-  }
-
-  export type NestedEnumAttachmentTypeNullableFilter = {
-    equals?: AttachmentType | null
-    in?: Enumerable<AttachmentType> | null
-    notIn?: Enumerable<AttachmentType> | null
-    not?: NestedEnumAttachmentTypeNullableFilter | AttachmentType | null
   }
 
   export type NestedDateTimeNullableFilter = {
@@ -7981,7 +7956,7 @@ export namespace Prisma {
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Comment?: CommentCreateManyWithoutUserInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
-    Peek?: PeekCreateManyWithoutUserInput
+    peek?: PeekCreateOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutFollowersInput = {
@@ -8004,7 +7979,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
-    Peek?: PeekUncheckedCreateManyWithoutUserInput
+    peek?: PeekUncheckedCreateOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutfollowersInput = {
@@ -8034,7 +8009,7 @@ export namespace Prisma {
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Comment?: CommentCreateManyWithoutUserInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
-    Peek?: PeekCreateManyWithoutUserInput
+    peek?: PeekCreateOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutFollowingInput = {
@@ -8057,7 +8032,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
-    Peek?: PeekUncheckedCreateManyWithoutUserInput
+    peek?: PeekUncheckedCreateOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutfollowingInput = {
@@ -8067,10 +8042,10 @@ export namespace Prisma {
 
   export type PostCreateWithoutUserInput = {
     cursor?: string
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
-    attachmentType: AttachmentType
-    content?: string | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: AttachmentType | null
+    content: string
     created?: Date | string
     updated?: Date | string
     reaction?: InputJsonValue | null
@@ -8089,10 +8064,10 @@ export namespace Prisma {
   export type PostUncheckedCreateWithoutUserInput = {
     id?: number
     cursor?: string
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
-    attachmentType: AttachmentType
-    content?: string | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: AttachmentType | null
+    content: string
     created?: Date | string
     updated?: Date | string
     reaction?: InputJsonValue | null
@@ -8115,9 +8090,9 @@ export namespace Prisma {
   export type CruiseCreateWithoutUserInput = {
     cursor?: string
     slogan: string
-    attachmentType: AttachmentType
-    attachmentMeta: InputJsonValue
-    attachmentUrl: string
+    attachmentType?: AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: string | null
     reaction: InputJsonValue
     created?: Date | string
     updated?: Date | string
@@ -8136,9 +8111,9 @@ export namespace Prisma {
     id?: number
     cursor?: string
     slogan: string
-    attachmentType: AttachmentType
-    attachmentMeta: InputJsonValue
-    attachmentUrl: string
+    attachmentType?: AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: string | null
     creatorId: string
     reaction: InputJsonValue
     created?: Date | string
@@ -8206,9 +8181,9 @@ export namespace Prisma {
   export type ChallengeCreateWithoutUserInput = {
     cursor?: string
     challenge: string
-    attachmentType: AttachmentType
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
+    attachmentType?: AttachmentType | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
     reaction: InputJsonValue
     start?: Date | string | null
     end?: Date | string | null
@@ -8230,9 +8205,9 @@ export namespace Prisma {
     cursor?: string
     challenge: string
     creatorId: string
-    attachmentType: AttachmentType
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
+    attachmentType?: AttachmentType | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
     reaction: InputJsonValue
     start?: Date | string | null
     end?: Date | string | null
@@ -8255,9 +8230,9 @@ export namespace Prisma {
   export type CruiseCreateWithoutFollowersInput = {
     cursor?: string
     slogan: string
-    attachmentType: AttachmentType
-    attachmentMeta: InputJsonValue
-    attachmentUrl: string
+    attachmentType?: AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: string | null
     reaction: InputJsonValue
     created?: Date | string
     updated?: Date | string
@@ -8276,9 +8251,9 @@ export namespace Prisma {
     id?: number
     cursor?: string
     slogan: string
-    attachmentType: AttachmentType
-    attachmentMeta: InputJsonValue
-    attachmentUrl: string
+    attachmentType?: AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: string | null
     creatorId: string
     reaction: InputJsonValue
     created?: Date | string
@@ -8301,9 +8276,9 @@ export namespace Prisma {
   export type ChallengeCreateWithoutFollowersInput = {
     cursor?: string
     challenge: string
-    attachmentType: AttachmentType
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
+    attachmentType?: AttachmentType | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
     reaction: InputJsonValue
     start?: Date | string | null
     end?: Date | string | null
@@ -8325,9 +8300,9 @@ export namespace Prisma {
     cursor?: string
     challenge: string
     creatorId: string
-    attachmentType: AttachmentType
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
+    attachmentType?: AttachmentType | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
     reaction: InputJsonValue
     start?: Date | string | null
     end?: Date | string | null
@@ -8351,9 +8326,9 @@ export namespace Prisma {
   export type CruiseCreateWithoutCreatorInput = {
     cursor?: string
     slogan: string
-    attachmentType: AttachmentType
-    attachmentMeta: InputJsonValue
-    attachmentUrl: string
+    attachmentType?: AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: string | null
     reaction: InputJsonValue
     created?: Date | string
     updated?: Date | string
@@ -8372,9 +8347,9 @@ export namespace Prisma {
     id?: number
     cursor?: string
     slogan: string
-    attachmentType: AttachmentType
-    attachmentMeta: InputJsonValue
-    attachmentUrl: string
+    attachmentType?: AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: string | null
     reaction: InputJsonValue
     created?: Date | string
     updated?: Date | string
@@ -8396,9 +8371,9 @@ export namespace Prisma {
   export type ChallengeCreateWithoutCreatorInput = {
     cursor?: string
     challenge: string
-    attachmentType: AttachmentType
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
+    attachmentType?: AttachmentType | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
     reaction: InputJsonValue
     start?: Date | string | null
     end?: Date | string | null
@@ -8419,9 +8394,9 @@ export namespace Prisma {
     id?: number
     cursor?: string
     challenge: string
-    attachmentType: AttachmentType
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
+    attachmentType?: AttachmentType | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
     reaction: InputJsonValue
     start?: Date | string | null
     end?: Date | string | null
@@ -8527,10 +8502,10 @@ export namespace Prisma {
     id?: IntFilter | number
     cursor?: StringFilter | string
     userId?: StringFilter | string
-    attachmentUrl?: StringFilter | string
-    attachmentMeta?: JsonFilter
-    attachmentType?: EnumAttachmentTypeFilter | AttachmentType
-    content?: StringNullableFilter | string | null
+    attachmentUrl?: StringNullableFilter | string | null
+    attachmentMeta?: JsonNullableFilter
+    attachmentType?: EnumAttachmentTypeNullableFilter | AttachmentType | null
+    content?: StringFilter | string
     created?: DateTimeFilter | Date | string
     updated?: DateTimeFilter | Date | string
     reaction?: JsonNullableFilter
@@ -8566,9 +8541,9 @@ export namespace Prisma {
     id?: IntFilter | number
     cursor?: StringFilter | string
     slogan?: StringFilter | string
-    attachmentType?: EnumAttachmentTypeFilter | AttachmentType
-    attachmentMeta?: JsonFilter
-    attachmentUrl?: StringFilter | string
+    attachmentType?: EnumAttachmentTypeNullableFilter | AttachmentType | null
+    attachmentMeta?: JsonNullableFilter
+    attachmentUrl?: StringNullableFilter | string | null
     creatorId?: StringFilter | string
     reaction?: JsonFilter
     kisses?: StringNullableListFilter
@@ -8646,9 +8621,9 @@ export namespace Prisma {
     cursor?: StringFilter | string
     challenge?: StringFilter | string
     creatorId?: StringFilter | string
-    attachmentType?: EnumAttachmentTypeFilter | AttachmentType
-    attachmentUrl?: StringFilter | string
-    attachmentMeta?: JsonFilter
+    attachmentType?: EnumAttachmentTypeNullableFilter | AttachmentType | null
+    attachmentUrl?: StringNullableFilter | string | null
+    attachmentMeta?: JsonNullableFilter
     reaction?: JsonFilter
     hashtags?: StringNullableListFilter
     kisses?: StringNullableListFilter
@@ -8731,29 +8706,20 @@ export namespace Prisma {
     create: XOR<ChallengeUncheckedCreateWithoutCreatorInput, ChallengeCreateWithoutCreatorInput>
   }
 
-  export type PeekUpdateWithWhereUniqueWithoutUserInput = {
-    where: PeekWhereUniqueInput
-    data: XOR<PeekUncheckedUpdateWithoutUserInput, PeekUpdateWithoutUserInput>
+  export type PeekUpdateWithoutUserInput = {
+    expiresUTC?: NullableBigIntFieldUpdateOperationsInput | BigInt | number | null
+    active?: BoolFieldUpdateOperationsInput | boolean
+    peeks?: IntFieldUpdateOperationsInput | number
   }
 
-  export type PeekUpdateManyWithWhereWithoutUserInput = {
-    where: PeekScalarWhereInput
-    data: XOR<PeekUncheckedUpdateManyWithoutPeekInput, PeekUpdateManyMutationInput>
+  export type PeekUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    expiresUTC?: NullableBigIntFieldUpdateOperationsInput | BigInt | number | null
+    active?: BoolFieldUpdateOperationsInput | boolean
+    peeks?: IntFieldUpdateOperationsInput | number
   }
 
-  export type PeekScalarWhereInput = {
-    AND?: Enumerable<PeekScalarWhereInput>
-    OR?: Enumerable<PeekScalarWhereInput>
-    NOT?: Enumerable<PeekScalarWhereInput>
-    id?: IntFilter | number
-    userId?: StringFilter | string
-    expiresUTC?: BigIntNullableFilter | BigInt | number | null
-    active?: BoolFilter | boolean
-    peeks?: IntFilter | number
-  }
-
-  export type PeekUpsertWithWhereUniqueWithoutUserInput = {
-    where: PeekWhereUniqueInput
+  export type PeekUpsertWithoutUserInput = {
     update: XOR<PeekUncheckedUpdateWithoutUserInput, PeekUpdateWithoutUserInput>
     create: XOR<PeekUncheckedCreateWithoutUserInput, PeekCreateWithoutUserInput>
   }
@@ -8780,7 +8746,7 @@ export namespace Prisma {
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Comment?: CommentCreateManyWithoutUserInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
-    Peek?: PeekCreateManyWithoutUserInput
+    peek?: PeekCreateOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
@@ -8802,7 +8768,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
-    Peek?: PeekUncheckedCreateManyWithoutUserInput
+    peek?: PeekUncheckedCreateOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutpostsInput = {
@@ -8859,9 +8825,9 @@ export namespace Prisma {
   export type CruiseCreateWithoutPostInput = {
     cursor?: string
     slogan: string
-    attachmentType: AttachmentType
-    attachmentMeta: InputJsonValue
-    attachmentUrl: string
+    attachmentType?: AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: string | null
     reaction: InputJsonValue
     created?: Date | string
     updated?: Date | string
@@ -8880,9 +8846,9 @@ export namespace Prisma {
     id?: number
     cursor?: string
     slogan: string
-    attachmentType: AttachmentType
-    attachmentMeta: InputJsonValue
-    attachmentUrl: string
+    attachmentType?: AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: string | null
     creatorId: string
     reaction: InputJsonValue
     created?: Date | string
@@ -8904,9 +8870,9 @@ export namespace Prisma {
   export type ChallengeCreateWithoutPostInput = {
     cursor?: string
     challenge: string
-    attachmentType: AttachmentType
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
+    attachmentType?: AttachmentType | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
     reaction: InputJsonValue
     start?: Date | string | null
     end?: Date | string | null
@@ -8928,9 +8894,9 @@ export namespace Prisma {
     cursor?: string
     challenge: string
     creatorId: string
-    attachmentType: AttachmentType
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
+    attachmentType?: AttachmentType | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
     reaction: InputJsonValue
     start?: Date | string | null
     end?: Date | string | null
@@ -8953,9 +8919,9 @@ export namespace Prisma {
   export type CruiseCreateWithoutPostsInput = {
     cursor?: string
     slogan: string
-    attachmentType: AttachmentType
-    attachmentMeta: InputJsonValue
-    attachmentUrl: string
+    attachmentType?: AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: string | null
     reaction: InputJsonValue
     created?: Date | string
     updated?: Date | string
@@ -8974,9 +8940,9 @@ export namespace Prisma {
     id?: number
     cursor?: string
     slogan: string
-    attachmentType: AttachmentType
-    attachmentMeta: InputJsonValue
-    attachmentUrl: string
+    attachmentType?: AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: string | null
     creatorId: string
     reaction: InputJsonValue
     created?: Date | string
@@ -8998,9 +8964,9 @@ export namespace Prisma {
   export type ChallengeCreateWithoutPostsInput = {
     cursor?: string
     challenge: string
-    attachmentType: AttachmentType
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
+    attachmentType?: AttachmentType | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
     reaction: InputJsonValue
     start?: Date | string | null
     end?: Date | string | null
@@ -9022,9 +8988,9 @@ export namespace Prisma {
     cursor?: string
     challenge: string
     creatorId: string
-    attachmentType: AttachmentType
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
+    attachmentType?: AttachmentType | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
     reaction: InputJsonValue
     start?: Date | string | null
     end?: Date | string | null
@@ -9066,7 +9032,7 @@ export namespace Prisma {
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
-    Peek?: PeekUpdateManyWithoutUserInput
+    peek?: PeekUpdateOneWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
@@ -9088,7 +9054,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
-    Peek?: PeekUncheckedUpdateManyWithoutUserInput
+    peek?: PeekUncheckedUpdateOneWithoutUserInput
   }
 
   export type UserUpsertWithoutPostsInput = {
@@ -9131,9 +9097,9 @@ export namespace Prisma {
   export type ChallengeUpdateWithoutPostInput = {
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -9155,9 +9121,9 @@ export namespace Prisma {
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -9180,9 +9146,9 @@ export namespace Prisma {
   export type CruiseUpdateWithoutPostsInput = {
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9201,9 +9167,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     creatorId?: StringFieldUpdateOperationsInput | string
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9225,9 +9191,9 @@ export namespace Prisma {
   export type ChallengeUpdateWithoutPostsInput = {
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -9249,9 +9215,9 @@ export namespace Prisma {
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -9293,7 +9259,7 @@ export namespace Prisma {
     challengeFollowing?: ChallengeCreateManyWithoutFollowersInput
     Comment?: CommentCreateManyWithoutUserInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
-    Peek?: PeekCreateManyWithoutUserInput
+    peek?: PeekCreateOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCruiseInput = {
@@ -9315,7 +9281,7 @@ export namespace Prisma {
     challenges?: ChallengeUncheckedCreateManyWithoutUserInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
-    Peek?: PeekUncheckedCreateManyWithoutUserInput
+    peek?: PeekUncheckedCreateOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCruiseInput = {
@@ -9345,7 +9311,7 @@ export namespace Prisma {
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Comment?: CommentCreateManyWithoutUserInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
-    Peek?: PeekCreateManyWithoutUserInput
+    peek?: PeekCreateOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCruiseFollowingInput = {
@@ -9368,7 +9334,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
-    Peek?: PeekUncheckedCreateManyWithoutUserInput
+    peek?: PeekUncheckedCreateOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutcruiseFollowingInput = {
@@ -9398,7 +9364,7 @@ export namespace Prisma {
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Comment?: CommentCreateManyWithoutUserInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
-    Peek?: PeekCreateManyWithoutUserInput
+    peek?: PeekCreateOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCruisesInput = {
@@ -9420,7 +9386,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
-    Peek?: PeekUncheckedCreateManyWithoutUserInput
+    peek?: PeekUncheckedCreateOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutcruisesInput = {
@@ -9430,10 +9396,10 @@ export namespace Prisma {
 
   export type PostCreateWithoutCruisesInput = {
     cursor?: string
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
-    attachmentType: AttachmentType
-    content?: string | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: AttachmentType | null
+    content: string
     created?: Date | string
     updated?: Date | string
     reaction?: InputJsonValue | null
@@ -9453,10 +9419,10 @@ export namespace Prisma {
     id?: number
     cursor?: string
     userId: string
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
-    attachmentType: AttachmentType
-    content?: string | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: AttachmentType | null
+    content: string
     created?: Date | string
     updated?: Date | string
     reaction?: InputJsonValue | null
@@ -9523,10 +9489,10 @@ export namespace Prisma {
 
   export type PostCreateWithoutCruiseInput = {
     cursor?: string
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
-    attachmentType: AttachmentType
-    content?: string | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: AttachmentType | null
+    content: string
     created?: Date | string
     updated?: Date | string
     reaction?: InputJsonValue | null
@@ -9546,10 +9512,10 @@ export namespace Prisma {
     id?: number
     cursor?: string
     userId: string
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
-    attachmentType: AttachmentType
-    content?: string | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: AttachmentType | null
+    content: string
     created?: Date | string
     updated?: Date | string
     reaction?: InputJsonValue | null
@@ -9590,7 +9556,7 @@ export namespace Prisma {
     challengeFollowing?: ChallengeUpdateManyWithoutFollowersInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
-    Peek?: PeekUpdateManyWithoutUserInput
+    peek?: PeekUpdateOneWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutCruiseInput = {
@@ -9612,7 +9578,7 @@ export namespace Prisma {
     challenges?: ChallengeUncheckedUpdateManyWithoutUserInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
-    Peek?: PeekUncheckedUpdateManyWithoutUserInput
+    peek?: PeekUncheckedUpdateOneWithoutUserInput
   }
 
   export type UserUpsertWithoutCruiseInput = {
@@ -9658,7 +9624,7 @@ export namespace Prisma {
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
-    Peek?: PeekUpdateManyWithoutUserInput
+    peek?: PeekUpdateOneWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutCruisesInput = {
@@ -9680,7 +9646,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
-    Peek?: PeekUncheckedUpdateManyWithoutUserInput
+    peek?: PeekUncheckedUpdateOneWithoutUserInput
   }
 
   export type UserUpsertWithoutCruisesInput = {
@@ -9690,10 +9656,10 @@ export namespace Prisma {
 
   export type PostUpdateWithoutCruisesInput = {
     cursor?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
@@ -9713,10 +9679,10 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
@@ -9789,7 +9755,7 @@ export namespace Prisma {
     challengeFollowing?: ChallengeCreateManyWithoutFollowersInput
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
-    Peek?: PeekCreateManyWithoutUserInput
+    peek?: PeekCreateOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCommentInput = {
@@ -9811,7 +9777,7 @@ export namespace Prisma {
     challenges?: ChallengeUncheckedCreateManyWithoutUserInput
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
-    Peek?: PeekUncheckedCreateManyWithoutUserInput
+    peek?: PeekUncheckedCreateOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCommentInput = {
@@ -9821,10 +9787,10 @@ export namespace Prisma {
 
   export type PostCreateWithoutCommentsInput = {
     cursor?: string
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
-    attachmentType: AttachmentType
-    content?: string | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: AttachmentType | null
+    content: string
     created?: Date | string
     updated?: Date | string
     reaction?: InputJsonValue | null
@@ -9844,10 +9810,10 @@ export namespace Prisma {
     id?: number
     cursor?: string
     userId: string
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
-    attachmentType: AttachmentType
-    content?: string | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: AttachmentType | null
+    content: string
     created?: Date | string
     updated?: Date | string
     reaction?: InputJsonValue | null
@@ -9869,9 +9835,9 @@ export namespace Prisma {
   export type ChallengeCreateWithoutCommentsInput = {
     cursor?: string
     challenge: string
-    attachmentType: AttachmentType
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
+    attachmentType?: AttachmentType | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
     reaction: InputJsonValue
     start?: Date | string | null
     end?: Date | string | null
@@ -9893,9 +9859,9 @@ export namespace Prisma {
     cursor?: string
     challenge: string
     creatorId: string
-    attachmentType: AttachmentType
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
+    attachmentType?: AttachmentType | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
     reaction: InputJsonValue
     start?: Date | string | null
     end?: Date | string | null
@@ -9918,9 +9884,9 @@ export namespace Prisma {
   export type CruiseCreateWithoutCommentsInput = {
     cursor?: string
     slogan: string
-    attachmentType: AttachmentType
-    attachmentMeta: InputJsonValue
-    attachmentUrl: string
+    attachmentType?: AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: string | null
     reaction: InputJsonValue
     created?: Date | string
     updated?: Date | string
@@ -9939,9 +9905,9 @@ export namespace Prisma {
     id?: number
     cursor?: string
     slogan: string
-    attachmentType: AttachmentType
-    attachmentMeta: InputJsonValue
-    attachmentUrl: string
+    attachmentType?: AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: string | null
     creatorId: string
     reaction: InputJsonValue
     created?: Date | string
@@ -9982,7 +9948,7 @@ export namespace Prisma {
     challengeFollowing?: ChallengeUpdateManyWithoutFollowersInput
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
-    Peek?: PeekUpdateManyWithoutUserInput
+    peek?: PeekUpdateOneWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutCommentInput = {
@@ -10004,7 +9970,7 @@ export namespace Prisma {
     challenges?: ChallengeUncheckedUpdateManyWithoutUserInput
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
-    Peek?: PeekUncheckedUpdateManyWithoutUserInput
+    peek?: PeekUncheckedUpdateOneWithoutUserInput
   }
 
   export type UserUpsertWithoutCommentInput = {
@@ -10014,10 +9980,10 @@ export namespace Prisma {
 
   export type PostUpdateWithoutCommentsInput = {
     cursor?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
@@ -10037,10 +10003,10 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
@@ -10062,9 +10028,9 @@ export namespace Prisma {
   export type ChallengeUpdateWithoutCommentsInput = {
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -10086,9 +10052,9 @@ export namespace Prisma {
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -10111,9 +10077,9 @@ export namespace Prisma {
   export type CruiseUpdateWithoutCommentsInput = {
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10132,9 +10098,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     creatorId?: StringFieldUpdateOperationsInput | string
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10180,7 +10146,7 @@ export namespace Prisma {
     challengeFollowing?: ChallengeCreateManyWithoutFollowersInput
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Comment?: CommentCreateManyWithoutUserInput
-    Peek?: PeekCreateManyWithoutUserInput
+    peek?: PeekCreateOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutChallengeInput = {
@@ -10202,7 +10168,7 @@ export namespace Prisma {
     challenges?: ChallengeUncheckedCreateManyWithoutUserInput
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
-    Peek?: PeekUncheckedCreateManyWithoutUserInput
+    peek?: PeekUncheckedCreateOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutChallengeInput = {
@@ -10232,7 +10198,7 @@ export namespace Prisma {
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Comment?: CommentCreateManyWithoutUserInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
-    Peek?: PeekCreateManyWithoutUserInput
+    peek?: PeekCreateOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutChallengeFollowingInput = {
@@ -10255,7 +10221,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
-    Peek?: PeekUncheckedCreateManyWithoutUserInput
+    peek?: PeekUncheckedCreateOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutchallengeFollowingInput = {
@@ -10285,7 +10251,7 @@ export namespace Prisma {
     Cruise?: CruiseCreateManyWithoutCreatorInput
     Comment?: CommentCreateManyWithoutUserInput
     Challenge?: ChallengeCreateManyWithoutCreatorInput
-    Peek?: PeekCreateManyWithoutUserInput
+    peek?: PeekCreateOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutChallengesInput = {
@@ -10307,7 +10273,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedCreateManyWithoutCreatorInput
     Comment?: CommentUncheckedCreateManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
-    Peek?: PeekUncheckedCreateManyWithoutUserInput
+    peek?: PeekUncheckedCreateOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutchallengesInput = {
@@ -10363,10 +10329,10 @@ export namespace Prisma {
 
   export type PostCreateWithoutChallengeInput = {
     cursor?: string
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
-    attachmentType: AttachmentType
-    content?: string | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: AttachmentType | null
+    content: string
     created?: Date | string
     updated?: Date | string
     reaction?: InputJsonValue | null
@@ -10386,10 +10352,10 @@ export namespace Prisma {
     id?: number
     cursor?: string
     userId: string
-    attachmentUrl: string
-    attachmentMeta: InputJsonValue
-    attachmentType: AttachmentType
-    content?: string | null
+    attachmentUrl?: string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: AttachmentType | null
+    content: string
     created?: Date | string
     updated?: Date | string
     reaction?: InputJsonValue | null
@@ -10430,7 +10396,7 @@ export namespace Prisma {
     challengeFollowing?: ChallengeUpdateManyWithoutFollowersInput
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Comment?: CommentUpdateManyWithoutUserInput
-    Peek?: PeekUpdateManyWithoutUserInput
+    peek?: PeekUpdateOneWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutChallengeInput = {
@@ -10452,7 +10418,7 @@ export namespace Prisma {
     challenges?: ChallengeUncheckedUpdateManyWithoutUserInput
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
-    Peek?: PeekUncheckedUpdateManyWithoutUserInput
+    peek?: PeekUncheckedUpdateOneWithoutUserInput
   }
 
   export type UserUpsertWithoutChallengeInput = {
@@ -10498,7 +10464,7 @@ export namespace Prisma {
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
-    Peek?: PeekUpdateManyWithoutUserInput
+    peek?: PeekUpdateOneWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutChallengesInput = {
@@ -10520,7 +10486,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
-    Peek?: PeekUncheckedUpdateManyWithoutUserInput
+    peek?: PeekUncheckedUpdateOneWithoutUserInput
   }
 
   export type UserUpsertWithoutChallengesInput = {
@@ -10607,7 +10573,7 @@ export namespace Prisma {
     Challenge?: ChallengeUncheckedCreateManyWithoutCreatorInput
   }
 
-  export type UserCreateOrConnectWithoutPeekInput = {
+  export type UserCreateOrConnectWithoutpeekInput = {
     where: UserWhereUniqueInput
     create: XOR<UserUncheckedCreateWithoutPeekInput, UserCreateWithoutPeekInput>
   }
@@ -10686,7 +10652,7 @@ export namespace Prisma {
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
-    Peek?: PeekUpdateManyWithoutUserInput
+    peek?: PeekUpdateOneWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutFollowersInput = {
@@ -10709,7 +10675,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
-    Peek?: PeekUncheckedUpdateManyWithoutUserInput
+    peek?: PeekUncheckedUpdateOneWithoutUserInput
   }
 
   export type UserUncheckedUpdateManyWithoutFollowingInput = {
@@ -10749,7 +10715,7 @@ export namespace Prisma {
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
-    Peek?: PeekUpdateManyWithoutUserInput
+    peek?: PeekUpdateOneWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutFollowingInput = {
@@ -10772,7 +10738,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
-    Peek?: PeekUncheckedUpdateManyWithoutUserInput
+    peek?: PeekUncheckedUpdateOneWithoutUserInput
   }
 
   export type UserUncheckedUpdateManyWithoutFollowersInput = {
@@ -10792,10 +10758,10 @@ export namespace Prisma {
 
   export type PostUpdateWithoutUserInput = {
     cursor?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
@@ -10814,10 +10780,10 @@ export namespace Prisma {
   export type PostUncheckedUpdateWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
@@ -10835,10 +10801,10 @@ export namespace Prisma {
   export type PostUncheckedUpdateManyWithoutPostsInput = {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
@@ -10854,9 +10820,9 @@ export namespace Prisma {
   export type CruiseUpdateWithoutUserInput = {
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10875,9 +10841,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     creatorId?: StringFieldUpdateOperationsInput | string
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10895,9 +10861,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     creatorId?: StringFieldUpdateOperationsInput | string
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10974,9 +10940,9 @@ export namespace Prisma {
   export type ChallengeUpdateWithoutUserInput = {
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -10998,9 +10964,9 @@ export namespace Prisma {
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -11020,9 +10986,9 @@ export namespace Prisma {
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -11037,9 +11003,9 @@ export namespace Prisma {
   export type CruiseUpdateWithoutFollowersInput = {
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11058,9 +11024,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     creatorId?: StringFieldUpdateOperationsInput | string
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11079,9 +11045,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     creatorId?: StringFieldUpdateOperationsInput | string
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11097,9 +11063,9 @@ export namespace Prisma {
   export type ChallengeUpdateWithoutFollowersInput = {
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -11121,9 +11087,9 @@ export namespace Prisma {
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -11144,9 +11110,9 @@ export namespace Prisma {
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
     creatorId?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -11162,9 +11128,9 @@ export namespace Prisma {
   export type CruiseUpdateWithoutCreatorInput = {
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11183,9 +11149,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11203,9 +11169,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11220,9 +11186,9 @@ export namespace Prisma {
   export type ChallengeUpdateWithoutCreatorInput = {
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -11243,9 +11209,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -11265,9 +11231,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     challenge?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
     reaction?: InputJsonValue
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -11278,26 +11244,6 @@ export namespace Prisma {
     kisses?: ChallengeUpdatekissesInput | Enumerable<string>
     hearts?: ChallengeUpdateheartsInput | Enumerable<string>
     hot?: ChallengeUpdatehotInput | Enumerable<string>
-  }
-
-  export type PeekUpdateWithoutUserInput = {
-    expiresUTC?: NullableBigIntFieldUpdateOperationsInput | BigInt | number | null
-    active?: BoolFieldUpdateOperationsInput | boolean
-    peeks?: IntFieldUpdateOperationsInput | number
-  }
-
-  export type PeekUncheckedUpdateWithoutUserInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    expiresUTC?: NullableBigIntFieldUpdateOperationsInput | BigInt | number | null
-    active?: BoolFieldUpdateOperationsInput | boolean
-    peeks?: IntFieldUpdateOperationsInput | number
-  }
-
-  export type PeekUncheckedUpdateManyWithoutPeekInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    expiresUTC?: NullableBigIntFieldUpdateOperationsInput | BigInt | number | null
-    active?: BoolFieldUpdateOperationsInput | boolean
-    peeks?: IntFieldUpdateOperationsInput | number
   }
 
   export type CommentUpdateWithoutPostInput = {
@@ -11365,9 +11311,9 @@ export namespace Prisma {
   export type CruiseUpdateWithoutPostInput = {
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11386,9 +11332,9 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    attachmentMeta?: InputJsonValue
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     creatorId?: StringFieldUpdateOperationsInput | string
     reaction?: InputJsonValue
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11424,7 +11370,7 @@ export namespace Prisma {
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
-    Peek?: PeekUpdateManyWithoutUserInput
+    peek?: PeekUpdateOneWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutCruiseFollowingInput = {
@@ -11447,7 +11393,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
-    Peek?: PeekUncheckedUpdateManyWithoutUserInput
+    peek?: PeekUncheckedUpdateOneWithoutUserInput
   }
 
   export type CommentUpdateWithoutCruiseInput = {
@@ -11493,10 +11439,10 @@ export namespace Prisma {
 
   export type PostUpdateWithoutCruiseInput = {
     cursor?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
@@ -11516,10 +11462,10 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
@@ -11555,7 +11501,7 @@ export namespace Prisma {
     Cruise?: CruiseUpdateManyWithoutCreatorInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutCreatorInput
-    Peek?: PeekUpdateManyWithoutUserInput
+    peek?: PeekUpdateOneWithoutUserInput
   }
 
   export type UserUncheckedUpdateWithoutChallengeFollowingInput = {
@@ -11578,7 +11524,7 @@ export namespace Prisma {
     Cruise?: CruiseUncheckedUpdateManyWithoutCreatorInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutCreatorInput
-    Peek?: PeekUncheckedUpdateManyWithoutUserInput
+    peek?: PeekUncheckedUpdateOneWithoutUserInput
   }
 
   export type CommentUpdateWithoutChallengeInput = {
@@ -11624,10 +11570,10 @@ export namespace Prisma {
 
   export type PostUpdateWithoutChallengeInput = {
     cursor?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
@@ -11647,10 +11593,10 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     cursor?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue
-    attachmentType?: EnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentMeta?: InputJsonValue | null
+    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
+    content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
