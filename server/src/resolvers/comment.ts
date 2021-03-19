@@ -16,13 +16,6 @@ export const post = async (parent: ParentInterface, args: any, context: ContextI
     }).post()
 }
 
-export const cruise = async (parent: ParentInterface, args: any, context: ContextInterface) => {
-    return await context.prisma.comment.findUnique({
-        where: {
-            id: parent.id
-        }
-    }).cruise()
-}
 
 export const challenge = async (parent: ParentInterface, args: any, context: ContextInterface) => {
     return await context.prisma.comment.findUnique({

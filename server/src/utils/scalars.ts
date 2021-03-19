@@ -11,7 +11,7 @@ export const dateScalar = new GraphQLScalarType({
   },
   parseLiteral(ast: any) {
     if (ast.kind === Kind.INT) {
-      return parseInt(ast.value, 10); // Convert hard-coded AST string to type expected by parseValue
+      return new Date(parseInt(ast.value, 10)); // Convert hard-coded AST string to integer and then to Date
     }
     return null; // Invalid hard-coded value (not an integer)
   },
@@ -46,3 +46,25 @@ export const intString = new GraphQLScalarType({
     return null
   }
 })
+
+export const mode = new GraphQLScalarType({
+  name: 'Mode',
+  serialize: (value: any) => {
+    if(value !== 'insensitive') throw new TypeError('Only value allowed is insensitive')
+
+    return value
+  },
+  parseValue: (value: any) => {
+    if(value !== 'insensitive') throw new TypeError('Only value allowed is insensitive')
+
+    return value
+  },
+  parseLiteral(ast: any) {
+    if (ast.kind === Kind.STRING && ast.value === 'insensitive') {
+      return ast.value
+    }
+    return null
+    //throw new TypeError('Only value allowed is insensitive')
+  }
+})
+

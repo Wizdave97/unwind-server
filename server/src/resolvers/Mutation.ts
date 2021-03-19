@@ -1,7 +1,7 @@
 import { UserInputError } from "apollo-server-express";
 import { ContextInterface, ParentInterface, Partial } from "unwind-server/types";
 import { getNextUTCHours } from "unwind-server/utils/helpers";
-import { CreateChallengeArgs, CreateCommentArgs, CreateCruiseArgs, CreatePostArgs, CreateReactionArgs, CreateUserArgs, EntityType, FollowEntityArgs, ReactionType, UpdateUserArgs, UserFollowArgs } from "./types";
+import { CreateChallengeArgs, CreateCommentArgs, CreatePostArgs, CreateReactionArgs, CreateUserArgs, EntityType, FollowEntityArgs, ReactionType, UpdateUserArgs, UserFollowArgs } from "./types";
 
 
 export const createUser = async (parent: ParentInterface, { input }: { input: CreateUserArgs }, context: ContextInterface) => {
@@ -46,7 +46,7 @@ export const updateUser = async (
     context: ContextInterface) => {
     const { prisma } = context
     const errors: Partial<UpdateUserArgs> = {}
-    const { lastName, firstName, userName, imgUrl, uid, bio } = input
+    const { lastName, firstName, userName, imgUrl, uid, bio, cruise } = input
     if (firstName && firstName.length > 255) errors.firstName = 'Too many characters'
     if (lastName && lastName.length > 255) errors.lastName = 'Too many characters'
     if (userName && userName.length > 255) errors.userName = 'Too many characters'
@@ -63,7 +63,8 @@ export const updateUser = async (
                 ...(lastName && { lastName }),
                 ...(imgUrl && { imgUrl }),
                 ...(userName && { userName }),
-                ...(bio && { bio })
+                ...(bio && { bio }),
+                ...(cruise && { cruise })
             }
         })
         return {
@@ -86,9 +87,9 @@ export const updateUser = async (
 export const createPost = async (parent: ParentInterface, { input }: { input: CreatePostArgs }, context: ContextInterface) => {
     const {  prisma  } = context
     
-    const { attachmentType, content, uid, location, fileAttachment } = input
+    const { attachmentType, content, uid, location, fileAttachment, challengeId } = input
 
-    let hashtags = content?.match(/#\w*/gi)
+    let hashtags = content?.toLowerCase().match(/#\w*/gi)
     const reaction = { hot: 0, kisses: 0, hearts: 0 }
     try {
         const post = await prisma.post.create({
@@ -99,7 +100,8 @@ export const createPost = async (parent: ParentInterface, { input }: { input: Cr
                 attachmentMeta: fileAttachment ?? null,
                 content,
                 ...(hashtags && { hashtags }),
-                reaction
+                reaction,
+                ...(challengeId && { challenge : { connect :{ id: challengeId} }})
             }
         })
         return {
@@ -119,54 +121,18 @@ export const createPost = async (parent: ParentInterface, { input }: { input: Cr
 
 }
 
-export const createCruise = async (parent: ParentInterface, { input }: { input: CreateCruiseArgs }, context: ContextInterface) => {
-    const {  prisma  } = context
-    
-    const { attachmentType, slogan, uid, fileAttachment } = input
-
-    let hashtags = slogan?.match(/#\w*/gi)
-    const reaction = { hot: 0, kisses: 0, hearts: 0 }
-    try {
-        const cruise = await prisma.cruise.create({
-            data: {
-                creator: { connect: { uid: uid } },
-                slogan,
-                attachmentType: attachmentType ?? null,
-                attachmentUrl: fileAttachment?.url ?? null,
-                attachmentMeta: fileAttachment ?? null,
-                ...(hashtags && { hashtags }),
-                reaction
-            }
-        })
-
-        return {
-            code: '200',
-            success: true,
-            message: 'Cruise created successfully',
-            cruise
-        }
-    }
-    catch {
-        return {
-            code: '500',
-            success: false,
-            message: 'Error while creating cruise',
-        }
-    }
-
-}
 
 export const createChallenge = async (parent: ParentInterface, { input }: { input: CreateChallengeArgs }, context: ContextInterface) => {
     const {  prisma  } = context
     
     const { attachmentType, challenge, uid, fileAttachment, start, end } = input
 
-    let hashtags = challenge?.match(/#\w*/gi)
+    let hashtags = challenge?.toLowerCase().match(/#\w*/gi)
     const reaction = { hot: 0, kisses: 0, hearts: 0 }
     try {
         const newChallenge = await prisma.challenge.create({
             data: {
-                creator: { connect: { uid: uid } },
+                user: { connect: { uid: uid } },
                 challenge,
                 attachmentType: attachmentType ?? null,
                 attachmentUrl: fileAttachment?.url ?? null,
@@ -200,7 +166,7 @@ export const createComment = async (parent: ParentInterface, { input }: { input:
     
     const { attachmentType, comment, uid, fileAttachment, entityId, entityType } = input
 
-    let hashtags = comment?.match(/#\w*/gi)
+    let hashtags = comment?.toLowerCase().match(/#\w*/gi)
     const reaction = { hot: 0, kisses: 0, hearts: 0 }
     try {
         const newComment = await prisma.comment.create({
@@ -214,8 +180,7 @@ export const createComment = async (parent: ParentInterface, { input }: { input:
                 entityType,
                 entityId,
                 ...(entityType === EntityType.CHALLENGE && { challenge: { connect: { id: entityId } } }),
-                ...(entityType === EntityType.POST && { post: { connect: { id: entityId } } }),
-                ...(entityType === EntityType.CRUISE && { cruise: { connect: { id: entityId } } }),
+                ...(entityType === EntityType.POST && { post: { connect: { id: entityId } } })
             }
         })
 
@@ -250,7 +215,7 @@ export const createReaction = async (parent: ParentInterface, { input }: { input
             })
             if (entity && reactionType === ReactionType.HEARTS) {
                 if (!entity.hearts.includes(uid)) {
-                    const reaction = entity.reaction as JsonValue
+                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
                     const post = await prisma.post.update({
                         where: {
                             id: entity.id
@@ -270,7 +235,7 @@ export const createReaction = async (parent: ParentInterface, { input }: { input
             }
             if (entity && reactionType === ReactionType.KISSES) {
                 if (!entity.kisses.includes(uid)) {
-                    const reaction = entity.reaction as JsonValue
+                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
                     const post = await prisma.post.update({
                         where: {
                             id: entity.id
@@ -290,7 +255,7 @@ export const createReaction = async (parent: ParentInterface, { input }: { input
             }
             if (entity && reactionType === ReactionType.HOT) {
                 if (!entity.hot.includes(uid)) {
-                    const reaction = entity.reaction as JsonValue
+                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
                     const post = await prisma.post.update({
                         where: {
                             id: entity.id
@@ -310,73 +275,6 @@ export const createReaction = async (parent: ParentInterface, { input }: { input
             }
 
         }
-        if (entityType === EntityType.CRUISE) {
-            entity = await prisma.cruise.findUnique({
-                where: {
-                    id: entityId
-                }
-            })
-            if (entity && reactionType === ReactionType.KISSES) {
-                if (!entity.kisses.includes(uid)) {
-                    const reaction = entity.reaction as JsonValue
-                    const post = await prisma.cruise.update({
-                        where: {
-                            id: entity.id
-                        },
-                        data: {
-                            kisses: [...entity.kisses, uid],
-                            reaction: { ...reaction, kisses: reaction.kisses + 1 }
-                        }
-                    })
-                    return {
-                        code: "200",
-                        success: true,
-                        message: 'Reaction created sucessfully',
-                        reaction: post.reaction
-                    }
-                }
-            }
-            if (entity && reactionType === ReactionType.HEARTS) {
-                if (!entity.hearts.includes(uid)) {
-                    const reaction = entity.reaction as JsonValue
-                    const post = await prisma.cruise.update({
-                        where: {
-                            id: entity.id
-                        },
-                        data: {
-                            hearts: [...entity.hearts, uid],
-                            reaction: { ...reaction, hearts: reaction.hearts + 1 }
-                        }
-                    })
-                    return {
-                        code: "200",
-                        success: true,
-                        message: 'Reaction created sucessfully',
-                        reaction: post.reaction
-                    }
-                }
-            }
-            if (entity && reactionType === ReactionType.HOT) {
-                if (!entity.hot.includes(uid)) {
-                    const reaction = entity.reaction as JsonValue
-                    const post = await prisma.cruise.update({
-                        where: {
-                            id: entity.id
-                        },
-                        data: {
-                            hot: [...entity.hot, uid],
-                            reaction: { ...reaction, hot: reaction.hot + 1 }
-                        }
-                    })
-                    return {
-                        code: "200",
-                        success: true,
-                        message: 'Reaction created sucessfully',
-                        reaction: post.reaction
-                    }
-                }
-            }
-        }
         if (entityType === EntityType.CHALLENGE) {
             entity = await prisma.challenge.findUnique({
                 where: {
@@ -385,7 +283,7 @@ export const createReaction = async (parent: ParentInterface, { input }: { input
             })
             if (entity && reactionType === ReactionType.KISSES) {
                 if (!entity.kisses.includes(uid)) {
-                    const reaction = entity.reaction as JsonValue
+                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
                     const post = await prisma.challenge.update({
                         where: {
                             id: entity.id
@@ -405,7 +303,7 @@ export const createReaction = async (parent: ParentInterface, { input }: { input
             }
             if (entity && reactionType === ReactionType.HEARTS) {
                 if (!entity.hearts.includes(uid)) {
-                    const reaction = entity.reaction as JsonValue
+                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
                     const post = await prisma.challenge.update({
                         where: {
                             id: entity.id
@@ -425,7 +323,7 @@ export const createReaction = async (parent: ParentInterface, { input }: { input
             }
             if (entity && reactionType === ReactionType.HOT) {
                 if (!entity.hot.includes(uid)) {
-                    const reaction = entity.reaction as JsonValue
+                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
                     const post = await prisma.challenge.update({
                         where: {
                             id: entity.id
@@ -468,7 +366,7 @@ export const deleteReaction = async (parent: ParentInterface, { input }: { input
             })
             if (entity && reactionType === ReactionType.HEARTS) {
                 if (entity.hearts.includes(uid)) {
-                    const reaction = entity.reaction as JsonValue
+                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
                     const post = await prisma.post.update({
                         where: {
                             id: entity.id
@@ -488,7 +386,7 @@ export const deleteReaction = async (parent: ParentInterface, { input }: { input
             }
             if (entity && reactionType === ReactionType.KISSES) {
                 if (entity.kisses.includes(uid)) {
-                    const reaction = entity.reaction as JsonValue
+                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
                     const post = await prisma.post.update({
                         where: {
                             id: entity.id
@@ -508,7 +406,7 @@ export const deleteReaction = async (parent: ParentInterface, { input }: { input
             }
             if (entity && reactionType === ReactionType.HOT) {
                 if (entity.hot.includes(uid)) {
-                    const reaction = entity.reaction as JsonValue
+                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
                     const post = await prisma.post.update({
                         where: {
                             id: entity.id
@@ -528,73 +426,7 @@ export const deleteReaction = async (parent: ParentInterface, { input }: { input
             }
 
         }
-        if (entityType === EntityType.CRUISE) {
-            entity = await prisma.cruise.findUnique({
-                where: {
-                    id: entityId
-                }
-            })
-            if (entity && reactionType === ReactionType.KISSES) {
-                if (entity.kisses.includes(uid)) {
-                    const reaction = entity.reaction as JsonValue
-                    const post = await prisma.cruise.update({
-                        where: {
-                            id: entity.id
-                        },
-                        data: {
-                            kisses: entity.kisses.filter(id => id !== uid),
-                            reaction: { ...reaction, kisses: reaction.kisses - 1 }
-                        }
-                    })
-                    return {
-                        code: "200",
-                        success: true,
-                        message: 'Reaction removed sucessfully',
-                        reaction: post.reaction
-                    }
-                }
-            }
-            if (entity && reactionType === ReactionType.HEARTS) {
-                if (entity.hearts.includes(uid)) {
-                    const reaction = entity.reaction as JsonValue
-                    const post = await prisma.cruise.update({
-                        where: {
-                            id: entity.id
-                        },
-                        data: {
-                            hearts: entity.hearts.filter(id => id !== uid),
-                            reaction: { ...reaction, hearts: reaction.hearts - 1 }
-                        }
-                    })
-                    return {
-                        code: "200",
-                        success: true,
-                        message: 'Reaction removed sucessfully',
-                        reaction: post.reaction
-                    }
-                }
-            }
-            if (entity && reactionType === ReactionType.HOT) {
-                if (entity.hot.includes(uid)) {
-                    const reaction = entity.reaction as JsonValue
-                    const post = await prisma.cruise.update({
-                        where: {
-                            id: entity.id
-                        },
-                        data: {
-                            hot: entity.hot.filter(id => id !== uid),
-                            reaction: { ...reaction, hot: reaction.hot - 1 }
-                        }
-                    })
-                    return {
-                        code: "200",
-                        success: true,
-                        message: 'Reaction removed sucessfully',
-                        reaction: post.reaction
-                    }
-                }
-            }
-        }
+        
         if (entityType === EntityType.CHALLENGE) {
             entity = await prisma.challenge.findUnique({
                 where: {
@@ -603,7 +435,7 @@ export const deleteReaction = async (parent: ParentInterface, { input }: { input
             })
             if (entity && reactionType === ReactionType.KISSES) {
                 if (entity.kisses.includes(uid)) {
-                    const reaction = entity.reaction as JsonValue
+                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
                     const post = await prisma.challenge.update({
                         where: {
                             id: entity.id
@@ -623,7 +455,7 @@ export const deleteReaction = async (parent: ParentInterface, { input }: { input
             }
             if (entity && reactionType === ReactionType.HEARTS) {
                 if (entity.hearts.includes(uid)) {
-                    const reaction = entity.reaction as JsonValue
+                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
                     const post = await prisma.challenge.update({
                         where: {
                             id: entity.id
@@ -643,7 +475,7 @@ export const deleteReaction = async (parent: ParentInterface, { input }: { input
             }
             if (entity && reactionType === ReactionType.HOT) {
                 if (entity.hot.includes(uid)) {
-                    const reaction = entity.reaction as JsonValue
+                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
                     const post = await prisma.challenge.update({
                         where: {
                             id: entity.id
@@ -677,19 +509,6 @@ export const followEntity = async (parent: ParentInterface, { input }: { input: 
     
     const { id, entityType, uid } = input
     try {
-        if (entityType === EntityType.CRUISE) {
-            await prisma.cruise.update({
-                where: {
-                    id
-                },
-                data: {
-                    followers: {
-                        connect: { uid }
-                    }
-                }
-            })
-        }
-
         if (entityType === EntityType.CHALLENGE) {
             await prisma.challenge.update({
                 where: {
@@ -724,18 +543,6 @@ export const unfollowEntity = async (parent: ParentInterface, { input }: { input
     
     const { id, entityType, uid } = input
     try {
-        if (entityType === EntityType.CRUISE) {
-            await prisma.cruise.update({
-                where: {
-                    id
-                },
-                data: {
-                    followers: {
-                        disconnect: { uid }
-                    }
-                }
-            }).catch(() => { })
-        }
 
         if (entityType === EntityType.CHALLENGE) {
             await prisma.challenge.update({

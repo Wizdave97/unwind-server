@@ -1,4 +1,7 @@
 /server/node_modules/**/**
 /server/dist/**/**
+/feed-server/node_modules/**/**
+/feed-server/dist/**/**
 datadir/**/**
 /server/serviceAccountKey.json
+/feed-server/serviceAccountKey.json

@@ -4,8 +4,8 @@ import express from 'express'
 import fs from 'fs'
 import path from 'path'
 import { PrismaClient } from 'unwind-server/prisma/src/generated/client'
-import { Mutation, Query, Post, Cruise, Comment, Challenge, User } from 'unwind-server/resolvers'
-import { dateScalar, intString } from './utils/scalars';
+import { Mutation, Query, Post, Comment, Challenge, User } from 'unwind-server/resolvers'
+import { dateScalar, intString, mode } from './utils/scalars';
 import Plugin from 'unwind-server/plugins'
 
 
@@ -18,10 +18,10 @@ const app = express()
 const resolvers = {
   Date: dateScalar,
   IntString: intString,
+  Mode: mode,
   Query,
   Mutation,
   Post,
-  Cruise,
   Comment,
   Challenge,
   User

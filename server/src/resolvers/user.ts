@@ -2,43 +2,6 @@ import { ParentInterface, ContextInterface } from "unwind-server/types";
 import { createPaginationOptions } from "unwind-server/utils/helpers";
 import { PaginationInterface } from "./types";
 
-export const cruises = async (parent: ParentInterface, args: PaginationInterface<any>, context: ContextInterface) => {
-    const { before, filters } = args
-    const opts = createPaginationOptions(args)
-
-    const cruises = await context.prisma.cruise.findMany({
-        ...opts,
-        where: {
-            ...(filters && filters),
-            creatorId: {equals: parent.uid}
-        }
-    })
-    const endCursor = cruises[cruises.length - 1]?.cursor
-    const startCursor = cruises[0]?.cursor
-    const count = await context.prisma.cruise.count({
-        ...{...opts, skip: 1, cursor: {cursor: endCursor}},
-        where: {
-            ...(filters && filters),
-            creatorId: {equals: parent.uid}
-        }
-    })
-    const edges = cruises.map((cruise) => ({
-        cursor: cruise?.cursor,
-        node: cruise
-    }))
-
-    return {
-        pageInfo: {
-            startCursor,
-            endCursor,
-            hasNextPage: count > 0 ? true :  false,
-            hasPreviousPage: before ? count > 0: false
-        },
-        edges
-    }
-    
-}
-
 export const challenges = async (parent: ParentInterface, args: PaginationInterface<any>, context: ContextInterface) => {
     const { before, filters } = args
     const opts = createPaginationOptions(args)
@@ -119,48 +82,6 @@ export const challengeFollowing = async (parent: ParentInterface, args: Paginati
     }
 }
 
-export const cruiseFollowing = async (parent: ParentInterface, args: PaginationInterface<any>, context: ContextInterface) => {
-    const { before, filters } = args
-    const opts = createPaginationOptions(args)
-    const cruises = await context.prisma.cruise.findMany({
-        ...opts,
-        where: {
-            ...(filters && filters),
-            followers: {
-                some: {
-                    uid: { equals: parent.uid }
-                }
-            }
-        }
-    })
-    const endCursor = cruises[cruises.length - 1]?.cursor
-    const startCursor = cruises[0]?.cursor
-    const count = await context.prisma.cruise.count({
-        ...{...opts, skip: 1, cursor: {cursor: endCursor}},
-        where: {
-            ...(filters && filters),
-            followers: {
-                some: {
-                    uid: { equals: parent.uid }
-                }
-            }
-        }
-    })
-    const edges = cruises.map((cruise) => ({
-        cursor: cruise?.cursor,
-        node: cruise
-    }))
-
-    return {
-        pageInfo: {
-            startCursor,
-            endCursor,
-            hasNextPage: count > 0 ? true :  false,
-            hasPreviousPage: before ? count > 0: false
-        },
-        edges
-    }
-}
 
 export const followers = async (parent: ParentInterface, args: PaginationInterface<any>, context: ContextInterface) => {
     const { before, filters } = args

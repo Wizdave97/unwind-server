@@ -11,12 +11,12 @@ const Prisma = {}
 exports.Prisma = Prisma
 
 /**
- * Prisma Client JS version: 2.15.0
- * Query Engine version: e51dc3b5a9ee790a07104bec1c9477d51740fe54
+ * Prisma Client JS version: 2.19.0
+ * Query Engine version: c1455d0b443d66b0d9db9bcb1bb9ee0d5bbc511d
  */
 Prisma.prismaVersion = {
-  client: "2.15.0",
-  engine: "e51dc3b5a9ee790a07104bec1c9477d51740fe54"
+  client: "2.19.0",
+  engine: "c1455d0b443d66b0d9db9bcb1bb9ee0d5bbc511d"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -61,6 +61,7 @@ Prisma.raw = () => {
   throw new Error(`raw is unable to be run in the browser.
 In case this error is unexpected for you, please report it in https://github.com/prisma/prisma/issues`,
 )}
+Prisma.validator = () => (val) => val
 
 /**
  * Enums
@@ -77,6 +78,7 @@ exports.Prisma.UserScalarFieldEnum = makeEnum({
   lastName: 'lastName',
   userName: 'userName',
   bio: 'bio',
+  cruise: 'cruise',
   email: 'email',
   imgUrl: 'imgUrl',
   created: 'created',
@@ -100,27 +102,7 @@ exports.Prisma.PostScalarFieldEnum = makeEnum({
   kisses: 'kisses',
   hearts: 'hearts',
   hot: 'hot',
-  challengeId: 'challengeId',
-  cruiseId: 'cruiseId'
-});
-
-exports.Prisma.CruiseScalarFieldEnum = makeEnum({
-  id: 'id',
-  cursor: 'cursor',
-  slogan: 'slogan',
-  attachmentType: 'attachmentType',
-  attachmentMeta: 'attachmentMeta',
-  attachmentUrl: 'attachmentUrl',
-  creatorId: 'creatorId',
-  reaction: 'reaction',
-  kisses: 'kisses',
-  hearts: 'hearts',
-  hot: 'hot',
-  hashtags: 'hashtags',
-  created: 'created',
-  updated: 'updated',
-  userUserId: 'userUserId',
-  postId: 'postId'
+  challengeId: 'challengeId'
 });
 
 exports.Prisma.CommentScalarFieldEnum = makeEnum({
@@ -141,7 +123,6 @@ exports.Prisma.CommentScalarFieldEnum = makeEnum({
   updated: 'updated',
   postId: 'postId',
   challengeId: 'challengeId',
-  cruiseId: 'cruiseId',
   userUserId: 'userUserId'
 });
 
@@ -149,7 +130,7 @@ exports.Prisma.ChallengeScalarFieldEnum = makeEnum({
   id: 'id',
   cursor: 'cursor',
   challenge: 'challenge',
-  creatorId: 'creatorId',
+  userId: 'userId',
   attachmentType: 'attachmentType',
   attachmentUrl: 'attachmentUrl',
   attachmentMeta: 'attachmentMeta',
@@ -190,14 +171,12 @@ exports.AttachmentType = makeEnum({
 
 exports.EntityType = makeEnum({
   POST: 'POST',
-  CRUISE: 'CRUISE',
   CHALLENGE: 'CHALLENGE'
 });
 
 exports.Prisma.ModelName = makeEnum({
   User: 'User',
   Post: 'Post',
-  Cruise: 'Cruise',
   Comment: 'Comment',
   Challenge: 'Challenge',
   Peek: 'Peek'
@@ -210,7 +189,7 @@ class PrismaClient {
   constructor() {
     throw new Error(
       `PrismaClient is unable to be run in the browser.
-In case this error is unexpected for you, please report it in https://github.com/prisma/prisma-client-js/issues`,
+In case this error is unexpected for you, please report it in https://github.com/prisma/prisma/issues`,
     )
   }
 }

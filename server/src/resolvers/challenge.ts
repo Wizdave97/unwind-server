@@ -2,12 +2,12 @@ import { ParentInterface, ContextInterface } from "unwind-server/types"
 import { createPaginationOptions } from "unwind-server/utils/helpers"
 import { PaginationInterface } from "./types"
 
-export const creator = async (parent: ParentInterface, args: any, context: ContextInterface) => {
+export const user = async (parent: ParentInterface, args: any, context: ContextInterface) => {
     return await context.prisma.challenge.findUnique({
         where: {
             id: parent.id
         }
-    }).creator()
+    }).user()
 }
 
 export const comments = async (parent: ParentInterface, args: PaginationInterface<any>, context: ContextInterface) => {

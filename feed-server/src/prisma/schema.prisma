@@ -1,0 +1,171 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  output          = "./src/generated/client"
+  previewFeatures = ["createMany"]
+}
+
+model User {
+  userId             Int         @id @default(autoincrement()) @map("user_id")
+  uid                String      @unique
+  cursor             String      @unique @default(uuid())
+  firstName          String      @map("first_name")
+  lastName           String      @map("last_name")
+  userName           String?     @unique @map("user_name")
+  bio                String?
+  email              String      @unique
+  imgUrl             String?     @map("img_url")
+  following          User[]      @relation("User")
+  followers          User[]      @relation("User")
+  created            DateTime    @default(now())
+  updated            DateTime    @updatedAt
+  location           Json?
+  posts              Post[]
+  cruises            Cruise[]    @relation("UserCruises")
+  comment            Comment[]   @relation("UserComments")
+  challenges         Challenge[] @relation("UserChallenges")
+  cruiseFollowing    Cruise[]    @relation("CruiseFollowing")
+  challengeFollowing Challenge[] @relation("ChallengeFollowing")
+  Cruise             Cruise[]
+  Comment            Comment[]
+  Challenge          Challenge[]
+  peek               Peek?
+}
+
+enum AttachmentType {
+  VIDEO
+  IMAGE
+  AUDIO
+}
+
+enum ReactionType {
+  KISS
+  HEART
+  HOT
+}
+
+enum EntityType {
+  POST
+  CRUISE
+  CHALLENGE
+}
+
+model Post {
+  id             Int             @id @default(autoincrement())
+  user           User            @relation(fields: [userId], references: [uid])
+  cursor         String          @unique @default(uuid())
+  userId         String          @map("user_id")
+  attachmentUrl  String?         @map("attachment_url")
+  attachmentMeta Json?
+  attachmentType AttachmentType?
+  content        String
+  created        DateTime        @default(now())
+  updated        DateTime        @updatedAt
+  reaction       Json?
+  location       Json?
+  hashtags       String[]
+  comments       Comment[]
+  cruises        Cruise[]
+  kisses         String[]
+  hearts         String[]
+  hot            String[]
+  challengeId    Int?
+  challenge      Challenge?      @relation(fields: [challengeId], references: [id])
+  Cruise         Cruise?         @relation("TaggedCruisePosts", fields: [cruiseId], references: [id])
+  cruiseId       Int?
+  Challenge      Challenge?      @relation("TaggedChallengePosts", fields: [challengeId], references: [id])
+}
+
+model Cruise {
+  id             Int             @id @default(autoincrement())
+  user           User            @relation(fields: [userId], references: [uid])
+  cursor         String          @unique @default(uuid())
+  slogan         String
+  attachmentType AttachmentType?
+  attachmentMeta Json?
+  attachmentUrl  String?         @map("attachment_url")
+  userId         String
+  reaction       Json?
+  followers      User[]          @relation("CruiseFollowing")
+  kisses         String[]
+  hearts         String[]
+  hot            String[]
+  hashtags       String[]
+  created        DateTime        @default(now())
+  updated        DateTime        @updatedAt
+  User           User?           @relation("UserCruises", fields: [userUserId], references: [userId])
+  userUserId     Int?
+  Post           Post?           @relation(fields: [postId], references: [id])
+  postId         Int?
+  comments       Comment[]
+  posts          Post[]          @relation("TaggedCruisePosts")
+}
+
+model Comment {
+  id             Int             @id @default(autoincrement())
+  cursor         String          @unique @default(uuid())
+  entityId       Int
+  entityType     EntityType
+  comment        String
+  attachmentMeta Json?
+  attachmentType AttachmentType?
+  attachmentUrl  String?         @map("attachment_url")
+  userId         String
+  reaction       Json?
+  kisses         String[]
+  hearts         String[]
+  hot            String[]
+  user           User            @relation(fields: [userId], references: [uid])
+  created        DateTime        @default(now())
+  updated        DateTime        @updatedAt
+  post           Post?           @relation(fields: [postId], references: [id])
+  postId         Int?
+  challenge      Challenge?      @relation(fields: [challengeId], references: [id])
+  challengeId    Int?
+  cruise         Cruise?         @relation(fields: [cruiseId], references: [id])
+  cruiseId       Int?
+  User           User?           @relation("UserComments", fields: [userUserId], references: [userId])
+  userUserId     Int?
+}
+
+model Challenge {
+  id             Int             @id @default(autoincrement())
+  user           User            @relation(fields: [userId], references: [uid])
+  cursor         String          @unique @default(uuid())
+  challenge      String
+  userId         String
+  attachmentType AttachmentType?
+  attachmentUrl  String?         @map("attachment_url")
+  attachmentMeta Json?
+  reaction       Json?
+  hashtags       String[]
+  followers      User[]          @relation("ChallengeFollowing")
+  kisses         String[]
+  hearts         String[]
+  hot            String[]
+  start          DateTime?
+  end            DateTime?
+  created        DateTime        @default(now())
+  updated        DateTime        @updatedAt
+  User           User?           @relation("UserChallenges", fields: [userUserId], references: [userId])
+  userUserId     Int?
+  comments       Comment[]
+  posts          Post[]          @relation("TaggedChallengePosts")
+  Post           Post[]
+}
+
+model Peek {
+  id         Int     @id @default(autoincrement())
+  userId     String  @map("user_id")
+  user       User    @relation(fields: [userId], references: [uid])
+  expiresUTC BigInt?
+  active     Boolean
+  peeks      Int
+}

@@ -7,8 +7,7 @@ export enum AttachmentType {
 
 export enum EntityType {
     POST = 'POST',
-    CHALLENGE = 'CHALLENGE',
-    CRUISE = 'CRUISE',
+    CHALLENGE = 'CHALLENGE'
 }
 
 export enum ReactionType {
@@ -41,6 +40,7 @@ export type UpdateUserArgs = {
     imgUrl?: string;
     userName?: string;
     bio?: string;
+    cruise?: string;
     uid: string;
 }
 
@@ -50,6 +50,7 @@ export type CreatePostArgs = {
     location?: LocationInput;
     content: string;
     fileAttachment?: FileInput;
+    challengeId?: number;
 }
 
 export type CreateChallengeArgs = {
@@ -61,12 +62,6 @@ export type CreateChallengeArgs = {
     end: Date
 }
 
-export type CreateCruiseArgs = {
-    uid: string
-    slogan: string
-    attachmentType?: AttachmentType
-    fileAttachment?: FileInput
-}
 
 export type CreateCommentArgs = {
     uid: string;
@@ -114,9 +109,6 @@ type PostRelationFilter = {
     every: PostInputFilter
 }
 
-type CruiseRelationFilter= {
-    every: CruiseInputFilter
-}
 
 type ChallengeRelationFilter = {
     every: ChallengeInputFilter
@@ -141,7 +133,6 @@ export interface PostInputFilter {
     content: FieldExpressionInput
     hashtags: FieldExpressionInput
     comments: CommentRelationFilter
-    cruises: CruiseRelationFilter
     challenge: ChallengeInputFilter
     AND: PostInputFilter[]
     OR: PostInputFilter[]
@@ -153,7 +144,6 @@ export interface UserInputFilter {
     lastName: FieldExpressionInput
     userName: FieldExpressionInput
     bio: FieldExpressionInput
-    cruiseFollowing: CruiseRelationFilter
     challengeFollowing: ChallengeRelationFilter
     following: UserRelationFilter
     followers: UserRelationFilter
@@ -183,7 +173,6 @@ export interface CommentInputFilter {
     user: UserInputFilter
     post: PostInputFilter
     challenge: ChallengeInputFilter
-    cruise: CruiseInputFilter
     kisses: FieldExpressionInput
     hot: FieldExpressionInput
     hearts: FieldExpressionInput
@@ -191,15 +180,3 @@ export interface CommentInputFilter {
     OR: CommentInputFilter[]
 }
 
-export interface CruiseInputFilter {
-    id: FieldExpressionInput
-    slogan: FieldExpressionInput
-    creator: UserInputFilter
-    hashtags: FieldExpressionInput
-    posts: PostRelationFilter
-    kisses: FieldExpressionInput
-    hot: FieldExpressionInput
-    hearts: FieldExpressionInput
-    AND: CruiseInputFilter[]
-    OR: CruiseInputFilter[]
-}

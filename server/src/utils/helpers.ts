@@ -2,7 +2,6 @@ import { PaginationInterface } from "unwind-server/resolvers/types";
 import express from 'express'
 import { verifyToken } from "unwind-server/auth";
 import { PrismaClient } from "unwind-server/prisma/src/generated/client";
-import { parse } from 'graphql'
 import { ApolloError } from "apollo-server-express";
 
 
