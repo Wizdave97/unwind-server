@@ -12,7 +12,7 @@ export const user = async (parent: ParentInterface, args:any, context: ContextIn
     }).user()
 }
 
-export const comments = async (parent: ParentInterface, args:PaginationInterface<any>, context: ContextInterface) => {
+export const comments = async (parent: ParentInterface, args:PaginationInterface<any, any>, context: ContextInterface) => {
     const { before, filters } = args
     const opts = createPaginationOptions(args)
     const comments = await context.prisma.comment.findMany({

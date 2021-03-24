@@ -24,6 +24,7 @@ export type User = {
   lastName: string
   userName: string | null
   bio: string | null
+  cruise: string | null
   email: string
   imgUrl: string | null
   created: Date
@@ -52,30 +53,6 @@ export type Post = {
   hearts: string[]
   hot: string[]
   challengeId: number | null
-  cruiseId: number | null
-}
-
-/**
- * Model Cruise
- */
-
-export type Cruise = {
-  id: number
-  cursor: string
-  slogan: string
-  attachmentType: AttachmentType | null
-  attachmentMeta: Prisma.JsonValue | null
-  attachmentUrl: string | null
-  userId: string
-  reaction: Prisma.JsonValue | null
-  kisses: string[]
-  hearts: string[]
-  hot: string[]
-  hashtags: string[]
-  created: Date
-  updated: Date
-  userUserId: number | null
-  postId: number | null
 }
 
 /**
@@ -100,7 +77,6 @@ export type Comment = {
   updated: Date
   postId: number | null
   challengeId: number | null
-  cruiseId: number | null
   userUserId: number | null
 }
 
@@ -159,7 +135,6 @@ export type AttachmentType = (typeof AttachmentType)[keyof typeof AttachmentType
 
 export const EntityType: {
   POST: 'POST',
-  CRUISE: 'CRUISE',
   CHALLENGE: 'CHALLENGE'
 };
 
@@ -307,16 +282,6 @@ export class PrismaClient<
     * ```
     */
   get post(): Prisma.PostDelegate<GlobalReject>;
-
-  /**
-   * `prisma.cruise`: Exposes CRUD operations for the **Cruise** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Cruises
-    * const cruises = await prisma.cruise.findMany()
-    * ```
-    */
-  get cruise(): Prisma.CruiseDelegate<GlobalReject>;
 
   /**
    * `prisma.comment`: Exposes CRUD operations for the **Comment** model.
@@ -685,7 +650,6 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     Post: 'Post',
-    Cruise: 'Cruise',
     Comment: 'Comment',
     Challenge: 'Challenge',
     Peek: 'Peek'
@@ -868,6 +832,7 @@ export namespace Prisma {
     lastName: string | null
     userName: string | null
     bio: string | null
+    cruise: string | null
     email: string | null
     imgUrl: string | null
     created: Date | null
@@ -882,6 +847,7 @@ export namespace Prisma {
     lastName: string | null
     userName: string | null
     bio: string | null
+    cruise: string | null
     email: string | null
     imgUrl: string | null
     created: Date | null
@@ -896,6 +862,7 @@ export namespace Prisma {
     lastName: number | null
     userName: number | null
     bio: number | null
+    cruise: number | null
     email: number | null
     imgUrl: number | null
     created: number | null
@@ -921,6 +888,7 @@ export namespace Prisma {
     lastName?: true
     userName?: true
     bio?: true
+    cruise?: true
     email?: true
     imgUrl?: true
     created?: true
@@ -935,6 +903,7 @@ export namespace Prisma {
     lastName?: true
     userName?: true
     bio?: true
+    cruise?: true
     email?: true
     imgUrl?: true
     created?: true
@@ -949,6 +918,7 @@ export namespace Prisma {
     lastName?: true
     userName?: true
     bio?: true
+    cruise?: true
     email?: true
     imgUrl?: true
     created?: true
@@ -1036,6 +1006,7 @@ export namespace Prisma {
     lastName?: boolean
     userName?: boolean
     bio?: boolean
+    cruise?: boolean
     email?: boolean
     imgUrl?: boolean
     following?: boolean | UserFindManyArgs
@@ -1044,12 +1015,9 @@ export namespace Prisma {
     updated?: boolean
     location?: boolean
     posts?: boolean | PostFindManyArgs
-    cruises?: boolean | CruiseFindManyArgs
     comment?: boolean | CommentFindManyArgs
     challenges?: boolean | ChallengeFindManyArgs
-    cruiseFollowing?: boolean | CruiseFindManyArgs
     challengeFollowing?: boolean | ChallengeFindManyArgs
-    Cruise?: boolean | CruiseFindManyArgs
     Comment?: boolean | CommentFindManyArgs
     Challenge?: boolean | ChallengeFindManyArgs
     peek?: boolean | PeekArgs
@@ -1059,12 +1027,9 @@ export namespace Prisma {
     following?: boolean | UserFindManyArgs
     followers?: boolean | UserFindManyArgs
     posts?: boolean | PostFindManyArgs
-    cruises?: boolean | CruiseFindManyArgs
     comment?: boolean | CommentFindManyArgs
     challenges?: boolean | ChallengeFindManyArgs
-    cruiseFollowing?: boolean | CruiseFindManyArgs
     challengeFollowing?: boolean | ChallengeFindManyArgs
-    Cruise?: boolean | CruiseFindManyArgs
     Comment?: boolean | CommentFindManyArgs
     Challenge?: boolean | ChallengeFindManyArgs
     peek?: boolean | PeekArgs
@@ -1087,18 +1052,12 @@ export namespace Prisma {
         ? Array < UserGetPayload<S['include'][P]>>  :
         P extends 'posts'
         ? Array < PostGetPayload<S['include'][P]>>  :
-        P extends 'cruises'
-        ? Array < CruiseGetPayload<S['include'][P]>>  :
         P extends 'comment'
         ? Array < CommentGetPayload<S['include'][P]>>  :
         P extends 'challenges'
         ? Array < ChallengeGetPayload<S['include'][P]>>  :
-        P extends 'cruiseFollowing'
-        ? Array < CruiseGetPayload<S['include'][P]>>  :
         P extends 'challengeFollowing'
         ? Array < ChallengeGetPayload<S['include'][P]>>  :
-        P extends 'Cruise'
-        ? Array < CruiseGetPayload<S['include'][P]>>  :
         P extends 'Comment'
         ? Array < CommentGetPayload<S['include'][P]>>  :
         P extends 'Challenge'
@@ -1116,18 +1075,12 @@ export namespace Prisma {
         ? Array < UserGetPayload<S['select'][P]>>  :
         P extends 'posts'
         ? Array < PostGetPayload<S['select'][P]>>  :
-        P extends 'cruises'
-        ? Array < CruiseGetPayload<S['select'][P]>>  :
         P extends 'comment'
         ? Array < CommentGetPayload<S['select'][P]>>  :
         P extends 'challenges'
         ? Array < ChallengeGetPayload<S['select'][P]>>  :
-        P extends 'cruiseFollowing'
-        ? Array < CruiseGetPayload<S['select'][P]>>  :
         P extends 'challengeFollowing'
         ? Array < ChallengeGetPayload<S['select'][P]>>  :
-        P extends 'Cruise'
-        ? Array < CruiseGetPayload<S['select'][P]>>  :
         P extends 'Comment'
         ? Array < CommentGetPayload<S['select'][P]>>  :
         P extends 'Challenge'
@@ -1404,17 +1357,11 @@ export namespace Prisma {
 
     posts<T extends PostFindManyArgs = {}>(args?: Subset<T, PostFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Post>>, PrismaPromise<Array<PostGetPayload<T>>>>;
 
-    cruises<T extends CruiseFindManyArgs = {}>(args?: Subset<T, CruiseFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Cruise>>, PrismaPromise<Array<CruiseGetPayload<T>>>>;
-
     comment<T extends CommentFindManyArgs = {}>(args?: Subset<T, CommentFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Comment>>, PrismaPromise<Array<CommentGetPayload<T>>>>;
 
     challenges<T extends ChallengeFindManyArgs = {}>(args?: Subset<T, ChallengeFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Challenge>>, PrismaPromise<Array<ChallengeGetPayload<T>>>>;
 
-    cruiseFollowing<T extends CruiseFindManyArgs = {}>(args?: Subset<T, CruiseFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Cruise>>, PrismaPromise<Array<CruiseGetPayload<T>>>>;
-
     challengeFollowing<T extends ChallengeFindManyArgs = {}>(args?: Subset<T, ChallengeFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Challenge>>, PrismaPromise<Array<ChallengeGetPayload<T>>>>;
-
-    Cruise<T extends CruiseFindManyArgs = {}>(args?: Subset<T, CruiseFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Cruise>>, PrismaPromise<Array<CruiseGetPayload<T>>>>;
 
     Comment<T extends CommentFindManyArgs = {}>(args?: Subset<T, CommentFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Comment>>, PrismaPromise<Array<CommentGetPayload<T>>>>;
 
@@ -1713,13 +1660,11 @@ export namespace Prisma {
   export type PostAvgAggregateOutputType = {
     id: number
     challengeId: number | null
-    cruiseId: number | null
   }
 
   export type PostSumAggregateOutputType = {
     id: number
     challengeId: number | null
-    cruiseId: number | null
   }
 
   export type PostMinAggregateOutputType = {
@@ -1732,7 +1677,6 @@ export namespace Prisma {
     created: Date | null
     updated: Date | null
     challengeId: number | null
-    cruiseId: number | null
   }
 
   export type PostMaxAggregateOutputType = {
@@ -1745,7 +1689,6 @@ export namespace Prisma {
     created: Date | null
     updated: Date | null
     challengeId: number | null
-    cruiseId: number | null
   }
 
   export type PostCountAggregateOutputType = {
@@ -1765,7 +1708,6 @@ export namespace Prisma {
     hearts: number | null
     hot: number | null
     challengeId: number | null
-    cruiseId: number | null
     _all: number
   }
 
@@ -1773,13 +1715,11 @@ export namespace Prisma {
   export type PostAvgAggregateInputType = {
     id?: true
     challengeId?: true
-    cruiseId?: true
   }
 
   export type PostSumAggregateInputType = {
     id?: true
     challengeId?: true
-    cruiseId?: true
   }
 
   export type PostMinAggregateInputType = {
@@ -1792,7 +1732,6 @@ export namespace Prisma {
     created?: true
     updated?: true
     challengeId?: true
-    cruiseId?: true
   }
 
   export type PostMaxAggregateInputType = {
@@ -1805,7 +1744,6 @@ export namespace Prisma {
     created?: true
     updated?: true
     challengeId?: true
-    cruiseId?: true
   }
 
   export type PostCountAggregateInputType = {
@@ -1825,7 +1763,6 @@ export namespace Prisma {
     hearts?: true
     hot?: true
     challengeId?: true
-    cruiseId?: true
     _all?: true
   }
 
@@ -1915,23 +1852,18 @@ export namespace Prisma {
     location?: boolean
     hashtags?: boolean
     comments?: boolean | CommentFindManyArgs
-    cruises?: boolean | CruiseFindManyArgs
     kisses?: boolean
     hearts?: boolean
     hot?: boolean
     challengeId?: boolean
     challenge?: boolean | ChallengeArgs
-    Cruise?: boolean | CruiseArgs
-    cruiseId?: boolean
     Challenge?: boolean | ChallengeArgs
   }
 
   export type PostInclude = {
     user?: boolean | UserArgs
     comments?: boolean | CommentFindManyArgs
-    cruises?: boolean | CruiseFindManyArgs
     challenge?: boolean | ChallengeArgs
-    Cruise?: boolean | CruiseArgs
     Challenge?: boolean | ChallengeArgs
   }
 
@@ -1950,12 +1882,8 @@ export namespace Prisma {
         ? UserGetPayload<S['include'][P]> :
         P extends 'comments'
         ? Array < CommentGetPayload<S['include'][P]>>  :
-        P extends 'cruises'
-        ? Array < CruiseGetPayload<S['include'][P]>>  :
         P extends 'challenge'
         ? ChallengeGetPayload<S['include'][P]> | null :
-        P extends 'Cruise'
-        ? CruiseGetPayload<S['include'][P]> | null :
         P extends 'Challenge'
         ? ChallengeGetPayload<S['include'][P]> | null : never
   } 
@@ -1967,12 +1895,8 @@ export namespace Prisma {
         ? UserGetPayload<S['select'][P]> :
         P extends 'comments'
         ? Array < CommentGetPayload<S['select'][P]>>  :
-        P extends 'cruises'
-        ? Array < CruiseGetPayload<S['select'][P]>>  :
         P extends 'challenge'
         ? ChallengeGetPayload<S['select'][P]> | null :
-        P extends 'Cruise'
-        ? CruiseGetPayload<S['select'][P]> | null :
         P extends 'Challenge'
         ? ChallengeGetPayload<S['select'][P]> | null : never
   } 
@@ -2243,11 +2167,7 @@ export namespace Prisma {
 
     comments<T extends CommentFindManyArgs = {}>(args?: Subset<T, CommentFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Comment>>, PrismaPromise<Array<CommentGetPayload<T>>>>;
 
-    cruises<T extends CruiseFindManyArgs = {}>(args?: Subset<T, CruiseFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Cruise>>, PrismaPromise<Array<CruiseGetPayload<T>>>>;
-
     challenge<T extends ChallengeArgs = {}>(args?: Subset<T, ChallengeArgs>): CheckSelect<T, Prisma__ChallengeClient<Challenge | null >, Prisma__ChallengeClient<ChallengeGetPayload<T> | null >>;
-
-    Cruise<T extends CruiseArgs = {}>(args?: Subset<T, CruiseArgs>): CheckSelect<T, Prisma__CruiseClient<Cruise | null >, Prisma__CruiseClient<CruiseGetPayload<T> | null >>;
 
     Challenge<T extends ChallengeArgs = {}>(args?: Subset<T, ChallengeArgs>): CheckSelect<T, Prisma__ChallengeClient<Challenge | null >, Prisma__ChallengeClient<ChallengeGetPayload<T> | null >>;
 
@@ -2527,832 +2447,6 @@ export namespace Prisma {
 
 
   /**
-   * Model Cruise
-   */
-
-
-  export type AggregateCruise = {
-    count: CruiseCountAggregateOutputType | null
-    avg: CruiseAvgAggregateOutputType | null
-    sum: CruiseSumAggregateOutputType | null
-    min: CruiseMinAggregateOutputType | null
-    max: CruiseMaxAggregateOutputType | null
-  }
-
-  export type CruiseAvgAggregateOutputType = {
-    id: number
-    userUserId: number | null
-    postId: number | null
-  }
-
-  export type CruiseSumAggregateOutputType = {
-    id: number
-    userUserId: number | null
-    postId: number | null
-  }
-
-  export type CruiseMinAggregateOutputType = {
-    id: number
-    cursor: string | null
-    slogan: string | null
-    attachmentType: AttachmentType | null
-    attachmentUrl: string | null
-    userId: string | null
-    created: Date | null
-    updated: Date | null
-    userUserId: number | null
-    postId: number | null
-  }
-
-  export type CruiseMaxAggregateOutputType = {
-    id: number
-    cursor: string | null
-    slogan: string | null
-    attachmentType: AttachmentType | null
-    attachmentUrl: string | null
-    userId: string | null
-    created: Date | null
-    updated: Date | null
-    userUserId: number | null
-    postId: number | null
-  }
-
-  export type CruiseCountAggregateOutputType = {
-    id: number
-    cursor: number | null
-    slogan: number | null
-    attachmentType: number | null
-    attachmentMeta: number | null
-    attachmentUrl: number | null
-    userId: number | null
-    reaction: number | null
-    kisses: number | null
-    hearts: number | null
-    hot: number | null
-    hashtags: number | null
-    created: number | null
-    updated: number | null
-    userUserId: number | null
-    postId: number | null
-    _all: number
-  }
-
-
-  export type CruiseAvgAggregateInputType = {
-    id?: true
-    userUserId?: true
-    postId?: true
-  }
-
-  export type CruiseSumAggregateInputType = {
-    id?: true
-    userUserId?: true
-    postId?: true
-  }
-
-  export type CruiseMinAggregateInputType = {
-    id?: true
-    cursor?: true
-    slogan?: true
-    attachmentType?: true
-    attachmentUrl?: true
-    userId?: true
-    created?: true
-    updated?: true
-    userUserId?: true
-    postId?: true
-  }
-
-  export type CruiseMaxAggregateInputType = {
-    id?: true
-    cursor?: true
-    slogan?: true
-    attachmentType?: true
-    attachmentUrl?: true
-    userId?: true
-    created?: true
-    updated?: true
-    userUserId?: true
-    postId?: true
-  }
-
-  export type CruiseCountAggregateInputType = {
-    id?: true
-    cursor?: true
-    slogan?: true
-    attachmentType?: true
-    attachmentMeta?: true
-    attachmentUrl?: true
-    userId?: true
-    reaction?: true
-    kisses?: true
-    hearts?: true
-    hot?: true
-    hashtags?: true
-    created?: true
-    updated?: true
-    userUserId?: true
-    postId?: true
-    _all?: true
-  }
-
-  export type CruiseAggregateArgs = {
-    /**
-     * Filter which Cruise to aggregate.
-    **/
-    where?: CruiseWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Cruises to fetch.
-    **/
-    orderBy?: Enumerable<CruiseOrderByInput>
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-    **/
-    cursor?: CruiseWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Cruises from the position of the cursor.
-    **/
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Cruises.
-    **/
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Cruises
-    **/
-    count?: true | CruiseCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    avg?: CruiseAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    sum?: CruiseSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    min?: CruiseMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    max?: CruiseMaxAggregateInputType
-  }
-
-  export type GetCruiseAggregateType<T extends CruiseAggregateArgs> = {
-    [P in keyof T & keyof AggregateCruise]: P extends 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateCruise[P]>
-      : GetScalarType<T[P], AggregateCruise[P]>
-  }
-
-
-
-  export type CruiseSelect = {
-    id?: boolean
-    user?: boolean | UserArgs
-    cursor?: boolean
-    slogan?: boolean
-    attachmentType?: boolean
-    attachmentMeta?: boolean
-    attachmentUrl?: boolean
-    userId?: boolean
-    reaction?: boolean
-    followers?: boolean | UserFindManyArgs
-    kisses?: boolean
-    hearts?: boolean
-    hot?: boolean
-    hashtags?: boolean
-    created?: boolean
-    updated?: boolean
-    User?: boolean | UserArgs
-    userUserId?: boolean
-    Post?: boolean | PostArgs
-    postId?: boolean
-    comments?: boolean | CommentFindManyArgs
-    posts?: boolean | PostFindManyArgs
-  }
-
-  export type CruiseInclude = {
-    user?: boolean | UserArgs
-    followers?: boolean | UserFindManyArgs
-    User?: boolean | UserArgs
-    Post?: boolean | PostArgs
-    comments?: boolean | CommentFindManyArgs
-    posts?: boolean | PostFindManyArgs
-  }
-
-  export type CruiseGetPayload<
-    S extends boolean | null | undefined | CruiseArgs,
-    U = keyof S
-      > = S extends true
-        ? Cruise
-    : S extends undefined
-    ? never
-    : S extends CruiseArgs | CruiseFindManyArgs
-    ?'include' extends U
-    ? Cruise  & {
-    [P in TrueKeys<S['include']>]: 
-          P extends 'user'
-        ? UserGetPayload<S['include'][P]> :
-        P extends 'followers'
-        ? Array < UserGetPayload<S['include'][P]>>  :
-        P extends 'User'
-        ? UserGetPayload<S['include'][P]> | null :
-        P extends 'Post'
-        ? PostGetPayload<S['include'][P]> | null :
-        P extends 'comments'
-        ? Array < CommentGetPayload<S['include'][P]>>  :
-        P extends 'posts'
-        ? Array < PostGetPayload<S['include'][P]>>  : never
-  } 
-    : 'select' extends U
-    ? {
-    [P in TrueKeys<S['select']>]: P extends keyof Cruise ?Cruise [P]
-  : 
-          P extends 'user'
-        ? UserGetPayload<S['select'][P]> :
-        P extends 'followers'
-        ? Array < UserGetPayload<S['select'][P]>>  :
-        P extends 'User'
-        ? UserGetPayload<S['select'][P]> | null :
-        P extends 'Post'
-        ? PostGetPayload<S['select'][P]> | null :
-        P extends 'comments'
-        ? Array < CommentGetPayload<S['select'][P]>>  :
-        P extends 'posts'
-        ? Array < PostGetPayload<S['select'][P]>>  : never
-  } 
-    : Cruise
-  : Cruise
-
-
-  type CruiseCountArgs = Merge<
-    Omit<CruiseFindManyArgs, 'select' | 'include'> & {
-      select?: CruiseCountAggregateInputType | true
-    }
-  >
-
-  export interface CruiseDelegate<GlobalRejectSettings> {
-    /**
-     * Find zero or one Cruise that matches the filter.
-     * @param {CruiseFindUniqueArgs} args - Arguments to find a Cruise
-     * @example
-     * // Get one Cruise
-     * const cruise = await prisma.cruise.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUnique<T extends CruiseFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
-      args: SelectSubset<T, CruiseFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Cruise'> extends True ? CheckSelect<T, Prisma__CruiseClient<Cruise>, Prisma__CruiseClient<CruiseGetPayload<T>>> : CheckSelect<T, Prisma__CruiseClient<Cruise | null >, Prisma__CruiseClient<CruiseGetPayload<T> | null >>
-
-    /**
-     * Find the first Cruise that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CruiseFindFirstArgs} args - Arguments to find a Cruise
-     * @example
-     * // Get one Cruise
-     * const cruise = await prisma.cruise.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirst<T extends CruiseFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
-      args?: SelectSubset<T, CruiseFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Cruise'> extends True ? CheckSelect<T, Prisma__CruiseClient<Cruise>, Prisma__CruiseClient<CruiseGetPayload<T>>> : CheckSelect<T, Prisma__CruiseClient<Cruise | null >, Prisma__CruiseClient<CruiseGetPayload<T> | null >>
-
-    /**
-     * Find zero or more Cruises that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CruiseFindManyArgs=} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Cruises
-     * const cruises = await prisma.cruise.findMany()
-     * 
-     * // Get first 10 Cruises
-     * const cruises = await prisma.cruise.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const cruiseWithIdOnly = await prisma.cruise.findMany({ select: { id: true } })
-     * 
-    **/
-    findMany<T extends CruiseFindManyArgs>(
-      args?: SelectSubset<T, CruiseFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<Cruise>>, PrismaPromise<Array<CruiseGetPayload<T>>>>
-
-    /**
-     * Create a Cruise.
-     * @param {CruiseCreateArgs} args - Arguments to create a Cruise.
-     * @example
-     * // Create one Cruise
-     * const Cruise = await prisma.cruise.create({
-     *   data: {
-     *     // ... data to create a Cruise
-     *   }
-     * })
-     * 
-    **/
-    create<T extends CruiseCreateArgs>(
-      args: SelectSubset<T, CruiseCreateArgs>
-    ): CheckSelect<T, Prisma__CruiseClient<Cruise>, Prisma__CruiseClient<CruiseGetPayload<T>>>
-
-    /**
-     * Create many Cruises.
-     *     @param {CruiseCreateManyArgs} args - Arguments to create many Cruises.
-     *     @example
-     *     // Create many Cruises
-     *     const cruise = await prisma.cruise.createMany({
-     *       data: {
-     *         // ... provide data here
-     *       }
-     *     })
-     *     
-    **/
-    createMany<T extends CruiseCreateManyArgs>(
-      args?: SelectSubset<T, CruiseCreateManyArgs>
-    ): PrismaPromise<BatchPayload>
-
-    /**
-     * Delete a Cruise.
-     * @param {CruiseDeleteArgs} args - Arguments to delete one Cruise.
-     * @example
-     * // Delete one Cruise
-     * const Cruise = await prisma.cruise.delete({
-     *   where: {
-     *     // ... filter to delete one Cruise
-     *   }
-     * })
-     * 
-    **/
-    delete<T extends CruiseDeleteArgs>(
-      args: SelectSubset<T, CruiseDeleteArgs>
-    ): CheckSelect<T, Prisma__CruiseClient<Cruise>, Prisma__CruiseClient<CruiseGetPayload<T>>>
-
-    /**
-     * Update one Cruise.
-     * @param {CruiseUpdateArgs} args - Arguments to update one Cruise.
-     * @example
-     * // Update one Cruise
-     * const cruise = await prisma.cruise.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-    **/
-    update<T extends CruiseUpdateArgs>(
-      args: SelectSubset<T, CruiseUpdateArgs>
-    ): CheckSelect<T, Prisma__CruiseClient<Cruise>, Prisma__CruiseClient<CruiseGetPayload<T>>>
-
-    /**
-     * Delete zero or more Cruises.
-     * @param {CruiseDeleteManyArgs} args - Arguments to filter Cruises to delete.
-     * @example
-     * // Delete a few Cruises
-     * const { count } = await prisma.cruise.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-    **/
-    deleteMany<T extends CruiseDeleteManyArgs>(
-      args?: SelectSubset<T, CruiseDeleteManyArgs>
-    ): PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Cruises.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CruiseUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Cruises
-     * const cruise = await prisma.cruise.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-    **/
-    updateMany<T extends CruiseUpdateManyArgs>(
-      args: SelectSubset<T, CruiseUpdateManyArgs>
-    ): PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one Cruise.
-     * @param {CruiseUpsertArgs} args - Arguments to update or create a Cruise.
-     * @example
-     * // Update or create a Cruise
-     * const cruise = await prisma.cruise.upsert({
-     *   create: {
-     *     // ... data to create a Cruise
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Cruise we want to update
-     *   }
-     * })
-    **/
-    upsert<T extends CruiseUpsertArgs>(
-      args: SelectSubset<T, CruiseUpsertArgs>
-    ): CheckSelect<T, Prisma__CruiseClient<Cruise>, Prisma__CruiseClient<CruiseGetPayload<T>>>
-
-    /**
-     * Count the number of Cruises.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CruiseCountArgs} args - Arguments to filter Cruises to count.
-     * @example
-     * // Count the number of Cruises
-     * const count = await prisma.cruise.count({
-     *   where: {
-     *     // ... the filter for the Cruises we want to count
-     *   }
-     * })
-    **/
-    count<T extends CruiseCountArgs>(
-      args?: Subset<T, CruiseCountArgs>,
-    ): PrismaPromise<
-      T extends _Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], CruiseCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Cruise.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CruiseAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends CruiseAggregateArgs>(args: Subset<T, CruiseAggregateArgs>): PrismaPromise<GetCruiseAggregateType<T>>
-
-
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for Cruise.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in 
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export class Prisma__CruiseClient<T> implements PrismaPromise<T> {
-    [prisma]: true;
-    private readonly _dmmf;
-    private readonly _fetcher;
-    private readonly _queryType;
-    private readonly _rootField;
-    private readonly _clientMethod;
-    private readonly _args;
-    private readonly _dataPath;
-    private readonly _errorFormat;
-    private readonly _measurePerformance?;
-    private _isList;
-    private _callsite;
-    private _requestPromise?;
-    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
-    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
-
-    user<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | null >, Prisma__UserClient<UserGetPayload<T> | null >>;
-
-    followers<T extends UserFindManyArgs = {}>(args?: Subset<T, UserFindManyArgs>): CheckSelect<T, PrismaPromise<Array<User>>, PrismaPromise<Array<UserGetPayload<T>>>>;
-
-    User<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | null >, Prisma__UserClient<UserGetPayload<T> | null >>;
-
-    Post<T extends PostArgs = {}>(args?: Subset<T, PostArgs>): CheckSelect<T, Prisma__PostClient<Post | null >, Prisma__PostClient<PostGetPayload<T> | null >>;
-
-    comments<T extends CommentFindManyArgs = {}>(args?: Subset<T, CommentFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Comment>>, PrismaPromise<Array<CommentGetPayload<T>>>>;
-
-    posts<T extends PostFindManyArgs = {}>(args?: Subset<T, PostFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Post>>, PrismaPromise<Array<PostGetPayload<T>>>>;
-
-    private get _document();
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
-  }
-
-  // Custom InputTypes
-
-  /**
-   * Cruise findUnique
-   */
-  export type CruiseFindUniqueArgs = {
-    /**
-     * Select specific fields to fetch from the Cruise
-    **/
-    select?: CruiseSelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-    **/
-    include?: CruiseInclude | null
-    /**
-     * Throw an Error if a Cruise can't be found
-    **/
-    rejectOnNotFound?: RejectOnNotFound
-    /**
-     * Filter, which Cruise to fetch.
-    **/
-    where: CruiseWhereUniqueInput
-  }
-
-
-  /**
-   * Cruise findFirst
-   */
-  export type CruiseFindFirstArgs = {
-    /**
-     * Select specific fields to fetch from the Cruise
-    **/
-    select?: CruiseSelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-    **/
-    include?: CruiseInclude | null
-    /**
-     * Throw an Error if a Cruise can't be found
-    **/
-    rejectOnNotFound?: RejectOnNotFound
-    /**
-     * Filter, which Cruise to fetch.
-    **/
-    where?: CruiseWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Cruises to fetch.
-    **/
-    orderBy?: Enumerable<CruiseOrderByInput>
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Cruises.
-    **/
-    cursor?: CruiseWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Cruises from the position of the cursor.
-    **/
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Cruises.
-    **/
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Cruises.
-    **/
-    distinct?: Enumerable<CruiseScalarFieldEnum>
-  }
-
-
-  /**
-   * Cruise findMany
-   */
-  export type CruiseFindManyArgs = {
-    /**
-     * Select specific fields to fetch from the Cruise
-    **/
-    select?: CruiseSelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-    **/
-    include?: CruiseInclude | null
-    /**
-     * Filter, which Cruises to fetch.
-    **/
-    where?: CruiseWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Cruises to fetch.
-    **/
-    orderBy?: Enumerable<CruiseOrderByInput>
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Cruises.
-    **/
-    cursor?: CruiseWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Cruises from the position of the cursor.
-    **/
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Cruises.
-    **/
-    skip?: number
-    distinct?: Enumerable<CruiseScalarFieldEnum>
-  }
-
-
-  /**
-   * Cruise create
-   */
-  export type CruiseCreateArgs = {
-    /**
-     * Select specific fields to fetch from the Cruise
-    **/
-    select?: CruiseSelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-    **/
-    include?: CruiseInclude | null
-    /**
-     * The data needed to create a Cruise.
-    **/
-    data: XOR<CruiseCreateInput, CruiseUncheckedCreateInput>
-  }
-
-
-  /**
-   * Cruise createMany
-   */
-  export type CruiseCreateManyArgs = {
-    data: Enumerable<CruiseCreateManyInput>
-    skipDuplicates?: boolean
-  }
-
-
-  /**
-   * Cruise update
-   */
-  export type CruiseUpdateArgs = {
-    /**
-     * Select specific fields to fetch from the Cruise
-    **/
-    select?: CruiseSelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-    **/
-    include?: CruiseInclude | null
-    /**
-     * The data needed to update a Cruise.
-    **/
-    data: XOR<CruiseUpdateInput, CruiseUncheckedUpdateInput>
-    /**
-     * Choose, which Cruise to update.
-    **/
-    where: CruiseWhereUniqueInput
-  }
-
-
-  /**
-   * Cruise updateMany
-   */
-  export type CruiseUpdateManyArgs = {
-    data: XOR<CruiseUpdateManyMutationInput, CruiseUncheckedUpdateManyInput>
-    where?: CruiseWhereInput
-  }
-
-
-  /**
-   * Cruise upsert
-   */
-  export type CruiseUpsertArgs = {
-    /**
-     * Select specific fields to fetch from the Cruise
-    **/
-    select?: CruiseSelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-    **/
-    include?: CruiseInclude | null
-    /**
-     * The filter to search for the Cruise to update in case it exists.
-    **/
-    where: CruiseWhereUniqueInput
-    /**
-     * In case the Cruise found by the `where` argument doesn't exist, create a new Cruise with this data.
-    **/
-    create: XOR<CruiseCreateInput, CruiseUncheckedCreateInput>
-    /**
-     * In case the Cruise was found with the provided `where` argument, update it with this data.
-    **/
-    update: XOR<CruiseUpdateInput, CruiseUncheckedUpdateInput>
-  }
-
-
-  /**
-   * Cruise delete
-   */
-  export type CruiseDeleteArgs = {
-    /**
-     * Select specific fields to fetch from the Cruise
-    **/
-    select?: CruiseSelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-    **/
-    include?: CruiseInclude | null
-    /**
-     * Filter which Cruise to delete.
-    **/
-    where: CruiseWhereUniqueInput
-  }
-
-
-  /**
-   * Cruise deleteMany
-   */
-  export type CruiseDeleteManyArgs = {
-    where?: CruiseWhereInput
-  }
-
-
-  /**
-   * Cruise without action
-   */
-  export type CruiseArgs = {
-    /**
-     * Select specific fields to fetch from the Cruise
-    **/
-    select?: CruiseSelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-    **/
-    include?: CruiseInclude | null
-  }
-
-
-
-  /**
    * Model Comment
    */
 
@@ -3370,7 +2464,6 @@ export namespace Prisma {
     entityId: number
     postId: number | null
     challengeId: number | null
-    cruiseId: number | null
     userUserId: number | null
   }
 
@@ -3379,7 +2472,6 @@ export namespace Prisma {
     entityId: number
     postId: number | null
     challengeId: number | null
-    cruiseId: number | null
     userUserId: number | null
   }
 
@@ -3396,7 +2488,6 @@ export namespace Prisma {
     updated: Date | null
     postId: number | null
     challengeId: number | null
-    cruiseId: number | null
     userUserId: number | null
   }
 
@@ -3413,7 +2504,6 @@ export namespace Prisma {
     updated: Date | null
     postId: number | null
     challengeId: number | null
-    cruiseId: number | null
     userUserId: number | null
   }
 
@@ -3435,7 +2525,6 @@ export namespace Prisma {
     updated: number | null
     postId: number | null
     challengeId: number | null
-    cruiseId: number | null
     userUserId: number | null
     _all: number
   }
@@ -3446,7 +2535,6 @@ export namespace Prisma {
     entityId?: true
     postId?: true
     challengeId?: true
-    cruiseId?: true
     userUserId?: true
   }
 
@@ -3455,7 +2543,6 @@ export namespace Prisma {
     entityId?: true
     postId?: true
     challengeId?: true
-    cruiseId?: true
     userUserId?: true
   }
 
@@ -3472,7 +2559,6 @@ export namespace Prisma {
     updated?: true
     postId?: true
     challengeId?: true
-    cruiseId?: true
     userUserId?: true
   }
 
@@ -3489,7 +2575,6 @@ export namespace Prisma {
     updated?: true
     postId?: true
     challengeId?: true
-    cruiseId?: true
     userUserId?: true
   }
 
@@ -3511,7 +2596,6 @@ export namespace Prisma {
     updated?: true
     postId?: true
     challengeId?: true
-    cruiseId?: true
     userUserId?: true
     _all?: true
   }
@@ -3608,8 +2692,6 @@ export namespace Prisma {
     postId?: boolean
     challenge?: boolean | ChallengeArgs
     challengeId?: boolean
-    cruise?: boolean | CruiseArgs
-    cruiseId?: boolean
     User?: boolean | UserArgs
     userUserId?: boolean
   }
@@ -3618,7 +2700,6 @@ export namespace Prisma {
     user?: boolean | UserArgs
     post?: boolean | PostArgs
     challenge?: boolean | ChallengeArgs
-    cruise?: boolean | CruiseArgs
     User?: boolean | UserArgs
   }
 
@@ -3639,8 +2720,6 @@ export namespace Prisma {
         ? PostGetPayload<S['include'][P]> | null :
         P extends 'challenge'
         ? ChallengeGetPayload<S['include'][P]> | null :
-        P extends 'cruise'
-        ? CruiseGetPayload<S['include'][P]> | null :
         P extends 'User'
         ? UserGetPayload<S['include'][P]> | null : never
   } 
@@ -3654,8 +2733,6 @@ export namespace Prisma {
         ? PostGetPayload<S['select'][P]> | null :
         P extends 'challenge'
         ? ChallengeGetPayload<S['select'][P]> | null :
-        P extends 'cruise'
-        ? CruiseGetPayload<S['select'][P]> | null :
         P extends 'User'
         ? UserGetPayload<S['select'][P]> | null : never
   } 
@@ -3927,8 +3004,6 @@ export namespace Prisma {
     post<T extends PostArgs = {}>(args?: Subset<T, PostArgs>): CheckSelect<T, Prisma__PostClient<Post | null >, Prisma__PostClient<PostGetPayload<T> | null >>;
 
     challenge<T extends ChallengeArgs = {}>(args?: Subset<T, ChallengeArgs>): CheckSelect<T, Prisma__ChallengeClient<Challenge | null >, Prisma__ChallengeClient<ChallengeGetPayload<T> | null >>;
-
-    cruise<T extends CruiseArgs = {}>(args?: Subset<T, CruiseArgs>): CheckSelect<T, Prisma__CruiseClient<Cruise | null >, Prisma__CruiseClient<CruiseGetPayload<T> | null >>;
 
     User<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | null >, Prisma__UserClient<UserGetPayload<T> | null >>;
 
@@ -5784,6 +4859,7 @@ export namespace Prisma {
     lastName: 'lastName',
     userName: 'userName',
     bio: 'bio',
+    cruise: 'cruise',
     email: 'email',
     imgUrl: 'imgUrl',
     created: 'created',
@@ -5810,33 +4886,10 @@ export namespace Prisma {
     kisses: 'kisses',
     hearts: 'hearts',
     hot: 'hot',
-    challengeId: 'challengeId',
-    cruiseId: 'cruiseId'
+    challengeId: 'challengeId'
   };
 
   export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
-
-
-  export const CruiseScalarFieldEnum: {
-    id: 'id',
-    cursor: 'cursor',
-    slogan: 'slogan',
-    attachmentType: 'attachmentType',
-    attachmentMeta: 'attachmentMeta',
-    attachmentUrl: 'attachmentUrl',
-    userId: 'userId',
-    reaction: 'reaction',
-    kisses: 'kisses',
-    hearts: 'hearts',
-    hot: 'hot',
-    hashtags: 'hashtags',
-    created: 'created',
-    updated: 'updated',
-    userUserId: 'userUserId',
-    postId: 'postId'
-  };
-
-  export type CruiseScalarFieldEnum = (typeof CruiseScalarFieldEnum)[keyof typeof CruiseScalarFieldEnum]
 
 
   export const CommentScalarFieldEnum: {
@@ -5857,7 +4910,6 @@ export namespace Prisma {
     updated: 'updated',
     postId: 'postId',
     challengeId: 'challengeId',
-    cruiseId: 'cruiseId',
     userUserId: 'userUserId'
   };
 
@@ -5930,6 +4982,7 @@ export namespace Prisma {
     lastName?: StringFilter | string
     userName?: StringNullableFilter | string | null
     bio?: StringNullableFilter | string | null
+    cruise?: StringNullableFilter | string | null
     email?: StringFilter | string
     imgUrl?: StringNullableFilter | string | null
     following?: UserListRelationFilter
@@ -5938,12 +4991,9 @@ export namespace Prisma {
     updated?: DateTimeFilter | Date | string
     location?: JsonNullableFilter
     posts?: PostListRelationFilter
-    cruises?: CruiseListRelationFilter
     comment?: CommentListRelationFilter
     challenges?: ChallengeListRelationFilter
-    cruiseFollowing?: CruiseListRelationFilter
     challengeFollowing?: ChallengeListRelationFilter
-    Cruise?: CruiseListRelationFilter
     Comment?: CommentListRelationFilter
     Challenge?: ChallengeListRelationFilter
     peek?: XOR<PeekRelationFilter, PeekWhereInput> | null
@@ -5957,6 +5007,7 @@ export namespace Prisma {
     lastName?: SortOrder
     userName?: SortOrder
     bio?: SortOrder
+    cruise?: SortOrder
     email?: SortOrder
     imgUrl?: SortOrder
     created?: SortOrder
@@ -5990,14 +5041,11 @@ export namespace Prisma {
     location?: JsonNullableFilter
     hashtags?: StringNullableListFilter
     comments?: CommentListRelationFilter
-    cruises?: CruiseListRelationFilter
     kisses?: StringNullableListFilter
     hearts?: StringNullableListFilter
     hot?: StringNullableListFilter
     challengeId?: IntNullableFilter | number | null
     challenge?: XOR<ChallengeRelationFilter, ChallengeWhereInput> | null
-    Cruise?: XOR<CruiseRelationFilter, CruiseWhereInput> | null
-    cruiseId?: IntNullableFilter | number | null
     Challenge?: XOR<ChallengeRelationFilter, ChallengeWhereInput> | null
   }
 
@@ -6018,62 +5066,9 @@ export namespace Prisma {
     hearts?: SortOrder
     hot?: SortOrder
     challengeId?: SortOrder
-    cruiseId?: SortOrder
   }
 
   export type PostWhereUniqueInput = {
-    id?: number
-    cursor?: string
-  }
-
-  export type CruiseWhereInput = {
-    AND?: Enumerable<CruiseWhereInput>
-    OR?: Enumerable<CruiseWhereInput>
-    NOT?: Enumerable<CruiseWhereInput>
-    id?: IntFilter | number
-    user?: XOR<UserRelationFilter, UserWhereInput>
-    cursor?: StringFilter | string
-    slogan?: StringFilter | string
-    attachmentType?: EnumAttachmentTypeNullableFilter | AttachmentType | null
-    attachmentMeta?: JsonNullableFilter
-    attachmentUrl?: StringNullableFilter | string | null
-    userId?: StringFilter | string
-    reaction?: JsonNullableFilter
-    followers?: UserListRelationFilter
-    kisses?: StringNullableListFilter
-    hearts?: StringNullableListFilter
-    hot?: StringNullableListFilter
-    hashtags?: StringNullableListFilter
-    created?: DateTimeFilter | Date | string
-    updated?: DateTimeFilter | Date | string
-    User?: XOR<UserRelationFilter, UserWhereInput> | null
-    userUserId?: IntNullableFilter | number | null
-    Post?: XOR<PostRelationFilter, PostWhereInput> | null
-    postId?: IntNullableFilter | number | null
-    comments?: CommentListRelationFilter
-    posts?: PostListRelationFilter
-  }
-
-  export type CruiseOrderByInput = {
-    id?: SortOrder
-    cursor?: SortOrder
-    slogan?: SortOrder
-    attachmentType?: SortOrder
-    attachmentMeta?: SortOrder
-    attachmentUrl?: SortOrder
-    userId?: SortOrder
-    reaction?: SortOrder
-    kisses?: SortOrder
-    hearts?: SortOrder
-    hot?: SortOrder
-    hashtags?: SortOrder
-    created?: SortOrder
-    updated?: SortOrder
-    userUserId?: SortOrder
-    postId?: SortOrder
-  }
-
-  export type CruiseWhereUniqueInput = {
     id?: number
     cursor?: string
   }
@@ -6102,8 +5097,6 @@ export namespace Prisma {
     postId?: IntNullableFilter | number | null
     challenge?: XOR<ChallengeRelationFilter, ChallengeWhereInput> | null
     challengeId?: IntNullableFilter | number | null
-    cruise?: XOR<CruiseRelationFilter, CruiseWhereInput> | null
-    cruiseId?: IntNullableFilter | number | null
     User?: XOR<UserRelationFilter, UserWhereInput> | null
     userUserId?: IntNullableFilter | number | null
   }
@@ -6126,7 +5119,6 @@ export namespace Prisma {
     updated?: SortOrder
     postId?: SortOrder
     challengeId?: SortOrder
-    cruiseId?: SortOrder
     userUserId?: SortOrder
   }
 
@@ -6220,6 +5212,7 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -6228,12 +5221,9 @@ export namespace Prisma {
     following?: UserCreateNestedManyWithoutFollowersInput
     followers?: UserCreateNestedManyWithoutFollowingInput
     posts?: PostCreateNestedManyWithoutUserInput
-    cruises?: CruiseCreateNestedManyWithoutUserInput
     comment?: CommentCreateNestedManyWithoutUserInput
     challenges?: ChallengeCreateNestedManyWithoutUserInput
-    cruiseFollowing?: CruiseCreateNestedManyWithoutFollowersInput
     challengeFollowing?: ChallengeCreateNestedManyWithoutFollowersInput
-    Cruise?: CruiseCreateNestedManyWithoutUserInput
     Comment?: CommentCreateNestedManyWithoutUserInput
     Challenge?: ChallengeCreateNestedManyWithoutUserInput
     peek?: PeekCreateNestedOneWithoutUserInput
@@ -6247,16 +5237,15 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
     updated?: Date | string
     location?: InputJsonValue | null
     posts?: PostUncheckedCreateNestedManyWithoutUserInput
-    cruises?: CruiseUncheckedCreateNestedManyWithoutUserInput
     comment?: CommentUncheckedCreateNestedManyWithoutUserInput
     challenges?: ChallengeUncheckedCreateNestedManyWithoutUserInput
-    Cruise?: CruiseUncheckedCreateNestedManyWithoutUserInput
     Comment?: CommentUncheckedCreateNestedManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateNestedManyWithoutUserInput
     peek?: PeekUncheckedCreateNestedOneWithoutUserInput
@@ -6269,6 +5258,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6277,12 +5267,9 @@ export namespace Prisma {
     following?: UserUpdateManyWithoutFollowersInput
     followers?: UserUpdateManyWithoutFollowingInput
     posts?: PostUpdateManyWithoutUserInput
-    cruises?: CruiseUpdateManyWithoutUserInput
     comment?: CommentUpdateManyWithoutUserInput
     challenges?: ChallengeUpdateManyWithoutUserInput
-    cruiseFollowing?: CruiseUpdateManyWithoutFollowersInput
     challengeFollowing?: ChallengeUpdateManyWithoutFollowersInput
-    Cruise?: CruiseUpdateManyWithoutUserInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutUserInput
     peek?: PeekUpdateOneWithoutUserInput
@@ -6296,16 +5283,15 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: InputJsonValue | null
     posts?: PostUncheckedUpdateManyWithoutUserInput
-    cruises?: CruiseUncheckedUpdateManyWithoutUserInput
     comment?: CommentUncheckedUpdateManyWithoutUserInput
     challenges?: ChallengeUncheckedUpdateManyWithoutUserInput
-    Cruise?: CruiseUncheckedUpdateManyWithoutUserInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutUserInput
     peek?: PeekUncheckedUpdateOneWithoutUserInput
@@ -6319,6 +5305,7 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -6333,6 +5320,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6348,6 +5336,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6371,9 +5360,7 @@ export namespace Prisma {
     hot?: PostCreatehotInput | Enumerable<string>
     user: UserCreateNestedOneWithoutPostsInput
     comments?: CommentCreateNestedManyWithoutPostInput
-    cruises?: CruiseCreateNestedManyWithoutPostInput
     challenge?: ChallengeCreateNestedOneWithoutPostInput
-    Cruise?: CruiseCreateNestedOneWithoutPostsInput
     Challenge?: ChallengeCreateNestedOneWithoutPostsInput
   }
 
@@ -6390,13 +5377,11 @@ export namespace Prisma {
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
     challengeId?: number | null
-    cruiseId?: number | null
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
     kisses?: PostCreatekissesInput | Enumerable<string>
     hearts?: PostCreateheartsInput | Enumerable<string>
     hot?: PostCreatehotInput | Enumerable<string>
     comments?: CommentUncheckedCreateNestedManyWithoutPostInput
-    cruises?: CruiseUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostUpdateInput = {
@@ -6415,9 +5400,7 @@ export namespace Prisma {
     hot?: PostUpdatehotInput | Enumerable<string>
     user?: UserUpdateOneRequiredWithoutPostsInput
     comments?: CommentUpdateManyWithoutPostInput
-    cruises?: CruiseUpdateManyWithoutPostInput
     challenge?: ChallengeUpdateOneWithoutPostInput
-    Cruise?: CruiseUpdateOneWithoutPostsInput
     Challenge?: ChallengeUpdateOneWithoutPostsInput
   }
 
@@ -6434,13 +5417,11 @@ export namespace Prisma {
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
-    cruiseId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
     kisses?: PostUpdatekissesInput | Enumerable<string>
     hearts?: PostUpdateheartsInput | Enumerable<string>
     hot?: PostUpdatehotInput | Enumerable<string>
     comments?: CommentUncheckedUpdateManyWithoutPostInput
-    cruises?: CruiseUncheckedUpdateManyWithoutPostInput
   }
 
   export type PostCreateManyInput = {
@@ -6456,7 +5437,6 @@ export namespace Prisma {
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
     challengeId?: number | null
-    cruiseId?: number | null
     hashtags?: PostCreateManyhashtagsInput | Enumerable<string>
     kisses?: PostCreateManykissesInput | Enumerable<string>
     hearts?: PostCreateManyheartsInput | Enumerable<string>
@@ -6492,148 +5472,10 @@ export namespace Prisma {
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
-    cruiseId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
     kisses?: PostUpdatekissesInput | Enumerable<string>
     hearts?: PostUpdateheartsInput | Enumerable<string>
     hot?: PostUpdatehotInput | Enumerable<string>
-  }
-
-  export type CruiseCreateInput = {
-    cursor?: string
-    slogan: string
-    attachmentType?: AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: string | null
-    reaction?: InputJsonValue | null
-    created?: Date | string
-    updated?: Date | string
-    kisses?: CruiseCreatekissesInput | Enumerable<string>
-    hearts?: CruiseCreateheartsInput | Enumerable<string>
-    hot?: CruiseCreatehotInput | Enumerable<string>
-    hashtags?: CruiseCreatehashtagsInput | Enumerable<string>
-    user: UserCreateNestedOneWithoutCruiseInput
-    followers?: UserCreateNestedManyWithoutCruiseFollowingInput
-    User?: UserCreateNestedOneWithoutCruisesInput
-    Post?: PostCreateNestedOneWithoutCruisesInput
-    comments?: CommentCreateNestedManyWithoutCruiseInput
-    posts?: PostCreateNestedManyWithoutCruiseInput
-  }
-
-  export type CruiseUncheckedCreateInput = {
-    id?: number
-    cursor?: string
-    slogan: string
-    attachmentType?: AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: string | null
-    userId: string
-    reaction?: InputJsonValue | null
-    created?: Date | string
-    updated?: Date | string
-    userUserId?: number | null
-    postId?: number | null
-    kisses?: CruiseCreatekissesInput | Enumerable<string>
-    hearts?: CruiseCreateheartsInput | Enumerable<string>
-    hot?: CruiseCreatehotInput | Enumerable<string>
-    hashtags?: CruiseCreatehashtagsInput | Enumerable<string>
-    comments?: CommentUncheckedCreateNestedManyWithoutCruiseInput
-    posts?: PostUncheckedCreateNestedManyWithoutCruiseInput
-  }
-
-  export type CruiseUpdateInput = {
-    cursor?: StringFieldUpdateOperationsInput | string
-    slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    reaction?: InputJsonValue | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    kisses?: CruiseUpdatekissesInput | Enumerable<string>
-    hearts?: CruiseUpdateheartsInput | Enumerable<string>
-    hot?: CruiseUpdatehotInput | Enumerable<string>
-    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
-    user?: UserUpdateOneRequiredWithoutCruiseInput
-    followers?: UserUpdateManyWithoutCruiseFollowingInput
-    User?: UserUpdateOneWithoutCruisesInput
-    Post?: PostUpdateOneWithoutCruisesInput
-    comments?: CommentUpdateManyWithoutCruiseInput
-    posts?: PostUpdateManyWithoutCruiseInput
-  }
-
-  export type CruiseUncheckedUpdateInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    cursor?: StringFieldUpdateOperationsInput | string
-    slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    userId?: StringFieldUpdateOperationsInput | string
-    reaction?: InputJsonValue | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    userUserId?: NullableIntFieldUpdateOperationsInput | number | null
-    postId?: NullableIntFieldUpdateOperationsInput | number | null
-    kisses?: CruiseUpdatekissesInput | Enumerable<string>
-    hearts?: CruiseUpdateheartsInput | Enumerable<string>
-    hot?: CruiseUpdatehotInput | Enumerable<string>
-    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
-    comments?: CommentUncheckedUpdateManyWithoutCruiseInput
-    posts?: PostUncheckedUpdateManyWithoutCruiseInput
-  }
-
-  export type CruiseCreateManyInput = {
-    id?: number
-    cursor?: string
-    slogan: string
-    attachmentType?: AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: string | null
-    userId: string
-    reaction?: InputJsonValue | null
-    created?: Date | string
-    updated?: Date | string
-    userUserId?: number | null
-    postId?: number | null
-    kisses?: CruiseCreateManykissesInput | Enumerable<string>
-    hearts?: CruiseCreateManyheartsInput | Enumerable<string>
-    hot?: CruiseCreateManyhotInput | Enumerable<string>
-    hashtags?: CruiseCreateManyhashtagsInput | Enumerable<string>
-  }
-
-  export type CruiseUpdateManyMutationInput = {
-    cursor?: StringFieldUpdateOperationsInput | string
-    slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    reaction?: InputJsonValue | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    kisses?: CruiseUpdatekissesInput | Enumerable<string>
-    hearts?: CruiseUpdateheartsInput | Enumerable<string>
-    hot?: CruiseUpdatehotInput | Enumerable<string>
-    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
-  }
-
-  export type CruiseUncheckedUpdateManyInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    cursor?: StringFieldUpdateOperationsInput | string
-    slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    userId?: StringFieldUpdateOperationsInput | string
-    reaction?: InputJsonValue | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    userUserId?: NullableIntFieldUpdateOperationsInput | number | null
-    postId?: NullableIntFieldUpdateOperationsInput | number | null
-    kisses?: CruiseUpdatekissesInput | Enumerable<string>
-    hearts?: CruiseUpdateheartsInput | Enumerable<string>
-    hot?: CruiseUpdatehotInput | Enumerable<string>
-    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
   }
 
   export type CommentCreateInput = {
@@ -6653,7 +5495,6 @@ export namespace Prisma {
     user: UserCreateNestedOneWithoutCommentInput
     post?: PostCreateNestedOneWithoutCommentsInput
     challenge?: ChallengeCreateNestedOneWithoutCommentsInput
-    cruise?: CruiseCreateNestedOneWithoutCommentsInput
     User?: UserCreateNestedOneWithoutCommentInput
   }
 
@@ -6672,7 +5513,6 @@ export namespace Prisma {
     updated?: Date | string
     postId?: number | null
     challengeId?: number | null
-    cruiseId?: number | null
     userUserId?: number | null
     kisses?: CommentCreatekissesInput | Enumerable<string>
     hearts?: CommentCreateheartsInput | Enumerable<string>
@@ -6696,7 +5536,6 @@ export namespace Prisma {
     user?: UserUpdateOneRequiredWithoutCommentInput
     post?: PostUpdateOneWithoutCommentsInput
     challenge?: ChallengeUpdateOneWithoutCommentsInput
-    cruise?: CruiseUpdateOneWithoutCommentsInput
     User?: UserUpdateOneWithoutCommentInput
   }
 
@@ -6715,7 +5554,6 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     postId?: NullableIntFieldUpdateOperationsInput | number | null
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
-    cruiseId?: NullableIntFieldUpdateOperationsInput | number | null
     userUserId?: NullableIntFieldUpdateOperationsInput | number | null
     kisses?: CommentUpdatekissesInput | Enumerable<string>
     hearts?: CommentUpdateheartsInput | Enumerable<string>
@@ -6737,7 +5575,6 @@ export namespace Prisma {
     updated?: Date | string
     postId?: number | null
     challengeId?: number | null
-    cruiseId?: number | null
     userUserId?: number | null
     kisses?: CommentCreateManykissesInput | Enumerable<string>
     hearts?: CommentCreateManyheartsInput | Enumerable<string>
@@ -6775,7 +5612,6 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     postId?: NullableIntFieldUpdateOperationsInput | number | null
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
-    cruiseId?: NullableIntFieldUpdateOperationsInput | number | null
     userUserId?: NullableIntFieldUpdateOperationsInput | number | null
     kisses?: CommentUpdatekissesInput | Enumerable<string>
     hearts?: CommentUpdateheartsInput | Enumerable<string>
@@ -7052,12 +5888,6 @@ export namespace Prisma {
     none?: PostWhereInput
   }
 
-  export type CruiseListRelationFilter = {
-    every?: CruiseWhereInput
-    some?: CruiseWhereInput
-    none?: CruiseWhereInput
-  }
-
   export type CommentListRelationFilter = {
     every?: CommentWhereInput
     some?: CommentWhereInput
@@ -7111,21 +5941,16 @@ export namespace Prisma {
     isNot?: ChallengeWhereInput | null
   }
 
-  export type CruiseRelationFilter = {
-    is?: CruiseWhereInput | null
-    isNot?: CruiseWhereInput | null
-  }
-
-  export type PostRelationFilter = {
-    is?: PostWhereInput | null
-    isNot?: PostWhereInput | null
-  }
-
   export type EnumEntityTypeFilter = {
     equals?: EntityType
     in?: Enumerable<EntityType>
     notIn?: Enumerable<EntityType>
     not?: NestedEnumEntityTypeFilter | EntityType
+  }
+
+  export type PostRelationFilter = {
+    is?: PostWhereInput | null
+    isNot?: PostWhereInput | null
   }
 
   export type DateTimeNullableFilter = {
@@ -7174,13 +5999,6 @@ export namespace Prisma {
     connect?: Enumerable<PostWhereUniqueInput>
   }
 
-  export type CruiseCreateNestedManyWithoutUserInput = {
-    create?: XOR<Enumerable<CruiseCreateWithoutUserInput>, Enumerable<CruiseUncheckedCreateWithoutUserInput>>
-    connectOrCreate?: Enumerable<CruiseCreateOrConnectWithoutUserInput>
-    createMany?: CruiseCreateManyUserInputEnvelope
-    connect?: Enumerable<CruiseWhereUniqueInput>
-  }
-
   export type CommentCreateNestedManyWithoutUserInput = {
     create?: XOR<Enumerable<CommentCreateWithoutUserInput>, Enumerable<CommentUncheckedCreateWithoutUserInput>>
     connectOrCreate?: Enumerable<CommentCreateOrConnectWithoutUserInput>
@@ -7193,12 +6011,6 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<ChallengeCreateOrConnectWithoutUserInput>
     createMany?: ChallengeCreateManyUserInputEnvelope
     connect?: Enumerable<ChallengeWhereUniqueInput>
-  }
-
-  export type CruiseCreateNestedManyWithoutFollowersInput = {
-    create?: XOR<Enumerable<CruiseCreateWithoutFollowersInput>, Enumerable<CruiseUncheckedCreateWithoutFollowersInput>>
-    connectOrCreate?: Enumerable<CruiseCreateOrConnectWithoutFollowersInput>
-    connect?: Enumerable<CruiseWhereUniqueInput>
   }
 
   export type ChallengeCreateNestedManyWithoutFollowersInput = {
@@ -7218,13 +6030,6 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<PostCreateOrConnectWithoutUserInput>
     createMany?: PostCreateManyUserInputEnvelope
     connect?: Enumerable<PostWhereUniqueInput>
-  }
-
-  export type CruiseUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<Enumerable<CruiseCreateWithoutUserInput>, Enumerable<CruiseUncheckedCreateWithoutUserInput>>
-    connectOrCreate?: Enumerable<CruiseCreateOrConnectWithoutUserInput>
-    createMany?: CruiseCreateManyUserInputEnvelope
-    connect?: Enumerable<CruiseWhereUniqueInput>
   }
 
   export type CommentUncheckedCreateNestedManyWithoutUserInput = {
@@ -7299,20 +6104,6 @@ export namespace Prisma {
     deleteMany?: Enumerable<PostScalarWhereInput>
   }
 
-  export type CruiseUpdateManyWithoutUserInput = {
-    create?: XOR<Enumerable<CruiseCreateWithoutUserInput>, Enumerable<CruiseUncheckedCreateWithoutUserInput>>
-    connectOrCreate?: Enumerable<CruiseCreateOrConnectWithoutUserInput>
-    upsert?: Enumerable<CruiseUpsertWithWhereUniqueWithoutUserInput>
-    createMany?: CruiseCreateManyUserInputEnvelope
-    connect?: Enumerable<CruiseWhereUniqueInput>
-    set?: Enumerable<CruiseWhereUniqueInput>
-    disconnect?: Enumerable<CruiseWhereUniqueInput>
-    delete?: Enumerable<CruiseWhereUniqueInput>
-    update?: Enumerable<CruiseUpdateWithWhereUniqueWithoutUserInput>
-    updateMany?: Enumerable<CruiseUpdateManyWithWhereWithoutUserInput>
-    deleteMany?: Enumerable<CruiseScalarWhereInput>
-  }
-
   export type CommentUpdateManyWithoutUserInput = {
     create?: XOR<Enumerable<CommentCreateWithoutUserInput>, Enumerable<CommentUncheckedCreateWithoutUserInput>>
     connectOrCreate?: Enumerable<CommentCreateOrConnectWithoutUserInput>
@@ -7339,19 +6130,6 @@ export namespace Prisma {
     update?: Enumerable<ChallengeUpdateWithWhereUniqueWithoutUserInput>
     updateMany?: Enumerable<ChallengeUpdateManyWithWhereWithoutUserInput>
     deleteMany?: Enumerable<ChallengeScalarWhereInput>
-  }
-
-  export type CruiseUpdateManyWithoutFollowersInput = {
-    create?: XOR<Enumerable<CruiseCreateWithoutFollowersInput>, Enumerable<CruiseUncheckedCreateWithoutFollowersInput>>
-    connectOrCreate?: Enumerable<CruiseCreateOrConnectWithoutFollowersInput>
-    upsert?: Enumerable<CruiseUpsertWithWhereUniqueWithoutFollowersInput>
-    connect?: Enumerable<CruiseWhereUniqueInput>
-    set?: Enumerable<CruiseWhereUniqueInput>
-    disconnect?: Enumerable<CruiseWhereUniqueInput>
-    delete?: Enumerable<CruiseWhereUniqueInput>
-    update?: Enumerable<CruiseUpdateWithWhereUniqueWithoutFollowersInput>
-    updateMany?: Enumerable<CruiseUpdateManyWithWhereWithoutFollowersInput>
-    deleteMany?: Enumerable<CruiseScalarWhereInput>
   }
 
   export type ChallengeUpdateManyWithoutFollowersInput = {
@@ -7397,20 +6175,6 @@ export namespace Prisma {
     update?: Enumerable<PostUpdateWithWhereUniqueWithoutUserInput>
     updateMany?: Enumerable<PostUpdateManyWithWhereWithoutUserInput>
     deleteMany?: Enumerable<PostScalarWhereInput>
-  }
-
-  export type CruiseUncheckedUpdateManyWithoutUserInput = {
-    create?: XOR<Enumerable<CruiseCreateWithoutUserInput>, Enumerable<CruiseUncheckedCreateWithoutUserInput>>
-    connectOrCreate?: Enumerable<CruiseCreateOrConnectWithoutUserInput>
-    upsert?: Enumerable<CruiseUpsertWithWhereUniqueWithoutUserInput>
-    createMany?: CruiseCreateManyUserInputEnvelope
-    connect?: Enumerable<CruiseWhereUniqueInput>
-    set?: Enumerable<CruiseWhereUniqueInput>
-    disconnect?: Enumerable<CruiseWhereUniqueInput>
-    delete?: Enumerable<CruiseWhereUniqueInput>
-    update?: Enumerable<CruiseUpdateWithWhereUniqueWithoutUserInput>
-    updateMany?: Enumerable<CruiseUpdateManyWithWhereWithoutUserInput>
-    deleteMany?: Enumerable<CruiseScalarWhereInput>
   }
 
   export type CommentUncheckedUpdateManyWithoutUserInput = {
@@ -7480,23 +6244,10 @@ export namespace Prisma {
     connect?: Enumerable<CommentWhereUniqueInput>
   }
 
-  export type CruiseCreateNestedManyWithoutPostInput = {
-    create?: XOR<Enumerable<CruiseCreateWithoutPostInput>, Enumerable<CruiseUncheckedCreateWithoutPostInput>>
-    connectOrCreate?: Enumerable<CruiseCreateOrConnectWithoutPostInput>
-    createMany?: CruiseCreateManyPostInputEnvelope
-    connect?: Enumerable<CruiseWhereUniqueInput>
-  }
-
   export type ChallengeCreateNestedOneWithoutPostInput = {
     create?: XOR<ChallengeCreateWithoutPostInput, ChallengeUncheckedCreateWithoutPostInput>
     connectOrCreate?: ChallengeCreateOrConnectWithoutPostInput
     connect?: ChallengeWhereUniqueInput
-  }
-
-  export type CruiseCreateNestedOneWithoutPostsInput = {
-    create?: XOR<CruiseCreateWithoutPostsInput, CruiseUncheckedCreateWithoutPostsInput>
-    connectOrCreate?: CruiseCreateOrConnectWithoutPostsInput
-    connect?: CruiseWhereUniqueInput
   }
 
   export type ChallengeCreateNestedOneWithoutPostsInput = {
@@ -7510,13 +6261,6 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<CommentCreateOrConnectWithoutPostInput>
     createMany?: CommentCreateManyPostInputEnvelope
     connect?: Enumerable<CommentWhereUniqueInput>
-  }
-
-  export type CruiseUncheckedCreateNestedManyWithoutPostInput = {
-    create?: XOR<Enumerable<CruiseCreateWithoutPostInput>, Enumerable<CruiseUncheckedCreateWithoutPostInput>>
-    connectOrCreate?: Enumerable<CruiseCreateOrConnectWithoutPostInput>
-    createMany?: CruiseCreateManyPostInputEnvelope
-    connect?: Enumerable<CruiseWhereUniqueInput>
   }
 
   export type NullableEnumAttachmentTypeFieldUpdateOperationsInput = {
@@ -7561,20 +6305,6 @@ export namespace Prisma {
     deleteMany?: Enumerable<CommentScalarWhereInput>
   }
 
-  export type CruiseUpdateManyWithoutPostInput = {
-    create?: XOR<Enumerable<CruiseCreateWithoutPostInput>, Enumerable<CruiseUncheckedCreateWithoutPostInput>>
-    connectOrCreate?: Enumerable<CruiseCreateOrConnectWithoutPostInput>
-    upsert?: Enumerable<CruiseUpsertWithWhereUniqueWithoutPostInput>
-    createMany?: CruiseCreateManyPostInputEnvelope
-    connect?: Enumerable<CruiseWhereUniqueInput>
-    set?: Enumerable<CruiseWhereUniqueInput>
-    disconnect?: Enumerable<CruiseWhereUniqueInput>
-    delete?: Enumerable<CruiseWhereUniqueInput>
-    update?: Enumerable<CruiseUpdateWithWhereUniqueWithoutPostInput>
-    updateMany?: Enumerable<CruiseUpdateManyWithWhereWithoutPostInput>
-    deleteMany?: Enumerable<CruiseScalarWhereInput>
-  }
-
   export type ChallengeUpdateOneWithoutPostInput = {
     create?: XOR<ChallengeCreateWithoutPostInput, ChallengeUncheckedCreateWithoutPostInput>
     connectOrCreate?: ChallengeCreateOrConnectWithoutPostInput
@@ -7583,16 +6313,6 @@ export namespace Prisma {
     disconnect?: boolean
     delete?: boolean
     update?: XOR<ChallengeUpdateWithoutPostInput, ChallengeUncheckedUpdateWithoutPostInput>
-  }
-
-  export type CruiseUpdateOneWithoutPostsInput = {
-    create?: XOR<CruiseCreateWithoutPostsInput, CruiseUncheckedCreateWithoutPostsInput>
-    connectOrCreate?: CruiseCreateOrConnectWithoutPostsInput
-    upsert?: CruiseUpsertWithoutPostsInput
-    connect?: CruiseWhereUniqueInput
-    disconnect?: boolean
-    delete?: boolean
-    update?: XOR<CruiseUpdateWithoutPostsInput, CruiseUncheckedUpdateWithoutPostsInput>
   }
 
   export type ChallengeUpdateOneWithoutPostsInput = {
@@ -7627,20 +6347,6 @@ export namespace Prisma {
     deleteMany?: Enumerable<CommentScalarWhereInput>
   }
 
-  export type CruiseUncheckedUpdateManyWithoutPostInput = {
-    create?: XOR<Enumerable<CruiseCreateWithoutPostInput>, Enumerable<CruiseUncheckedCreateWithoutPostInput>>
-    connectOrCreate?: Enumerable<CruiseCreateOrConnectWithoutPostInput>
-    upsert?: Enumerable<CruiseUpsertWithWhereUniqueWithoutPostInput>
-    createMany?: CruiseCreateManyPostInputEnvelope
-    connect?: Enumerable<CruiseWhereUniqueInput>
-    set?: Enumerable<CruiseWhereUniqueInput>
-    disconnect?: Enumerable<CruiseWhereUniqueInput>
-    delete?: Enumerable<CruiseWhereUniqueInput>
-    update?: Enumerable<CruiseUpdateWithWhereUniqueWithoutPostInput>
-    updateMany?: Enumerable<CruiseUpdateManyWithWhereWithoutPostInput>
-    deleteMany?: Enumerable<CruiseScalarWhereInput>
-  }
-
   export type PostCreateManyhashtagsInput = {
     set: Enumerable<string>
   }
@@ -7654,203 +6360,6 @@ export namespace Prisma {
   }
 
   export type PostCreateManyhotInput = {
-    set: Enumerable<string>
-  }
-
-  export type CruiseCreatekissesInput = {
-    set: Enumerable<string>
-  }
-
-  export type CruiseCreateheartsInput = {
-    set: Enumerable<string>
-  }
-
-  export type CruiseCreatehotInput = {
-    set: Enumerable<string>
-  }
-
-  export type CruiseCreatehashtagsInput = {
-    set: Enumerable<string>
-  }
-
-  export type UserCreateNestedOneWithoutCruiseInput = {
-    create?: XOR<UserCreateWithoutCruiseInput, UserUncheckedCreateWithoutCruiseInput>
-    connectOrCreate?: UserCreateOrConnectWithoutCruiseInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type UserCreateNestedManyWithoutCruiseFollowingInput = {
-    create?: XOR<Enumerable<UserCreateWithoutCruiseFollowingInput>, Enumerable<UserUncheckedCreateWithoutCruiseFollowingInput>>
-    connectOrCreate?: Enumerable<UserCreateOrConnectWithoutCruiseFollowingInput>
-    connect?: Enumerable<UserWhereUniqueInput>
-  }
-
-  export type UserCreateNestedOneWithoutCruisesInput = {
-    create?: XOR<UserCreateWithoutCruisesInput, UserUncheckedCreateWithoutCruisesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutCruisesInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type PostCreateNestedOneWithoutCruisesInput = {
-    create?: XOR<PostCreateWithoutCruisesInput, PostUncheckedCreateWithoutCruisesInput>
-    connectOrCreate?: PostCreateOrConnectWithoutCruisesInput
-    connect?: PostWhereUniqueInput
-  }
-
-  export type CommentCreateNestedManyWithoutCruiseInput = {
-    create?: XOR<Enumerable<CommentCreateWithoutCruiseInput>, Enumerable<CommentUncheckedCreateWithoutCruiseInput>>
-    connectOrCreate?: Enumerable<CommentCreateOrConnectWithoutCruiseInput>
-    createMany?: CommentCreateManyCruiseInputEnvelope
-    connect?: Enumerable<CommentWhereUniqueInput>
-  }
-
-  export type PostCreateNestedManyWithoutCruiseInput = {
-    create?: XOR<Enumerable<PostCreateWithoutCruiseInput>, Enumerable<PostUncheckedCreateWithoutCruiseInput>>
-    connectOrCreate?: Enumerable<PostCreateOrConnectWithoutCruiseInput>
-    createMany?: PostCreateManyCruiseInputEnvelope
-    connect?: Enumerable<PostWhereUniqueInput>
-  }
-
-  export type CommentUncheckedCreateNestedManyWithoutCruiseInput = {
-    create?: XOR<Enumerable<CommentCreateWithoutCruiseInput>, Enumerable<CommentUncheckedCreateWithoutCruiseInput>>
-    connectOrCreate?: Enumerable<CommentCreateOrConnectWithoutCruiseInput>
-    createMany?: CommentCreateManyCruiseInputEnvelope
-    connect?: Enumerable<CommentWhereUniqueInput>
-  }
-
-  export type PostUncheckedCreateNestedManyWithoutCruiseInput = {
-    create?: XOR<Enumerable<PostCreateWithoutCruiseInput>, Enumerable<PostUncheckedCreateWithoutCruiseInput>>
-    connectOrCreate?: Enumerable<PostCreateOrConnectWithoutCruiseInput>
-    createMany?: PostCreateManyCruiseInputEnvelope
-    connect?: Enumerable<PostWhereUniqueInput>
-  }
-
-  export type CruiseUpdatekissesInput = {
-    set: Enumerable<string>
-  }
-
-  export type CruiseUpdateheartsInput = {
-    set: Enumerable<string>
-  }
-
-  export type CruiseUpdatehotInput = {
-    set: Enumerable<string>
-  }
-
-  export type CruiseUpdatehashtagsInput = {
-    set: Enumerable<string>
-  }
-
-  export type UserUpdateOneRequiredWithoutCruiseInput = {
-    create?: XOR<UserCreateWithoutCruiseInput, UserUncheckedCreateWithoutCruiseInput>
-    connectOrCreate?: UserCreateOrConnectWithoutCruiseInput
-    upsert?: UserUpsertWithoutCruiseInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<UserUpdateWithoutCruiseInput, UserUncheckedUpdateWithoutCruiseInput>
-  }
-
-  export type UserUpdateManyWithoutCruiseFollowingInput = {
-    create?: XOR<Enumerable<UserCreateWithoutCruiseFollowingInput>, Enumerable<UserUncheckedCreateWithoutCruiseFollowingInput>>
-    connectOrCreate?: Enumerable<UserCreateOrConnectWithoutCruiseFollowingInput>
-    upsert?: Enumerable<UserUpsertWithWhereUniqueWithoutCruiseFollowingInput>
-    connect?: Enumerable<UserWhereUniqueInput>
-    set?: Enumerable<UserWhereUniqueInput>
-    disconnect?: Enumerable<UserWhereUniqueInput>
-    delete?: Enumerable<UserWhereUniqueInput>
-    update?: Enumerable<UserUpdateWithWhereUniqueWithoutCruiseFollowingInput>
-    updateMany?: Enumerable<UserUpdateManyWithWhereWithoutCruiseFollowingInput>
-    deleteMany?: Enumerable<UserScalarWhereInput>
-  }
-
-  export type UserUpdateOneWithoutCruisesInput = {
-    create?: XOR<UserCreateWithoutCruisesInput, UserUncheckedCreateWithoutCruisesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutCruisesInput
-    upsert?: UserUpsertWithoutCruisesInput
-    connect?: UserWhereUniqueInput
-    disconnect?: boolean
-    delete?: boolean
-    update?: XOR<UserUpdateWithoutCruisesInput, UserUncheckedUpdateWithoutCruisesInput>
-  }
-
-  export type PostUpdateOneWithoutCruisesInput = {
-    create?: XOR<PostCreateWithoutCruisesInput, PostUncheckedCreateWithoutCruisesInput>
-    connectOrCreate?: PostCreateOrConnectWithoutCruisesInput
-    upsert?: PostUpsertWithoutCruisesInput
-    connect?: PostWhereUniqueInput
-    disconnect?: boolean
-    delete?: boolean
-    update?: XOR<PostUpdateWithoutCruisesInput, PostUncheckedUpdateWithoutCruisesInput>
-  }
-
-  export type CommentUpdateManyWithoutCruiseInput = {
-    create?: XOR<Enumerable<CommentCreateWithoutCruiseInput>, Enumerable<CommentUncheckedCreateWithoutCruiseInput>>
-    connectOrCreate?: Enumerable<CommentCreateOrConnectWithoutCruiseInput>
-    upsert?: Enumerable<CommentUpsertWithWhereUniqueWithoutCruiseInput>
-    createMany?: CommentCreateManyCruiseInputEnvelope
-    connect?: Enumerable<CommentWhereUniqueInput>
-    set?: Enumerable<CommentWhereUniqueInput>
-    disconnect?: Enumerable<CommentWhereUniqueInput>
-    delete?: Enumerable<CommentWhereUniqueInput>
-    update?: Enumerable<CommentUpdateWithWhereUniqueWithoutCruiseInput>
-    updateMany?: Enumerable<CommentUpdateManyWithWhereWithoutCruiseInput>
-    deleteMany?: Enumerable<CommentScalarWhereInput>
-  }
-
-  export type PostUpdateManyWithoutCruiseInput = {
-    create?: XOR<Enumerable<PostCreateWithoutCruiseInput>, Enumerable<PostUncheckedCreateWithoutCruiseInput>>
-    connectOrCreate?: Enumerable<PostCreateOrConnectWithoutCruiseInput>
-    upsert?: Enumerable<PostUpsertWithWhereUniqueWithoutCruiseInput>
-    createMany?: PostCreateManyCruiseInputEnvelope
-    connect?: Enumerable<PostWhereUniqueInput>
-    set?: Enumerable<PostWhereUniqueInput>
-    disconnect?: Enumerable<PostWhereUniqueInput>
-    delete?: Enumerable<PostWhereUniqueInput>
-    update?: Enumerable<PostUpdateWithWhereUniqueWithoutCruiseInput>
-    updateMany?: Enumerable<PostUpdateManyWithWhereWithoutCruiseInput>
-    deleteMany?: Enumerable<PostScalarWhereInput>
-  }
-
-  export type CommentUncheckedUpdateManyWithoutCruiseInput = {
-    create?: XOR<Enumerable<CommentCreateWithoutCruiseInput>, Enumerable<CommentUncheckedCreateWithoutCruiseInput>>
-    connectOrCreate?: Enumerable<CommentCreateOrConnectWithoutCruiseInput>
-    upsert?: Enumerable<CommentUpsertWithWhereUniqueWithoutCruiseInput>
-    createMany?: CommentCreateManyCruiseInputEnvelope
-    connect?: Enumerable<CommentWhereUniqueInput>
-    set?: Enumerable<CommentWhereUniqueInput>
-    disconnect?: Enumerable<CommentWhereUniqueInput>
-    delete?: Enumerable<CommentWhereUniqueInput>
-    update?: Enumerable<CommentUpdateWithWhereUniqueWithoutCruiseInput>
-    updateMany?: Enumerable<CommentUpdateManyWithWhereWithoutCruiseInput>
-    deleteMany?: Enumerable<CommentScalarWhereInput>
-  }
-
-  export type PostUncheckedUpdateManyWithoutCruiseInput = {
-    create?: XOR<Enumerable<PostCreateWithoutCruiseInput>, Enumerable<PostUncheckedCreateWithoutCruiseInput>>
-    connectOrCreate?: Enumerable<PostCreateOrConnectWithoutCruiseInput>
-    upsert?: Enumerable<PostUpsertWithWhereUniqueWithoutCruiseInput>
-    createMany?: PostCreateManyCruiseInputEnvelope
-    connect?: Enumerable<PostWhereUniqueInput>
-    set?: Enumerable<PostWhereUniqueInput>
-    disconnect?: Enumerable<PostWhereUniqueInput>
-    delete?: Enumerable<PostWhereUniqueInput>
-    update?: Enumerable<PostUpdateWithWhereUniqueWithoutCruiseInput>
-    updateMany?: Enumerable<PostUpdateManyWithWhereWithoutCruiseInput>
-    deleteMany?: Enumerable<PostScalarWhereInput>
-  }
-
-  export type CruiseCreateManykissesInput = {
-    set: Enumerable<string>
-  }
-
-  export type CruiseCreateManyheartsInput = {
-    set: Enumerable<string>
-  }
-
-  export type CruiseCreateManyhotInput = {
-    set: Enumerable<string>
-  }
-
-  export type CruiseCreateManyhashtagsInput = {
     set: Enumerable<string>
   }
 
@@ -7882,12 +6391,6 @@ export namespace Prisma {
     create?: XOR<ChallengeCreateWithoutCommentsInput, ChallengeUncheckedCreateWithoutCommentsInput>
     connectOrCreate?: ChallengeCreateOrConnectWithoutCommentsInput
     connect?: ChallengeWhereUniqueInput
-  }
-
-  export type CruiseCreateNestedOneWithoutCommentsInput = {
-    create?: XOR<CruiseCreateWithoutCommentsInput, CruiseUncheckedCreateWithoutCommentsInput>
-    connectOrCreate?: CruiseCreateOrConnectWithoutCommentsInput
-    connect?: CruiseWhereUniqueInput
   }
 
   export type EnumEntityTypeFieldUpdateOperationsInput = {
@@ -7932,16 +6435,6 @@ export namespace Prisma {
     disconnect?: boolean
     delete?: boolean
     update?: XOR<ChallengeUpdateWithoutCommentsInput, ChallengeUncheckedUpdateWithoutCommentsInput>
-  }
-
-  export type CruiseUpdateOneWithoutCommentsInput = {
-    create?: XOR<CruiseCreateWithoutCommentsInput, CruiseUncheckedCreateWithoutCommentsInput>
-    connectOrCreate?: CruiseCreateOrConnectWithoutCommentsInput
-    upsert?: CruiseUpsertWithoutCommentsInput
-    connect?: CruiseWhereUniqueInput
-    disconnect?: boolean
-    delete?: boolean
-    update?: XOR<CruiseUpdateWithoutCommentsInput, CruiseUncheckedUpdateWithoutCommentsInput>
   }
 
   export type UserUpdateOneWithoutCommentInput = {
@@ -8286,6 +6779,7 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -8293,12 +6787,9 @@ export namespace Prisma {
     location?: InputJsonValue | null
     following?: UserCreateNestedManyWithoutFollowersInput
     posts?: PostCreateNestedManyWithoutUserInput
-    cruises?: CruiseCreateNestedManyWithoutUserInput
     comment?: CommentCreateNestedManyWithoutUserInput
     challenges?: ChallengeCreateNestedManyWithoutUserInput
-    cruiseFollowing?: CruiseCreateNestedManyWithoutFollowersInput
     challengeFollowing?: ChallengeCreateNestedManyWithoutFollowersInput
-    Cruise?: CruiseCreateNestedManyWithoutUserInput
     Comment?: CommentCreateNestedManyWithoutUserInput
     Challenge?: ChallengeCreateNestedManyWithoutUserInput
     peek?: PeekCreateNestedOneWithoutUserInput
@@ -8312,16 +6803,15 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
     updated?: Date | string
     location?: InputJsonValue | null
     posts?: PostUncheckedCreateNestedManyWithoutUserInput
-    cruises?: CruiseUncheckedCreateNestedManyWithoutUserInput
     comment?: CommentUncheckedCreateNestedManyWithoutUserInput
     challenges?: ChallengeUncheckedCreateNestedManyWithoutUserInput
-    Cruise?: CruiseUncheckedCreateNestedManyWithoutUserInput
     Comment?: CommentUncheckedCreateNestedManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateNestedManyWithoutUserInput
     peek?: PeekUncheckedCreateNestedOneWithoutUserInput
@@ -8339,6 +6829,7 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -8346,12 +6837,9 @@ export namespace Prisma {
     location?: InputJsonValue | null
     followers?: UserCreateNestedManyWithoutFollowingInput
     posts?: PostCreateNestedManyWithoutUserInput
-    cruises?: CruiseCreateNestedManyWithoutUserInput
     comment?: CommentCreateNestedManyWithoutUserInput
     challenges?: ChallengeCreateNestedManyWithoutUserInput
-    cruiseFollowing?: CruiseCreateNestedManyWithoutFollowersInput
     challengeFollowing?: ChallengeCreateNestedManyWithoutFollowersInput
-    Cruise?: CruiseCreateNestedManyWithoutUserInput
     Comment?: CommentCreateNestedManyWithoutUserInput
     Challenge?: ChallengeCreateNestedManyWithoutUserInput
     peek?: PeekCreateNestedOneWithoutUserInput
@@ -8365,16 +6853,15 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
     updated?: Date | string
     location?: InputJsonValue | null
     posts?: PostUncheckedCreateNestedManyWithoutUserInput
-    cruises?: CruiseUncheckedCreateNestedManyWithoutUserInput
     comment?: CommentUncheckedCreateNestedManyWithoutUserInput
     challenges?: ChallengeUncheckedCreateNestedManyWithoutUserInput
-    Cruise?: CruiseUncheckedCreateNestedManyWithoutUserInput
     Comment?: CommentUncheckedCreateNestedManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateNestedManyWithoutUserInput
     peek?: PeekUncheckedCreateNestedOneWithoutUserInput
@@ -8400,9 +6887,7 @@ export namespace Prisma {
     hearts?: PostCreateheartsInput | Enumerable<string>
     hot?: PostCreatehotInput | Enumerable<string>
     comments?: CommentCreateNestedManyWithoutPostInput
-    cruises?: CruiseCreateNestedManyWithoutPostInput
     challenge?: ChallengeCreateNestedOneWithoutPostInput
-    Cruise?: CruiseCreateNestedOneWithoutPostsInput
     Challenge?: ChallengeCreateNestedOneWithoutPostsInput
   }
 
@@ -8418,13 +6903,11 @@ export namespace Prisma {
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
     challengeId?: number | null
-    cruiseId?: number | null
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
     kisses?: PostCreatekissesInput | Enumerable<string>
     hearts?: PostCreateheartsInput | Enumerable<string>
     hot?: PostCreatehotInput | Enumerable<string>
     comments?: CommentUncheckedCreateNestedManyWithoutPostInput
-    cruises?: CruiseUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostCreateOrConnectWithoutUserInput = {
@@ -8434,56 +6917,6 @@ export namespace Prisma {
 
   export type PostCreateManyUserInputEnvelope = {
     data: Enumerable<PostCreateManyUserInput>
-    skipDuplicates?: boolean
-  }
-
-  export type CruiseCreateWithoutUserInput = {
-    cursor?: string
-    slogan: string
-    attachmentType?: AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: string | null
-    reaction?: InputJsonValue | null
-    created?: Date | string
-    updated?: Date | string
-    kisses?: CruiseCreatekissesInput | Enumerable<string>
-    hearts?: CruiseCreateheartsInput | Enumerable<string>
-    hot?: CruiseCreatehotInput | Enumerable<string>
-    hashtags?: CruiseCreatehashtagsInput | Enumerable<string>
-    user: UserCreateNestedOneWithoutCruiseInput
-    followers?: UserCreateNestedManyWithoutCruiseFollowingInput
-    Post?: PostCreateNestedOneWithoutCruisesInput
-    comments?: CommentCreateNestedManyWithoutCruiseInput
-    posts?: PostCreateNestedManyWithoutCruiseInput
-  }
-
-  export type CruiseUncheckedCreateWithoutUserInput = {
-    id?: number
-    cursor?: string
-    slogan: string
-    attachmentType?: AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: string | null
-    userId: string
-    reaction?: InputJsonValue | null
-    created?: Date | string
-    updated?: Date | string
-    postId?: number | null
-    kisses?: CruiseCreatekissesInput | Enumerable<string>
-    hearts?: CruiseCreateheartsInput | Enumerable<string>
-    hot?: CruiseCreatehotInput | Enumerable<string>
-    hashtags?: CruiseCreatehashtagsInput | Enumerable<string>
-    comments?: CommentUncheckedCreateNestedManyWithoutCruiseInput
-    posts?: PostUncheckedCreateNestedManyWithoutCruiseInput
-  }
-
-  export type CruiseCreateOrConnectWithoutUserInput = {
-    where: CruiseWhereUniqueInput
-    create: XOR<CruiseCreateWithoutUserInput, CruiseUncheckedCreateWithoutUserInput>
-  }
-
-  export type CruiseCreateManyUserInputEnvelope = {
-    data: Enumerable<CruiseCreateManyUserInput>
     skipDuplicates?: boolean
   }
 
@@ -8504,7 +6937,6 @@ export namespace Prisma {
     user: UserCreateNestedOneWithoutCommentInput
     post?: PostCreateNestedOneWithoutCommentsInput
     challenge?: ChallengeCreateNestedOneWithoutCommentsInput
-    cruise?: CruiseCreateNestedOneWithoutCommentsInput
   }
 
   export type CommentUncheckedCreateWithoutUserInput = {
@@ -8522,7 +6954,6 @@ export namespace Prisma {
     updated?: Date | string
     postId?: number | null
     challengeId?: number | null
-    cruiseId?: number | null
     kisses?: CommentCreatekissesInput | Enumerable<string>
     hearts?: CommentCreateheartsInput | Enumerable<string>
     hot?: CommentCreatehotInput | Enumerable<string>
@@ -8590,52 +7021,6 @@ export namespace Prisma {
   export type ChallengeCreateManyUserInputEnvelope = {
     data: Enumerable<ChallengeCreateManyUserInput>
     skipDuplicates?: boolean
-  }
-
-  export type CruiseCreateWithoutFollowersInput = {
-    cursor?: string
-    slogan: string
-    attachmentType?: AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: string | null
-    reaction?: InputJsonValue | null
-    created?: Date | string
-    updated?: Date | string
-    kisses?: CruiseCreatekissesInput | Enumerable<string>
-    hearts?: CruiseCreateheartsInput | Enumerable<string>
-    hot?: CruiseCreatehotInput | Enumerable<string>
-    hashtags?: CruiseCreatehashtagsInput | Enumerable<string>
-    user: UserCreateNestedOneWithoutCruiseInput
-    User?: UserCreateNestedOneWithoutCruisesInput
-    Post?: PostCreateNestedOneWithoutCruisesInput
-    comments?: CommentCreateNestedManyWithoutCruiseInput
-    posts?: PostCreateNestedManyWithoutCruiseInput
-  }
-
-  export type CruiseUncheckedCreateWithoutFollowersInput = {
-    id?: number
-    cursor?: string
-    slogan: string
-    attachmentType?: AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: string | null
-    userId: string
-    reaction?: InputJsonValue | null
-    created?: Date | string
-    updated?: Date | string
-    userUserId?: number | null
-    postId?: number | null
-    kisses?: CruiseCreatekissesInput | Enumerable<string>
-    hearts?: CruiseCreateheartsInput | Enumerable<string>
-    hot?: CruiseCreatehotInput | Enumerable<string>
-    hashtags?: CruiseCreatehashtagsInput | Enumerable<string>
-    comments?: CommentUncheckedCreateNestedManyWithoutCruiseInput
-    posts?: PostUncheckedCreateNestedManyWithoutCruiseInput
-  }
-
-  export type CruiseCreateOrConnectWithoutFollowersInput = {
-    where: CruiseWhereUniqueInput
-    create: XOR<CruiseCreateWithoutFollowersInput, CruiseUncheckedCreateWithoutFollowersInput>
   }
 
   export type ChallengeCreateWithoutFollowersInput = {
@@ -8733,6 +7118,7 @@ export namespace Prisma {
     lastName?: StringFilter | string
     userName?: StringNullableFilter | string | null
     bio?: StringNullableFilter | string | null
+    cruise?: StringNullableFilter | string | null
     email?: StringFilter | string
     imgUrl?: StringNullableFilter | string | null
     created?: DateTimeFilter | Date | string
@@ -8792,45 +7178,6 @@ export namespace Prisma {
     hearts?: StringNullableListFilter
     hot?: StringNullableListFilter
     challengeId?: IntNullableFilter | number | null
-    cruiseId?: IntNullableFilter | number | null
-  }
-
-  export type CruiseUpsertWithWhereUniqueWithoutUserInput = {
-    where: CruiseWhereUniqueInput
-    update: XOR<CruiseUpdateWithoutUserInput, CruiseUncheckedUpdateWithoutUserInput>
-    create: XOR<CruiseCreateWithoutUserInput, CruiseUncheckedCreateWithoutUserInput>
-  }
-
-  export type CruiseUpdateWithWhereUniqueWithoutUserInput = {
-    where: CruiseWhereUniqueInput
-    data: XOR<CruiseUpdateWithoutUserInput, CruiseUncheckedUpdateWithoutUserInput>
-  }
-
-  export type CruiseUpdateManyWithWhereWithoutUserInput = {
-    where: CruiseScalarWhereInput
-    data: XOR<CruiseUpdateManyMutationInput, CruiseUncheckedUpdateManyWithoutCruisesInput>
-  }
-
-  export type CruiseScalarWhereInput = {
-    AND?: Enumerable<CruiseScalarWhereInput>
-    OR?: Enumerable<CruiseScalarWhereInput>
-    NOT?: Enumerable<CruiseScalarWhereInput>
-    id?: IntFilter | number
-    cursor?: StringFilter | string
-    slogan?: StringFilter | string
-    attachmentType?: EnumAttachmentTypeNullableFilter | AttachmentType | null
-    attachmentMeta?: JsonNullableFilter
-    attachmentUrl?: StringNullableFilter | string | null
-    userId?: StringFilter | string
-    reaction?: JsonNullableFilter
-    kisses?: StringNullableListFilter
-    hearts?: StringNullableListFilter
-    hot?: StringNullableListFilter
-    hashtags?: StringNullableListFilter
-    created?: DateTimeFilter | Date | string
-    updated?: DateTimeFilter | Date | string
-    userUserId?: IntNullableFilter | number | null
-    postId?: IntNullableFilter | number | null
   }
 
   export type CommentUpsertWithWhereUniqueWithoutUserInput = {
@@ -8870,7 +7217,6 @@ export namespace Prisma {
     updated?: DateTimeFilter | Date | string
     postId?: IntNullableFilter | number | null
     challengeId?: IntNullableFilter | number | null
-    cruiseId?: IntNullableFilter | number | null
     userUserId?: IntNullableFilter | number | null
   }
 
@@ -8911,22 +7257,6 @@ export namespace Prisma {
     created?: DateTimeFilter | Date | string
     updated?: DateTimeFilter | Date | string
     userUserId?: IntNullableFilter | number | null
-  }
-
-  export type CruiseUpsertWithWhereUniqueWithoutFollowersInput = {
-    where: CruiseWhereUniqueInput
-    update: XOR<CruiseUpdateWithoutFollowersInput, CruiseUncheckedUpdateWithoutFollowersInput>
-    create: XOR<CruiseCreateWithoutFollowersInput, CruiseUncheckedCreateWithoutFollowersInput>
-  }
-
-  export type CruiseUpdateWithWhereUniqueWithoutFollowersInput = {
-    where: CruiseWhereUniqueInput
-    data: XOR<CruiseUpdateWithoutFollowersInput, CruiseUncheckedUpdateWithoutFollowersInput>
-  }
-
-  export type CruiseUpdateManyWithWhereWithoutFollowersInput = {
-    where: CruiseScalarWhereInput
-    data: XOR<CruiseUpdateManyMutationInput, CruiseUncheckedUpdateManyWithoutCruiseFollowingInput>
   }
 
   export type ChallengeUpsertWithWhereUniqueWithoutFollowersInput = {
@@ -8970,6 +7300,7 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -8977,12 +7308,9 @@ export namespace Prisma {
     location?: InputJsonValue | null
     following?: UserCreateNestedManyWithoutFollowersInput
     followers?: UserCreateNestedManyWithoutFollowingInput
-    cruises?: CruiseCreateNestedManyWithoutUserInput
     comment?: CommentCreateNestedManyWithoutUserInput
     challenges?: ChallengeCreateNestedManyWithoutUserInput
-    cruiseFollowing?: CruiseCreateNestedManyWithoutFollowersInput
     challengeFollowing?: ChallengeCreateNestedManyWithoutFollowersInput
-    Cruise?: CruiseCreateNestedManyWithoutUserInput
     Comment?: CommentCreateNestedManyWithoutUserInput
     Challenge?: ChallengeCreateNestedManyWithoutUserInput
     peek?: PeekCreateNestedOneWithoutUserInput
@@ -8996,15 +7324,14 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
     updated?: Date | string
     location?: InputJsonValue | null
-    cruises?: CruiseUncheckedCreateNestedManyWithoutUserInput
     comment?: CommentUncheckedCreateNestedManyWithoutUserInput
     challenges?: ChallengeUncheckedCreateNestedManyWithoutUserInput
-    Cruise?: CruiseUncheckedCreateNestedManyWithoutUserInput
     Comment?: CommentUncheckedCreateNestedManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateNestedManyWithoutUserInput
     peek?: PeekUncheckedCreateNestedOneWithoutUserInput
@@ -9031,7 +7358,6 @@ export namespace Prisma {
     hot?: CommentCreatehotInput | Enumerable<string>
     user: UserCreateNestedOneWithoutCommentInput
     challenge?: ChallengeCreateNestedOneWithoutCommentsInput
-    cruise?: CruiseCreateNestedOneWithoutCommentsInput
     User?: UserCreateNestedOneWithoutCommentInput
   }
 
@@ -9049,7 +7375,6 @@ export namespace Prisma {
     created?: Date | string
     updated?: Date | string
     challengeId?: number | null
-    cruiseId?: number | null
     userUserId?: number | null
     kisses?: CommentCreatekissesInput | Enumerable<string>
     hearts?: CommentCreateheartsInput | Enumerable<string>
@@ -9063,56 +7388,6 @@ export namespace Prisma {
 
   export type CommentCreateManyPostInputEnvelope = {
     data: Enumerable<CommentCreateManyPostInput>
-    skipDuplicates?: boolean
-  }
-
-  export type CruiseCreateWithoutPostInput = {
-    cursor?: string
-    slogan: string
-    attachmentType?: AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: string | null
-    reaction?: InputJsonValue | null
-    created?: Date | string
-    updated?: Date | string
-    kisses?: CruiseCreatekissesInput | Enumerable<string>
-    hearts?: CruiseCreateheartsInput | Enumerable<string>
-    hot?: CruiseCreatehotInput | Enumerable<string>
-    hashtags?: CruiseCreatehashtagsInput | Enumerable<string>
-    user: UserCreateNestedOneWithoutCruiseInput
-    followers?: UserCreateNestedManyWithoutCruiseFollowingInput
-    User?: UserCreateNestedOneWithoutCruisesInput
-    comments?: CommentCreateNestedManyWithoutCruiseInput
-    posts?: PostCreateNestedManyWithoutCruiseInput
-  }
-
-  export type CruiseUncheckedCreateWithoutPostInput = {
-    id?: number
-    cursor?: string
-    slogan: string
-    attachmentType?: AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: string | null
-    userId: string
-    reaction?: InputJsonValue | null
-    created?: Date | string
-    updated?: Date | string
-    userUserId?: number | null
-    kisses?: CruiseCreatekissesInput | Enumerable<string>
-    hearts?: CruiseCreateheartsInput | Enumerable<string>
-    hot?: CruiseCreatehotInput | Enumerable<string>
-    hashtags?: CruiseCreatehashtagsInput | Enumerable<string>
-    comments?: CommentUncheckedCreateNestedManyWithoutCruiseInput
-    posts?: PostUncheckedCreateNestedManyWithoutCruiseInput
-  }
-
-  export type CruiseCreateOrConnectWithoutPostInput = {
-    where: CruiseWhereUniqueInput
-    create: XOR<CruiseCreateWithoutPostInput, CruiseUncheckedCreateWithoutPostInput>
-  }
-
-  export type CruiseCreateManyPostInputEnvelope = {
-    data: Enumerable<CruiseCreateManyPostInput>
     skipDuplicates?: boolean
   }
 
@@ -9163,51 +7438,6 @@ export namespace Prisma {
   export type ChallengeCreateOrConnectWithoutPostInput = {
     where: ChallengeWhereUniqueInput
     create: XOR<ChallengeCreateWithoutPostInput, ChallengeUncheckedCreateWithoutPostInput>
-  }
-
-  export type CruiseCreateWithoutPostsInput = {
-    cursor?: string
-    slogan: string
-    attachmentType?: AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: string | null
-    reaction?: InputJsonValue | null
-    created?: Date | string
-    updated?: Date | string
-    kisses?: CruiseCreatekissesInput | Enumerable<string>
-    hearts?: CruiseCreateheartsInput | Enumerable<string>
-    hot?: CruiseCreatehotInput | Enumerable<string>
-    hashtags?: CruiseCreatehashtagsInput | Enumerable<string>
-    user: UserCreateNestedOneWithoutCruiseInput
-    followers?: UserCreateNestedManyWithoutCruiseFollowingInput
-    User?: UserCreateNestedOneWithoutCruisesInput
-    Post?: PostCreateNestedOneWithoutCruisesInput
-    comments?: CommentCreateNestedManyWithoutCruiseInput
-  }
-
-  export type CruiseUncheckedCreateWithoutPostsInput = {
-    id?: number
-    cursor?: string
-    slogan: string
-    attachmentType?: AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: string | null
-    userId: string
-    reaction?: InputJsonValue | null
-    created?: Date | string
-    updated?: Date | string
-    userUserId?: number | null
-    postId?: number | null
-    kisses?: CruiseCreatekissesInput | Enumerable<string>
-    hearts?: CruiseCreateheartsInput | Enumerable<string>
-    hot?: CruiseCreatehotInput | Enumerable<string>
-    hashtags?: CruiseCreatehashtagsInput | Enumerable<string>
-    comments?: CommentUncheckedCreateNestedManyWithoutCruiseInput
-  }
-
-  export type CruiseCreateOrConnectWithoutPostsInput = {
-    where: CruiseWhereUniqueInput
-    create: XOR<CruiseCreateWithoutPostsInput, CruiseUncheckedCreateWithoutPostsInput>
   }
 
   export type ChallengeCreateWithoutPostsInput = {
@@ -9271,6 +7501,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9278,12 +7509,9 @@ export namespace Prisma {
     location?: InputJsonValue | null
     following?: UserUpdateManyWithoutFollowersInput
     followers?: UserUpdateManyWithoutFollowingInput
-    cruises?: CruiseUpdateManyWithoutUserInput
     comment?: CommentUpdateManyWithoutUserInput
     challenges?: ChallengeUpdateManyWithoutUserInput
-    cruiseFollowing?: CruiseUpdateManyWithoutFollowersInput
     challengeFollowing?: ChallengeUpdateManyWithoutFollowersInput
-    Cruise?: CruiseUpdateManyWithoutUserInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutUserInput
     peek?: PeekUpdateOneWithoutUserInput
@@ -9297,15 +7525,14 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: InputJsonValue | null
-    cruises?: CruiseUncheckedUpdateManyWithoutUserInput
     comment?: CommentUncheckedUpdateManyWithoutUserInput
     challenges?: ChallengeUncheckedUpdateManyWithoutUserInput
-    Cruise?: CruiseUncheckedUpdateManyWithoutUserInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutUserInput
     peek?: PeekUncheckedUpdateOneWithoutUserInput
@@ -9325,22 +7552,6 @@ export namespace Prisma {
   export type CommentUpdateManyWithWhereWithoutPostInput = {
     where: CommentScalarWhereInput
     data: XOR<CommentUpdateManyMutationInput, CommentUncheckedUpdateManyWithoutCommentsInput>
-  }
-
-  export type CruiseUpsertWithWhereUniqueWithoutPostInput = {
-    where: CruiseWhereUniqueInput
-    update: XOR<CruiseUpdateWithoutPostInput, CruiseUncheckedUpdateWithoutPostInput>
-    create: XOR<CruiseCreateWithoutPostInput, CruiseUncheckedCreateWithoutPostInput>
-  }
-
-  export type CruiseUpdateWithWhereUniqueWithoutPostInput = {
-    where: CruiseWhereUniqueInput
-    data: XOR<CruiseUpdateWithoutPostInput, CruiseUncheckedUpdateWithoutPostInput>
-  }
-
-  export type CruiseUpdateManyWithWhereWithoutPostInput = {
-    where: CruiseScalarWhereInput
-    data: XOR<CruiseUpdateManyMutationInput, CruiseUncheckedUpdateManyWithoutCruisesInput>
   }
 
   export type ChallengeUpsertWithoutPostInput = {
@@ -9392,51 +7603,6 @@ export namespace Prisma {
     posts?: PostUncheckedUpdateManyWithoutChallengeInput
   }
 
-  export type CruiseUpsertWithoutPostsInput = {
-    update: XOR<CruiseUpdateWithoutPostsInput, CruiseUncheckedUpdateWithoutPostsInput>
-    create: XOR<CruiseCreateWithoutPostsInput, CruiseUncheckedCreateWithoutPostsInput>
-  }
-
-  export type CruiseUpdateWithoutPostsInput = {
-    cursor?: StringFieldUpdateOperationsInput | string
-    slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    reaction?: InputJsonValue | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    kisses?: CruiseUpdatekissesInput | Enumerable<string>
-    hearts?: CruiseUpdateheartsInput | Enumerable<string>
-    hot?: CruiseUpdatehotInput | Enumerable<string>
-    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
-    user?: UserUpdateOneRequiredWithoutCruiseInput
-    followers?: UserUpdateManyWithoutCruiseFollowingInput
-    User?: UserUpdateOneWithoutCruisesInput
-    Post?: PostUpdateOneWithoutCruisesInput
-    comments?: CommentUpdateManyWithoutCruiseInput
-  }
-
-  export type CruiseUncheckedUpdateWithoutPostsInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    cursor?: StringFieldUpdateOperationsInput | string
-    slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    userId?: StringFieldUpdateOperationsInput | string
-    reaction?: InputJsonValue | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    userUserId?: NullableIntFieldUpdateOperationsInput | number | null
-    postId?: NullableIntFieldUpdateOperationsInput | number | null
-    kisses?: CruiseUpdatekissesInput | Enumerable<string>
-    hearts?: CruiseUpdateheartsInput | Enumerable<string>
-    hot?: CruiseUpdatehotInput | Enumerable<string>
-    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
-    comments?: CommentUncheckedUpdateManyWithoutCruiseInput
-  }
-
   export type ChallengeUpsertWithoutPostsInput = {
     update: XOR<ChallengeUpdateWithoutPostsInput, ChallengeUncheckedUpdateWithoutPostsInput>
     create: XOR<ChallengeCreateWithoutPostsInput, ChallengeUncheckedCreateWithoutPostsInput>
@@ -9486,512 +7652,6 @@ export namespace Prisma {
     Post?: PostUncheckedUpdateManyWithoutChallengeInput
   }
 
-  export type UserCreateWithoutCruiseInput = {
-    uid: string
-    cursor?: string
-    firstName: string
-    lastName: string
-    userName?: string | null
-    bio?: string | null
-    email: string
-    imgUrl?: string | null
-    created?: Date | string
-    updated?: Date | string
-    location?: InputJsonValue | null
-    following?: UserCreateNestedManyWithoutFollowersInput
-    followers?: UserCreateNestedManyWithoutFollowingInput
-    posts?: PostCreateNestedManyWithoutUserInput
-    cruises?: CruiseCreateNestedManyWithoutUserInput
-    comment?: CommentCreateNestedManyWithoutUserInput
-    challenges?: ChallengeCreateNestedManyWithoutUserInput
-    cruiseFollowing?: CruiseCreateNestedManyWithoutFollowersInput
-    challengeFollowing?: ChallengeCreateNestedManyWithoutFollowersInput
-    Comment?: CommentCreateNestedManyWithoutUserInput
-    Challenge?: ChallengeCreateNestedManyWithoutUserInput
-    peek?: PeekCreateNestedOneWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutCruiseInput = {
-    userId?: number
-    uid: string
-    cursor?: string
-    firstName: string
-    lastName: string
-    userName?: string | null
-    bio?: string | null
-    email: string
-    imgUrl?: string | null
-    created?: Date | string
-    updated?: Date | string
-    location?: InputJsonValue | null
-    posts?: PostUncheckedCreateNestedManyWithoutUserInput
-    cruises?: CruiseUncheckedCreateNestedManyWithoutUserInput
-    comment?: CommentUncheckedCreateNestedManyWithoutUserInput
-    challenges?: ChallengeUncheckedCreateNestedManyWithoutUserInput
-    Comment?: CommentUncheckedCreateNestedManyWithoutUserInput
-    Challenge?: ChallengeUncheckedCreateNestedManyWithoutUserInput
-    peek?: PeekUncheckedCreateNestedOneWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutCruiseInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutCruiseInput, UserUncheckedCreateWithoutCruiseInput>
-  }
-
-  export type UserCreateWithoutCruiseFollowingInput = {
-    uid: string
-    cursor?: string
-    firstName: string
-    lastName: string
-    userName?: string | null
-    bio?: string | null
-    email: string
-    imgUrl?: string | null
-    created?: Date | string
-    updated?: Date | string
-    location?: InputJsonValue | null
-    following?: UserCreateNestedManyWithoutFollowersInput
-    followers?: UserCreateNestedManyWithoutFollowingInput
-    posts?: PostCreateNestedManyWithoutUserInput
-    cruises?: CruiseCreateNestedManyWithoutUserInput
-    comment?: CommentCreateNestedManyWithoutUserInput
-    challenges?: ChallengeCreateNestedManyWithoutUserInput
-    challengeFollowing?: ChallengeCreateNestedManyWithoutFollowersInput
-    Cruise?: CruiseCreateNestedManyWithoutUserInput
-    Comment?: CommentCreateNestedManyWithoutUserInput
-    Challenge?: ChallengeCreateNestedManyWithoutUserInput
-    peek?: PeekCreateNestedOneWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutCruiseFollowingInput = {
-    userId?: number
-    uid: string
-    cursor?: string
-    firstName: string
-    lastName: string
-    userName?: string | null
-    bio?: string | null
-    email: string
-    imgUrl?: string | null
-    created?: Date | string
-    updated?: Date | string
-    location?: InputJsonValue | null
-    posts?: PostUncheckedCreateNestedManyWithoutUserInput
-    cruises?: CruiseUncheckedCreateNestedManyWithoutUserInput
-    comment?: CommentUncheckedCreateNestedManyWithoutUserInput
-    challenges?: ChallengeUncheckedCreateNestedManyWithoutUserInput
-    Cruise?: CruiseUncheckedCreateNestedManyWithoutUserInput
-    Comment?: CommentUncheckedCreateNestedManyWithoutUserInput
-    Challenge?: ChallengeUncheckedCreateNestedManyWithoutUserInput
-    peek?: PeekUncheckedCreateNestedOneWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutCruiseFollowingInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutCruiseFollowingInput, UserUncheckedCreateWithoutCruiseFollowingInput>
-  }
-
-  export type UserCreateWithoutCruisesInput = {
-    uid: string
-    cursor?: string
-    firstName: string
-    lastName: string
-    userName?: string | null
-    bio?: string | null
-    email: string
-    imgUrl?: string | null
-    created?: Date | string
-    updated?: Date | string
-    location?: InputJsonValue | null
-    following?: UserCreateNestedManyWithoutFollowersInput
-    followers?: UserCreateNestedManyWithoutFollowingInput
-    posts?: PostCreateNestedManyWithoutUserInput
-    comment?: CommentCreateNestedManyWithoutUserInput
-    challenges?: ChallengeCreateNestedManyWithoutUserInput
-    cruiseFollowing?: CruiseCreateNestedManyWithoutFollowersInput
-    challengeFollowing?: ChallengeCreateNestedManyWithoutFollowersInput
-    Cruise?: CruiseCreateNestedManyWithoutUserInput
-    Comment?: CommentCreateNestedManyWithoutUserInput
-    Challenge?: ChallengeCreateNestedManyWithoutUserInput
-    peek?: PeekCreateNestedOneWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutCruisesInput = {
-    userId?: number
-    uid: string
-    cursor?: string
-    firstName: string
-    lastName: string
-    userName?: string | null
-    bio?: string | null
-    email: string
-    imgUrl?: string | null
-    created?: Date | string
-    updated?: Date | string
-    location?: InputJsonValue | null
-    posts?: PostUncheckedCreateNestedManyWithoutUserInput
-    comment?: CommentUncheckedCreateNestedManyWithoutUserInput
-    challenges?: ChallengeUncheckedCreateNestedManyWithoutUserInput
-    Cruise?: CruiseUncheckedCreateNestedManyWithoutUserInput
-    Comment?: CommentUncheckedCreateNestedManyWithoutUserInput
-    Challenge?: ChallengeUncheckedCreateNestedManyWithoutUserInput
-    peek?: PeekUncheckedCreateNestedOneWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutCruisesInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutCruisesInput, UserUncheckedCreateWithoutCruisesInput>
-  }
-
-  export type PostCreateWithoutCruisesInput = {
-    cursor?: string
-    attachmentUrl?: string | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentType?: AttachmentType | null
-    content: string
-    created?: Date | string
-    updated?: Date | string
-    reaction?: InputJsonValue | null
-    location?: InputJsonValue | null
-    hashtags?: PostCreatehashtagsInput | Enumerable<string>
-    kisses?: PostCreatekissesInput | Enumerable<string>
-    hearts?: PostCreateheartsInput | Enumerable<string>
-    hot?: PostCreatehotInput | Enumerable<string>
-    user: UserCreateNestedOneWithoutPostsInput
-    comments?: CommentCreateNestedManyWithoutPostInput
-    challenge?: ChallengeCreateNestedOneWithoutPostInput
-    Cruise?: CruiseCreateNestedOneWithoutPostsInput
-    Challenge?: ChallengeCreateNestedOneWithoutPostsInput
-  }
-
-  export type PostUncheckedCreateWithoutCruisesInput = {
-    id?: number
-    cursor?: string
-    userId: string
-    attachmentUrl?: string | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentType?: AttachmentType | null
-    content: string
-    created?: Date | string
-    updated?: Date | string
-    reaction?: InputJsonValue | null
-    location?: InputJsonValue | null
-    challengeId?: number | null
-    cruiseId?: number | null
-    hashtags?: PostCreatehashtagsInput | Enumerable<string>
-    kisses?: PostCreatekissesInput | Enumerable<string>
-    hearts?: PostCreateheartsInput | Enumerable<string>
-    hot?: PostCreatehotInput | Enumerable<string>
-    comments?: CommentUncheckedCreateNestedManyWithoutPostInput
-  }
-
-  export type PostCreateOrConnectWithoutCruisesInput = {
-    where: PostWhereUniqueInput
-    create: XOR<PostCreateWithoutCruisesInput, PostUncheckedCreateWithoutCruisesInput>
-  }
-
-  export type CommentCreateWithoutCruiseInput = {
-    cursor?: string
-    entityId: number
-    entityType: EntityType
-    comment: string
-    attachmentMeta?: InputJsonValue | null
-    attachmentType?: AttachmentType | null
-    attachmentUrl?: string | null
-    reaction?: InputJsonValue | null
-    created?: Date | string
-    updated?: Date | string
-    kisses?: CommentCreatekissesInput | Enumerable<string>
-    hearts?: CommentCreateheartsInput | Enumerable<string>
-    hot?: CommentCreatehotInput | Enumerable<string>
-    user: UserCreateNestedOneWithoutCommentInput
-    post?: PostCreateNestedOneWithoutCommentsInput
-    challenge?: ChallengeCreateNestedOneWithoutCommentsInput
-    User?: UserCreateNestedOneWithoutCommentInput
-  }
-
-  export type CommentUncheckedCreateWithoutCruiseInput = {
-    id?: number
-    cursor?: string
-    entityId: number
-    entityType: EntityType
-    comment: string
-    attachmentMeta?: InputJsonValue | null
-    attachmentType?: AttachmentType | null
-    attachmentUrl?: string | null
-    userId: string
-    reaction?: InputJsonValue | null
-    created?: Date | string
-    updated?: Date | string
-    postId?: number | null
-    challengeId?: number | null
-    userUserId?: number | null
-    kisses?: CommentCreatekissesInput | Enumerable<string>
-    hearts?: CommentCreateheartsInput | Enumerable<string>
-    hot?: CommentCreatehotInput | Enumerable<string>
-  }
-
-  export type CommentCreateOrConnectWithoutCruiseInput = {
-    where: CommentWhereUniqueInput
-    create: XOR<CommentCreateWithoutCruiseInput, CommentUncheckedCreateWithoutCruiseInput>
-  }
-
-  export type CommentCreateManyCruiseInputEnvelope = {
-    data: Enumerable<CommentCreateManyCruiseInput>
-    skipDuplicates?: boolean
-  }
-
-  export type PostCreateWithoutCruiseInput = {
-    cursor?: string
-    attachmentUrl?: string | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentType?: AttachmentType | null
-    content: string
-    created?: Date | string
-    updated?: Date | string
-    reaction?: InputJsonValue | null
-    location?: InputJsonValue | null
-    hashtags?: PostCreatehashtagsInput | Enumerable<string>
-    kisses?: PostCreatekissesInput | Enumerable<string>
-    hearts?: PostCreateheartsInput | Enumerable<string>
-    hot?: PostCreatehotInput | Enumerable<string>
-    user: UserCreateNestedOneWithoutPostsInput
-    comments?: CommentCreateNestedManyWithoutPostInput
-    cruises?: CruiseCreateNestedManyWithoutPostInput
-    challenge?: ChallengeCreateNestedOneWithoutPostInput
-    Challenge?: ChallengeCreateNestedOneWithoutPostsInput
-  }
-
-  export type PostUncheckedCreateWithoutCruiseInput = {
-    id?: number
-    cursor?: string
-    userId: string
-    attachmentUrl?: string | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentType?: AttachmentType | null
-    content: string
-    created?: Date | string
-    updated?: Date | string
-    reaction?: InputJsonValue | null
-    location?: InputJsonValue | null
-    challengeId?: number | null
-    hashtags?: PostCreatehashtagsInput | Enumerable<string>
-    kisses?: PostCreatekissesInput | Enumerable<string>
-    hearts?: PostCreateheartsInput | Enumerable<string>
-    hot?: PostCreatehotInput | Enumerable<string>
-    comments?: CommentUncheckedCreateNestedManyWithoutPostInput
-    cruises?: CruiseUncheckedCreateNestedManyWithoutPostInput
-  }
-
-  export type PostCreateOrConnectWithoutCruiseInput = {
-    where: PostWhereUniqueInput
-    create: XOR<PostCreateWithoutCruiseInput, PostUncheckedCreateWithoutCruiseInput>
-  }
-
-  export type PostCreateManyCruiseInputEnvelope = {
-    data: Enumerable<PostCreateManyCruiseInput>
-    skipDuplicates?: boolean
-  }
-
-  export type UserUpsertWithoutCruiseInput = {
-    update: XOR<UserUpdateWithoutCruiseInput, UserUncheckedUpdateWithoutCruiseInput>
-    create: XOR<UserCreateWithoutCruiseInput, UserUncheckedCreateWithoutCruiseInput>
-  }
-
-  export type UserUpdateWithoutCruiseInput = {
-    uid?: StringFieldUpdateOperationsInput | string
-    cursor?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
-    userName?: NullableStringFieldUpdateOperationsInput | string | null
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
-    imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    location?: InputJsonValue | null
-    following?: UserUpdateManyWithoutFollowersInput
-    followers?: UserUpdateManyWithoutFollowingInput
-    posts?: PostUpdateManyWithoutUserInput
-    cruises?: CruiseUpdateManyWithoutUserInput
-    comment?: CommentUpdateManyWithoutUserInput
-    challenges?: ChallengeUpdateManyWithoutUserInput
-    cruiseFollowing?: CruiseUpdateManyWithoutFollowersInput
-    challengeFollowing?: ChallengeUpdateManyWithoutFollowersInput
-    Comment?: CommentUpdateManyWithoutUserInput
-    Challenge?: ChallengeUpdateManyWithoutUserInput
-    peek?: PeekUpdateOneWithoutUserInput
-  }
-
-  export type UserUncheckedUpdateWithoutCruiseInput = {
-    userId?: IntFieldUpdateOperationsInput | number
-    uid?: StringFieldUpdateOperationsInput | string
-    cursor?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
-    userName?: NullableStringFieldUpdateOperationsInput | string | null
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
-    imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    location?: InputJsonValue | null
-    posts?: PostUncheckedUpdateManyWithoutUserInput
-    cruises?: CruiseUncheckedUpdateManyWithoutUserInput
-    comment?: CommentUncheckedUpdateManyWithoutUserInput
-    challenges?: ChallengeUncheckedUpdateManyWithoutUserInput
-    Comment?: CommentUncheckedUpdateManyWithoutUserInput
-    Challenge?: ChallengeUncheckedUpdateManyWithoutUserInput
-    peek?: PeekUncheckedUpdateOneWithoutUserInput
-  }
-
-  export type UserUpsertWithWhereUniqueWithoutCruiseFollowingInput = {
-    where: UserWhereUniqueInput
-    update: XOR<UserUpdateWithoutCruiseFollowingInput, UserUncheckedUpdateWithoutCruiseFollowingInput>
-    create: XOR<UserCreateWithoutCruiseFollowingInput, UserUncheckedCreateWithoutCruiseFollowingInput>
-  }
-
-  export type UserUpdateWithWhereUniqueWithoutCruiseFollowingInput = {
-    where: UserWhereUniqueInput
-    data: XOR<UserUpdateWithoutCruiseFollowingInput, UserUncheckedUpdateWithoutCruiseFollowingInput>
-  }
-
-  export type UserUpdateManyWithWhereWithoutCruiseFollowingInput = {
-    where: UserScalarWhereInput
-    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutFollowersInput>
-  }
-
-  export type UserUpsertWithoutCruisesInput = {
-    update: XOR<UserUpdateWithoutCruisesInput, UserUncheckedUpdateWithoutCruisesInput>
-    create: XOR<UserCreateWithoutCruisesInput, UserUncheckedCreateWithoutCruisesInput>
-  }
-
-  export type UserUpdateWithoutCruisesInput = {
-    uid?: StringFieldUpdateOperationsInput | string
-    cursor?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
-    userName?: NullableStringFieldUpdateOperationsInput | string | null
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
-    imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    location?: InputJsonValue | null
-    following?: UserUpdateManyWithoutFollowersInput
-    followers?: UserUpdateManyWithoutFollowingInput
-    posts?: PostUpdateManyWithoutUserInput
-    comment?: CommentUpdateManyWithoutUserInput
-    challenges?: ChallengeUpdateManyWithoutUserInput
-    cruiseFollowing?: CruiseUpdateManyWithoutFollowersInput
-    challengeFollowing?: ChallengeUpdateManyWithoutFollowersInput
-    Cruise?: CruiseUpdateManyWithoutUserInput
-    Comment?: CommentUpdateManyWithoutUserInput
-    Challenge?: ChallengeUpdateManyWithoutUserInput
-    peek?: PeekUpdateOneWithoutUserInput
-  }
-
-  export type UserUncheckedUpdateWithoutCruisesInput = {
-    userId?: IntFieldUpdateOperationsInput | number
-    uid?: StringFieldUpdateOperationsInput | string
-    cursor?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
-    userName?: NullableStringFieldUpdateOperationsInput | string | null
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
-    imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    location?: InputJsonValue | null
-    posts?: PostUncheckedUpdateManyWithoutUserInput
-    comment?: CommentUncheckedUpdateManyWithoutUserInput
-    challenges?: ChallengeUncheckedUpdateManyWithoutUserInput
-    Cruise?: CruiseUncheckedUpdateManyWithoutUserInput
-    Comment?: CommentUncheckedUpdateManyWithoutUserInput
-    Challenge?: ChallengeUncheckedUpdateManyWithoutUserInput
-    peek?: PeekUncheckedUpdateOneWithoutUserInput
-  }
-
-  export type PostUpsertWithoutCruisesInput = {
-    update: XOR<PostUpdateWithoutCruisesInput, PostUncheckedUpdateWithoutCruisesInput>
-    create: XOR<PostCreateWithoutCruisesInput, PostUncheckedCreateWithoutCruisesInput>
-  }
-
-  export type PostUpdateWithoutCruisesInput = {
-    cursor?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    content?: StringFieldUpdateOperationsInput | string
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    reaction?: InputJsonValue | null
-    location?: InputJsonValue | null
-    hashtags?: PostUpdatehashtagsInput | Enumerable<string>
-    kisses?: PostUpdatekissesInput | Enumerable<string>
-    hearts?: PostUpdateheartsInput | Enumerable<string>
-    hot?: PostUpdatehotInput | Enumerable<string>
-    user?: UserUpdateOneRequiredWithoutPostsInput
-    comments?: CommentUpdateManyWithoutPostInput
-    challenge?: ChallengeUpdateOneWithoutPostInput
-    Cruise?: CruiseUpdateOneWithoutPostsInput
-    Challenge?: ChallengeUpdateOneWithoutPostsInput
-  }
-
-  export type PostUncheckedUpdateWithoutCruisesInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    cursor?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    content?: StringFieldUpdateOperationsInput | string
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    reaction?: InputJsonValue | null
-    location?: InputJsonValue | null
-    challengeId?: NullableIntFieldUpdateOperationsInput | number | null
-    cruiseId?: NullableIntFieldUpdateOperationsInput | number | null
-    hashtags?: PostUpdatehashtagsInput | Enumerable<string>
-    kisses?: PostUpdatekissesInput | Enumerable<string>
-    hearts?: PostUpdateheartsInput | Enumerable<string>
-    hot?: PostUpdatehotInput | Enumerable<string>
-    comments?: CommentUncheckedUpdateManyWithoutPostInput
-  }
-
-  export type CommentUpsertWithWhereUniqueWithoutCruiseInput = {
-    where: CommentWhereUniqueInput
-    update: XOR<CommentUpdateWithoutCruiseInput, CommentUncheckedUpdateWithoutCruiseInput>
-    create: XOR<CommentCreateWithoutCruiseInput, CommentUncheckedCreateWithoutCruiseInput>
-  }
-
-  export type CommentUpdateWithWhereUniqueWithoutCruiseInput = {
-    where: CommentWhereUniqueInput
-    data: XOR<CommentUpdateWithoutCruiseInput, CommentUncheckedUpdateWithoutCruiseInput>
-  }
-
-  export type CommentUpdateManyWithWhereWithoutCruiseInput = {
-    where: CommentScalarWhereInput
-    data: XOR<CommentUpdateManyMutationInput, CommentUncheckedUpdateManyWithoutCommentsInput>
-  }
-
-  export type PostUpsertWithWhereUniqueWithoutCruiseInput = {
-    where: PostWhereUniqueInput
-    update: XOR<PostUpdateWithoutCruiseInput, PostUncheckedUpdateWithoutCruiseInput>
-    create: XOR<PostCreateWithoutCruiseInput, PostUncheckedCreateWithoutCruiseInput>
-  }
-
-  export type PostUpdateWithWhereUniqueWithoutCruiseInput = {
-    where: PostWhereUniqueInput
-    data: XOR<PostUpdateWithoutCruiseInput, PostUncheckedUpdateWithoutCruiseInput>
-  }
-
-  export type PostUpdateManyWithWhereWithoutCruiseInput = {
-    where: PostScalarWhereInput
-    data: XOR<PostUpdateManyMutationInput, PostUncheckedUpdateManyWithoutPostsInput>
-  }
-
   export type UserCreateWithoutCommentInput = {
     uid: string
     cursor?: string
@@ -9999,6 +7659,7 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -10007,12 +7668,9 @@ export namespace Prisma {
     following?: UserCreateNestedManyWithoutFollowersInput
     followers?: UserCreateNestedManyWithoutFollowingInput
     posts?: PostCreateNestedManyWithoutUserInput
-    cruises?: CruiseCreateNestedManyWithoutUserInput
     comment?: CommentCreateNestedManyWithoutUserInput
     challenges?: ChallengeCreateNestedManyWithoutUserInput
-    cruiseFollowing?: CruiseCreateNestedManyWithoutFollowersInput
     challengeFollowing?: ChallengeCreateNestedManyWithoutFollowersInput
-    Cruise?: CruiseCreateNestedManyWithoutUserInput
     Challenge?: ChallengeCreateNestedManyWithoutUserInput
     peek?: PeekCreateNestedOneWithoutUserInput
   }
@@ -10025,16 +7683,15 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
     updated?: Date | string
     location?: InputJsonValue | null
     posts?: PostUncheckedCreateNestedManyWithoutUserInput
-    cruises?: CruiseUncheckedCreateNestedManyWithoutUserInput
     comment?: CommentUncheckedCreateNestedManyWithoutUserInput
     challenges?: ChallengeUncheckedCreateNestedManyWithoutUserInput
-    Cruise?: CruiseUncheckedCreateNestedManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateNestedManyWithoutUserInput
     peek?: PeekUncheckedCreateNestedOneWithoutUserInput
   }
@@ -10059,9 +7716,7 @@ export namespace Prisma {
     hearts?: PostCreateheartsInput | Enumerable<string>
     hot?: PostCreatehotInput | Enumerable<string>
     user: UserCreateNestedOneWithoutPostsInput
-    cruises?: CruiseCreateNestedManyWithoutPostInput
     challenge?: ChallengeCreateNestedOneWithoutPostInput
-    Cruise?: CruiseCreateNestedOneWithoutPostsInput
     Challenge?: ChallengeCreateNestedOneWithoutPostsInput
   }
 
@@ -10078,12 +7733,10 @@ export namespace Prisma {
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
     challengeId?: number | null
-    cruiseId?: number | null
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
     kisses?: PostCreatekissesInput | Enumerable<string>
     hearts?: PostCreateheartsInput | Enumerable<string>
     hot?: PostCreatehotInput | Enumerable<string>
-    cruises?: CruiseUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostCreateOrConnectWithoutCommentsInput = {
@@ -10140,51 +7793,6 @@ export namespace Prisma {
     create: XOR<ChallengeCreateWithoutCommentsInput, ChallengeUncheckedCreateWithoutCommentsInput>
   }
 
-  export type CruiseCreateWithoutCommentsInput = {
-    cursor?: string
-    slogan: string
-    attachmentType?: AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: string | null
-    reaction?: InputJsonValue | null
-    created?: Date | string
-    updated?: Date | string
-    kisses?: CruiseCreatekissesInput | Enumerable<string>
-    hearts?: CruiseCreateheartsInput | Enumerable<string>
-    hot?: CruiseCreatehotInput | Enumerable<string>
-    hashtags?: CruiseCreatehashtagsInput | Enumerable<string>
-    user: UserCreateNestedOneWithoutCruiseInput
-    followers?: UserCreateNestedManyWithoutCruiseFollowingInput
-    User?: UserCreateNestedOneWithoutCruisesInput
-    Post?: PostCreateNestedOneWithoutCruisesInput
-    posts?: PostCreateNestedManyWithoutCruiseInput
-  }
-
-  export type CruiseUncheckedCreateWithoutCommentsInput = {
-    id?: number
-    cursor?: string
-    slogan: string
-    attachmentType?: AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: string | null
-    userId: string
-    reaction?: InputJsonValue | null
-    created?: Date | string
-    updated?: Date | string
-    userUserId?: number | null
-    postId?: number | null
-    kisses?: CruiseCreatekissesInput | Enumerable<string>
-    hearts?: CruiseCreateheartsInput | Enumerable<string>
-    hot?: CruiseCreatehotInput | Enumerable<string>
-    hashtags?: CruiseCreatehashtagsInput | Enumerable<string>
-    posts?: PostUncheckedCreateNestedManyWithoutCruiseInput
-  }
-
-  export type CruiseCreateOrConnectWithoutCommentsInput = {
-    where: CruiseWhereUniqueInput
-    create: XOR<CruiseCreateWithoutCommentsInput, CruiseUncheckedCreateWithoutCommentsInput>
-  }
-
   export type UserUpsertWithoutCommentInput = {
     update: XOR<UserUpdateWithoutCommentInput, UserUncheckedUpdateWithoutCommentInput>
     create: XOR<UserCreateWithoutCommentInput, UserUncheckedCreateWithoutCommentInput>
@@ -10197,6 +7805,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10205,12 +7814,9 @@ export namespace Prisma {
     following?: UserUpdateManyWithoutFollowersInput
     followers?: UserUpdateManyWithoutFollowingInput
     posts?: PostUpdateManyWithoutUserInput
-    cruises?: CruiseUpdateManyWithoutUserInput
     comment?: CommentUpdateManyWithoutUserInput
     challenges?: ChallengeUpdateManyWithoutUserInput
-    cruiseFollowing?: CruiseUpdateManyWithoutFollowersInput
     challengeFollowing?: ChallengeUpdateManyWithoutFollowersInput
-    Cruise?: CruiseUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutUserInput
     peek?: PeekUpdateOneWithoutUserInput
   }
@@ -10223,16 +7829,15 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: InputJsonValue | null
     posts?: PostUncheckedUpdateManyWithoutUserInput
-    cruises?: CruiseUncheckedUpdateManyWithoutUserInput
     comment?: CommentUncheckedUpdateManyWithoutUserInput
     challenges?: ChallengeUncheckedUpdateManyWithoutUserInput
-    Cruise?: CruiseUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutUserInput
     peek?: PeekUncheckedUpdateOneWithoutUserInput
   }
@@ -10257,9 +7862,7 @@ export namespace Prisma {
     hearts?: PostUpdateheartsInput | Enumerable<string>
     hot?: PostUpdatehotInput | Enumerable<string>
     user?: UserUpdateOneRequiredWithoutPostsInput
-    cruises?: CruiseUpdateManyWithoutPostInput
     challenge?: ChallengeUpdateOneWithoutPostInput
-    Cruise?: CruiseUpdateOneWithoutPostsInput
     Challenge?: ChallengeUpdateOneWithoutPostsInput
   }
 
@@ -10276,12 +7879,10 @@ export namespace Prisma {
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
-    cruiseId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
     kisses?: PostUpdatekissesInput | Enumerable<string>
     hearts?: PostUpdateheartsInput | Enumerable<string>
     hot?: PostUpdatehotInput | Enumerable<string>
-    cruises?: CruiseUncheckedUpdateManyWithoutPostInput
   }
 
   export type ChallengeUpsertWithoutCommentsInput = {
@@ -10333,51 +7934,6 @@ export namespace Prisma {
     Post?: PostUncheckedUpdateManyWithoutChallengeInput
   }
 
-  export type CruiseUpsertWithoutCommentsInput = {
-    update: XOR<CruiseUpdateWithoutCommentsInput, CruiseUncheckedUpdateWithoutCommentsInput>
-    create: XOR<CruiseCreateWithoutCommentsInput, CruiseUncheckedCreateWithoutCommentsInput>
-  }
-
-  export type CruiseUpdateWithoutCommentsInput = {
-    cursor?: StringFieldUpdateOperationsInput | string
-    slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    reaction?: InputJsonValue | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    kisses?: CruiseUpdatekissesInput | Enumerable<string>
-    hearts?: CruiseUpdateheartsInput | Enumerable<string>
-    hot?: CruiseUpdatehotInput | Enumerable<string>
-    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
-    user?: UserUpdateOneRequiredWithoutCruiseInput
-    followers?: UserUpdateManyWithoutCruiseFollowingInput
-    User?: UserUpdateOneWithoutCruisesInput
-    Post?: PostUpdateOneWithoutCruisesInput
-    posts?: PostUpdateManyWithoutCruiseInput
-  }
-
-  export type CruiseUncheckedUpdateWithoutCommentsInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    cursor?: StringFieldUpdateOperationsInput | string
-    slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    userId?: StringFieldUpdateOperationsInput | string
-    reaction?: InputJsonValue | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    userUserId?: NullableIntFieldUpdateOperationsInput | number | null
-    postId?: NullableIntFieldUpdateOperationsInput | number | null
-    kisses?: CruiseUpdatekissesInput | Enumerable<string>
-    hearts?: CruiseUpdateheartsInput | Enumerable<string>
-    hot?: CruiseUpdatehotInput | Enumerable<string>
-    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
-    posts?: PostUncheckedUpdateManyWithoutCruiseInput
-  }
-
   export type UserCreateWithoutChallengeInput = {
     uid: string
     cursor?: string
@@ -10385,6 +7941,7 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -10393,12 +7950,9 @@ export namespace Prisma {
     following?: UserCreateNestedManyWithoutFollowersInput
     followers?: UserCreateNestedManyWithoutFollowingInput
     posts?: PostCreateNestedManyWithoutUserInput
-    cruises?: CruiseCreateNestedManyWithoutUserInput
     comment?: CommentCreateNestedManyWithoutUserInput
     challenges?: ChallengeCreateNestedManyWithoutUserInput
-    cruiseFollowing?: CruiseCreateNestedManyWithoutFollowersInput
     challengeFollowing?: ChallengeCreateNestedManyWithoutFollowersInput
-    Cruise?: CruiseCreateNestedManyWithoutUserInput
     Comment?: CommentCreateNestedManyWithoutUserInput
     peek?: PeekCreateNestedOneWithoutUserInput
   }
@@ -10411,16 +7965,15 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
     updated?: Date | string
     location?: InputJsonValue | null
     posts?: PostUncheckedCreateNestedManyWithoutUserInput
-    cruises?: CruiseUncheckedCreateNestedManyWithoutUserInput
     comment?: CommentUncheckedCreateNestedManyWithoutUserInput
     challenges?: ChallengeUncheckedCreateNestedManyWithoutUserInput
-    Cruise?: CruiseUncheckedCreateNestedManyWithoutUserInput
     Comment?: CommentUncheckedCreateNestedManyWithoutUserInput
     peek?: PeekUncheckedCreateNestedOneWithoutUserInput
   }
@@ -10437,6 +7990,7 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -10445,11 +7999,8 @@ export namespace Prisma {
     following?: UserCreateNestedManyWithoutFollowersInput
     followers?: UserCreateNestedManyWithoutFollowingInput
     posts?: PostCreateNestedManyWithoutUserInput
-    cruises?: CruiseCreateNestedManyWithoutUserInput
     comment?: CommentCreateNestedManyWithoutUserInput
     challenges?: ChallengeCreateNestedManyWithoutUserInput
-    cruiseFollowing?: CruiseCreateNestedManyWithoutFollowersInput
-    Cruise?: CruiseCreateNestedManyWithoutUserInput
     Comment?: CommentCreateNestedManyWithoutUserInput
     Challenge?: ChallengeCreateNestedManyWithoutUserInput
     peek?: PeekCreateNestedOneWithoutUserInput
@@ -10463,16 +8014,15 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
     updated?: Date | string
     location?: InputJsonValue | null
     posts?: PostUncheckedCreateNestedManyWithoutUserInput
-    cruises?: CruiseUncheckedCreateNestedManyWithoutUserInput
     comment?: CommentUncheckedCreateNestedManyWithoutUserInput
     challenges?: ChallengeUncheckedCreateNestedManyWithoutUserInput
-    Cruise?: CruiseUncheckedCreateNestedManyWithoutUserInput
     Comment?: CommentUncheckedCreateNestedManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateNestedManyWithoutUserInput
     peek?: PeekUncheckedCreateNestedOneWithoutUserInput
@@ -10490,6 +8040,7 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -10498,11 +8049,8 @@ export namespace Prisma {
     following?: UserCreateNestedManyWithoutFollowersInput
     followers?: UserCreateNestedManyWithoutFollowingInput
     posts?: PostCreateNestedManyWithoutUserInput
-    cruises?: CruiseCreateNestedManyWithoutUserInput
     comment?: CommentCreateNestedManyWithoutUserInput
-    cruiseFollowing?: CruiseCreateNestedManyWithoutFollowersInput
     challengeFollowing?: ChallengeCreateNestedManyWithoutFollowersInput
-    Cruise?: CruiseCreateNestedManyWithoutUserInput
     Comment?: CommentCreateNestedManyWithoutUserInput
     Challenge?: ChallengeCreateNestedManyWithoutUserInput
     peek?: PeekCreateNestedOneWithoutUserInput
@@ -10516,15 +8064,14 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
     updated?: Date | string
     location?: InputJsonValue | null
     posts?: PostUncheckedCreateNestedManyWithoutUserInput
-    cruises?: CruiseUncheckedCreateNestedManyWithoutUserInput
     comment?: CommentUncheckedCreateNestedManyWithoutUserInput
-    Cruise?: CruiseUncheckedCreateNestedManyWithoutUserInput
     Comment?: CommentUncheckedCreateNestedManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateNestedManyWithoutUserInput
     peek?: PeekUncheckedCreateNestedOneWithoutUserInput
@@ -10551,7 +8098,6 @@ export namespace Prisma {
     hot?: CommentCreatehotInput | Enumerable<string>
     user: UserCreateNestedOneWithoutCommentInput
     post?: PostCreateNestedOneWithoutCommentsInput
-    cruise?: CruiseCreateNestedOneWithoutCommentsInput
     User?: UserCreateNestedOneWithoutCommentInput
   }
 
@@ -10569,7 +8115,6 @@ export namespace Prisma {
     created?: Date | string
     updated?: Date | string
     postId?: number | null
-    cruiseId?: number | null
     userUserId?: number | null
     kisses?: CommentCreatekissesInput | Enumerable<string>
     hearts?: CommentCreateheartsInput | Enumerable<string>
@@ -10602,9 +8147,7 @@ export namespace Prisma {
     hot?: PostCreatehotInput | Enumerable<string>
     user: UserCreateNestedOneWithoutPostsInput
     comments?: CommentCreateNestedManyWithoutPostInput
-    cruises?: CruiseCreateNestedManyWithoutPostInput
     challenge?: ChallengeCreateNestedOneWithoutPostInput
-    Cruise?: CruiseCreateNestedOneWithoutPostsInput
   }
 
   export type PostUncheckedCreateWithoutChallengeInput = {
@@ -10619,13 +8162,11 @@ export namespace Prisma {
     updated?: Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
-    cruiseId?: number | null
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
     kisses?: PostCreatekissesInput | Enumerable<string>
     hearts?: PostCreateheartsInput | Enumerable<string>
     hot?: PostCreatehotInput | Enumerable<string>
     comments?: CommentUncheckedCreateNestedManyWithoutPostInput
-    cruises?: CruiseUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostCreateOrConnectWithoutChallengeInput = {
@@ -10650,6 +8191,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10658,12 +8200,9 @@ export namespace Prisma {
     following?: UserUpdateManyWithoutFollowersInput
     followers?: UserUpdateManyWithoutFollowingInput
     posts?: PostUpdateManyWithoutUserInput
-    cruises?: CruiseUpdateManyWithoutUserInput
     comment?: CommentUpdateManyWithoutUserInput
     challenges?: ChallengeUpdateManyWithoutUserInput
-    cruiseFollowing?: CruiseUpdateManyWithoutFollowersInput
     challengeFollowing?: ChallengeUpdateManyWithoutFollowersInput
-    Cruise?: CruiseUpdateManyWithoutUserInput
     Comment?: CommentUpdateManyWithoutUserInput
     peek?: PeekUpdateOneWithoutUserInput
   }
@@ -10676,16 +8215,15 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: InputJsonValue | null
     posts?: PostUncheckedUpdateManyWithoutUserInput
-    cruises?: CruiseUncheckedUpdateManyWithoutUserInput
     comment?: CommentUncheckedUpdateManyWithoutUserInput
     challenges?: ChallengeUncheckedUpdateManyWithoutUserInput
-    Cruise?: CruiseUncheckedUpdateManyWithoutUserInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     peek?: PeekUncheckedUpdateOneWithoutUserInput
   }
@@ -10718,6 +8256,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10726,11 +8265,8 @@ export namespace Prisma {
     following?: UserUpdateManyWithoutFollowersInput
     followers?: UserUpdateManyWithoutFollowingInput
     posts?: PostUpdateManyWithoutUserInput
-    cruises?: CruiseUpdateManyWithoutUserInput
     comment?: CommentUpdateManyWithoutUserInput
-    cruiseFollowing?: CruiseUpdateManyWithoutFollowersInput
     challengeFollowing?: ChallengeUpdateManyWithoutFollowersInput
-    Cruise?: CruiseUpdateManyWithoutUserInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutUserInput
     peek?: PeekUpdateOneWithoutUserInput
@@ -10744,15 +8280,14 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: InputJsonValue | null
     posts?: PostUncheckedUpdateManyWithoutUserInput
-    cruises?: CruiseUncheckedUpdateManyWithoutUserInput
     comment?: CommentUncheckedUpdateManyWithoutUserInput
-    Cruise?: CruiseUncheckedUpdateManyWithoutUserInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutUserInput
     peek?: PeekUncheckedUpdateOneWithoutUserInput
@@ -10797,6 +8332,7 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
@@ -10805,12 +8341,9 @@ export namespace Prisma {
     following?: UserCreateNestedManyWithoutFollowersInput
     followers?: UserCreateNestedManyWithoutFollowingInput
     posts?: PostCreateNestedManyWithoutUserInput
-    cruises?: CruiseCreateNestedManyWithoutUserInput
     comment?: CommentCreateNestedManyWithoutUserInput
     challenges?: ChallengeCreateNestedManyWithoutUserInput
-    cruiseFollowing?: CruiseCreateNestedManyWithoutFollowersInput
     challengeFollowing?: ChallengeCreateNestedManyWithoutFollowersInput
-    Cruise?: CruiseCreateNestedManyWithoutUserInput
     Comment?: CommentCreateNestedManyWithoutUserInput
     Challenge?: ChallengeCreateNestedManyWithoutUserInput
   }
@@ -10823,16 +8356,15 @@ export namespace Prisma {
     lastName: string
     userName?: string | null
     bio?: string | null
+    cruise?: string | null
     email: string
     imgUrl?: string | null
     created?: Date | string
     updated?: Date | string
     location?: InputJsonValue | null
     posts?: PostUncheckedCreateNestedManyWithoutUserInput
-    cruises?: CruiseUncheckedCreateNestedManyWithoutUserInput
     comment?: CommentUncheckedCreateNestedManyWithoutUserInput
     challenges?: ChallengeUncheckedCreateNestedManyWithoutUserInput
-    Cruise?: CruiseUncheckedCreateNestedManyWithoutUserInput
     Comment?: CommentUncheckedCreateNestedManyWithoutUserInput
     Challenge?: ChallengeUncheckedCreateNestedManyWithoutUserInput
   }
@@ -10854,6 +8386,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10862,12 +8395,9 @@ export namespace Prisma {
     following?: UserUpdateManyWithoutFollowersInput
     followers?: UserUpdateManyWithoutFollowingInput
     posts?: PostUpdateManyWithoutUserInput
-    cruises?: CruiseUpdateManyWithoutUserInput
     comment?: CommentUpdateManyWithoutUserInput
     challenges?: ChallengeUpdateManyWithoutUserInput
-    cruiseFollowing?: CruiseUpdateManyWithoutFollowersInput
     challengeFollowing?: ChallengeUpdateManyWithoutFollowersInput
-    Cruise?: CruiseUpdateManyWithoutUserInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutUserInput
   }
@@ -10880,16 +8410,15 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: InputJsonValue | null
     posts?: PostUncheckedUpdateManyWithoutUserInput
-    cruises?: CruiseUncheckedUpdateManyWithoutUserInput
     comment?: CommentUncheckedUpdateManyWithoutUserInput
     challenges?: ChallengeUncheckedUpdateManyWithoutUserInput
-    Cruise?: CruiseUncheckedUpdateManyWithoutUserInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutUserInput
   }
@@ -10906,29 +8435,10 @@ export namespace Prisma {
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
     challengeId?: number | null
-    cruiseId?: number | null
     hashtags?: PostCreateManyhashtagsInput | Enumerable<string>
     kisses?: PostCreateManykissesInput | Enumerable<string>
     hearts?: PostCreateManyheartsInput | Enumerable<string>
     hot?: PostCreateManyhotInput | Enumerable<string>
-  }
-
-  export type CruiseCreateManyUserInput = {
-    id?: number
-    cursor?: string
-    slogan: string
-    attachmentType?: AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: string | null
-    userId: string
-    reaction?: InputJsonValue | null
-    created?: Date | string
-    updated?: Date | string
-    postId?: number | null
-    kisses?: CruiseCreateManykissesInput | Enumerable<string>
-    hearts?: CruiseCreateManyheartsInput | Enumerable<string>
-    hot?: CruiseCreateManyhotInput | Enumerable<string>
-    hashtags?: CruiseCreateManyhashtagsInput | Enumerable<string>
   }
 
   export type CommentCreateManyUserInput = {
@@ -10946,7 +8456,6 @@ export namespace Prisma {
     updated?: Date | string
     postId?: number | null
     challengeId?: number | null
-    cruiseId?: number | null
     kisses?: CommentCreateManykissesInput | Enumerable<string>
     hearts?: CommentCreateManyheartsInput | Enumerable<string>
     hot?: CommentCreateManyhotInput | Enumerable<string>
@@ -10978,6 +8487,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10985,12 +8495,9 @@ export namespace Prisma {
     location?: InputJsonValue | null
     following?: UserUpdateManyWithoutFollowersInput
     posts?: PostUpdateManyWithoutUserInput
-    cruises?: CruiseUpdateManyWithoutUserInput
     comment?: CommentUpdateManyWithoutUserInput
     challenges?: ChallengeUpdateManyWithoutUserInput
-    cruiseFollowing?: CruiseUpdateManyWithoutFollowersInput
     challengeFollowing?: ChallengeUpdateManyWithoutFollowersInput
-    Cruise?: CruiseUpdateManyWithoutUserInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutUserInput
     peek?: PeekUpdateOneWithoutUserInput
@@ -11004,16 +8511,15 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: InputJsonValue | null
     posts?: PostUncheckedUpdateManyWithoutUserInput
-    cruises?: CruiseUncheckedUpdateManyWithoutUserInput
     comment?: CommentUncheckedUpdateManyWithoutUserInput
     challenges?: ChallengeUncheckedUpdateManyWithoutUserInput
-    Cruise?: CruiseUncheckedUpdateManyWithoutUserInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutUserInput
     peek?: PeekUncheckedUpdateOneWithoutUserInput
@@ -11027,6 +8533,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11041,6 +8548,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11048,12 +8556,9 @@ export namespace Prisma {
     location?: InputJsonValue | null
     followers?: UserUpdateManyWithoutFollowingInput
     posts?: PostUpdateManyWithoutUserInput
-    cruises?: CruiseUpdateManyWithoutUserInput
     comment?: CommentUpdateManyWithoutUserInput
     challenges?: ChallengeUpdateManyWithoutUserInput
-    cruiseFollowing?: CruiseUpdateManyWithoutFollowersInput
     challengeFollowing?: ChallengeUpdateManyWithoutFollowersInput
-    Cruise?: CruiseUpdateManyWithoutUserInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutUserInput
     peek?: PeekUpdateOneWithoutUserInput
@@ -11067,16 +8572,15 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: InputJsonValue | null
     posts?: PostUncheckedUpdateManyWithoutUserInput
-    cruises?: CruiseUncheckedUpdateManyWithoutUserInput
     comment?: CommentUncheckedUpdateManyWithoutUserInput
     challenges?: ChallengeUncheckedUpdateManyWithoutUserInput
-    Cruise?: CruiseUncheckedUpdateManyWithoutUserInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutUserInput
     peek?: PeekUncheckedUpdateOneWithoutUserInput
@@ -11090,6 +8594,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11112,9 +8617,7 @@ export namespace Prisma {
     hearts?: PostUpdateheartsInput | Enumerable<string>
     hot?: PostUpdatehotInput | Enumerable<string>
     comments?: CommentUpdateManyWithoutPostInput
-    cruises?: CruiseUpdateManyWithoutPostInput
     challenge?: ChallengeUpdateOneWithoutPostInput
-    Cruise?: CruiseUpdateOneWithoutPostsInput
     Challenge?: ChallengeUpdateOneWithoutPostsInput
   }
 
@@ -11130,13 +8633,11 @@ export namespace Prisma {
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
-    cruiseId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
     kisses?: PostUpdatekissesInput | Enumerable<string>
     hearts?: PostUpdateheartsInput | Enumerable<string>
     hot?: PostUpdatehotInput | Enumerable<string>
     comments?: CommentUncheckedUpdateManyWithoutPostInput
-    cruises?: CruiseUncheckedUpdateManyWithoutPostInput
   }
 
   export type PostUncheckedUpdateManyWithoutPostsInput = {
@@ -11151,69 +8652,10 @@ export namespace Prisma {
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
-    cruiseId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
     kisses?: PostUpdatekissesInput | Enumerable<string>
     hearts?: PostUpdateheartsInput | Enumerable<string>
     hot?: PostUpdatehotInput | Enumerable<string>
-  }
-
-  export type CruiseUpdateWithoutUserInput = {
-    cursor?: StringFieldUpdateOperationsInput | string
-    slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    reaction?: InputJsonValue | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    kisses?: CruiseUpdatekissesInput | Enumerable<string>
-    hearts?: CruiseUpdateheartsInput | Enumerable<string>
-    hot?: CruiseUpdatehotInput | Enumerable<string>
-    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
-    user?: UserUpdateOneRequiredWithoutCruiseInput
-    followers?: UserUpdateManyWithoutCruiseFollowingInput
-    Post?: PostUpdateOneWithoutCruisesInput
-    comments?: CommentUpdateManyWithoutCruiseInput
-    posts?: PostUpdateManyWithoutCruiseInput
-  }
-
-  export type CruiseUncheckedUpdateWithoutUserInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    cursor?: StringFieldUpdateOperationsInput | string
-    slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    userId?: StringFieldUpdateOperationsInput | string
-    reaction?: InputJsonValue | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    postId?: NullableIntFieldUpdateOperationsInput | number | null
-    kisses?: CruiseUpdatekissesInput | Enumerable<string>
-    hearts?: CruiseUpdateheartsInput | Enumerable<string>
-    hot?: CruiseUpdatehotInput | Enumerable<string>
-    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
-    comments?: CommentUncheckedUpdateManyWithoutCruiseInput
-    posts?: PostUncheckedUpdateManyWithoutCruiseInput
-  }
-
-  export type CruiseUncheckedUpdateManyWithoutCruisesInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    cursor?: StringFieldUpdateOperationsInput | string
-    slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    userId?: StringFieldUpdateOperationsInput | string
-    reaction?: InputJsonValue | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    postId?: NullableIntFieldUpdateOperationsInput | number | null
-    kisses?: CruiseUpdatekissesInput | Enumerable<string>
-    hearts?: CruiseUpdateheartsInput | Enumerable<string>
-    hot?: CruiseUpdatehotInput | Enumerable<string>
-    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
   }
 
   export type CommentUpdateWithoutUserInput = {
@@ -11233,7 +8675,6 @@ export namespace Prisma {
     user?: UserUpdateOneRequiredWithoutCommentInput
     post?: PostUpdateOneWithoutCommentsInput
     challenge?: ChallengeUpdateOneWithoutCommentsInput
-    cruise?: CruiseUpdateOneWithoutCommentsInput
   }
 
   export type CommentUncheckedUpdateWithoutUserInput = {
@@ -11251,7 +8692,6 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     postId?: NullableIntFieldUpdateOperationsInput | number | null
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
-    cruiseId?: NullableIntFieldUpdateOperationsInput | number | null
     kisses?: CommentUpdatekissesInput | Enumerable<string>
     hearts?: CommentUpdateheartsInput | Enumerable<string>
     hot?: CommentUpdatehotInput | Enumerable<string>
@@ -11272,7 +8712,6 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     postId?: NullableIntFieldUpdateOperationsInput | number | null
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
-    cruiseId?: NullableIntFieldUpdateOperationsInput | number | null
     kisses?: CommentUpdatekissesInput | Enumerable<string>
     hearts?: CommentUpdateheartsInput | Enumerable<string>
     hot?: CommentUpdatehotInput | Enumerable<string>
@@ -11339,66 +8778,6 @@ export namespace Prisma {
     kisses?: ChallengeUpdatekissesInput | Enumerable<string>
     hearts?: ChallengeUpdateheartsInput | Enumerable<string>
     hot?: ChallengeUpdatehotInput | Enumerable<string>
-  }
-
-  export type CruiseUpdateWithoutFollowersInput = {
-    cursor?: StringFieldUpdateOperationsInput | string
-    slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    reaction?: InputJsonValue | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    kisses?: CruiseUpdatekissesInput | Enumerable<string>
-    hearts?: CruiseUpdateheartsInput | Enumerable<string>
-    hot?: CruiseUpdatehotInput | Enumerable<string>
-    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
-    user?: UserUpdateOneRequiredWithoutCruiseInput
-    User?: UserUpdateOneWithoutCruisesInput
-    Post?: PostUpdateOneWithoutCruisesInput
-    comments?: CommentUpdateManyWithoutCruiseInput
-    posts?: PostUpdateManyWithoutCruiseInput
-  }
-
-  export type CruiseUncheckedUpdateWithoutFollowersInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    cursor?: StringFieldUpdateOperationsInput | string
-    slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    userId?: StringFieldUpdateOperationsInput | string
-    reaction?: InputJsonValue | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    userUserId?: NullableIntFieldUpdateOperationsInput | number | null
-    postId?: NullableIntFieldUpdateOperationsInput | number | null
-    kisses?: CruiseUpdatekissesInput | Enumerable<string>
-    hearts?: CruiseUpdateheartsInput | Enumerable<string>
-    hot?: CruiseUpdatehotInput | Enumerable<string>
-    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
-    comments?: CommentUncheckedUpdateManyWithoutCruiseInput
-    posts?: PostUncheckedUpdateManyWithoutCruiseInput
-  }
-
-  export type CruiseUncheckedUpdateManyWithoutCruiseFollowingInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    cursor?: StringFieldUpdateOperationsInput | string
-    slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    userId?: StringFieldUpdateOperationsInput | string
-    reaction?: InputJsonValue | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    userUserId?: NullableIntFieldUpdateOperationsInput | number | null
-    postId?: NullableIntFieldUpdateOperationsInput | number | null
-    kisses?: CruiseUpdatekissesInput | Enumerable<string>
-    hearts?: CruiseUpdateheartsInput | Enumerable<string>
-    hot?: CruiseUpdatehotInput | Enumerable<string>
-    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
   }
 
   export type ChallengeUpdateWithoutFollowersInput = {
@@ -11480,29 +8859,10 @@ export namespace Prisma {
     created?: Date | string
     updated?: Date | string
     challengeId?: number | null
-    cruiseId?: number | null
     userUserId?: number | null
     kisses?: CommentCreateManykissesInput | Enumerable<string>
     hearts?: CommentCreateManyheartsInput | Enumerable<string>
     hot?: CommentCreateManyhotInput | Enumerable<string>
-  }
-
-  export type CruiseCreateManyPostInput = {
-    id?: number
-    cursor?: string
-    slogan: string
-    attachmentType?: AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: string | null
-    userId: string
-    reaction?: InputJsonValue | null
-    created?: Date | string
-    updated?: Date | string
-    userUserId?: number | null
-    kisses?: CruiseCreateManykissesInput | Enumerable<string>
-    hearts?: CruiseCreateManyheartsInput | Enumerable<string>
-    hot?: CruiseCreateManyhotInput | Enumerable<string>
-    hashtags?: CruiseCreateManyhashtagsInput | Enumerable<string>
   }
 
   export type CommentUpdateWithoutPostInput = {
@@ -11521,7 +8881,6 @@ export namespace Prisma {
     hot?: CommentUpdatehotInput | Enumerable<string>
     user?: UserUpdateOneRequiredWithoutCommentInput
     challenge?: ChallengeUpdateOneWithoutCommentsInput
-    cruise?: CruiseUpdateOneWithoutCommentsInput
     User?: UserUpdateOneWithoutCommentInput
   }
 
@@ -11539,7 +8898,6 @@ export namespace Prisma {
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
-    cruiseId?: NullableIntFieldUpdateOperationsInput | number | null
     userUserId?: NullableIntFieldUpdateOperationsInput | number | null
     kisses?: CommentUpdatekissesInput | Enumerable<string>
     hearts?: CommentUpdateheartsInput | Enumerable<string>
@@ -11560,222 +8918,10 @@ export namespace Prisma {
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
-    cruiseId?: NullableIntFieldUpdateOperationsInput | number | null
     userUserId?: NullableIntFieldUpdateOperationsInput | number | null
     kisses?: CommentUpdatekissesInput | Enumerable<string>
     hearts?: CommentUpdateheartsInput | Enumerable<string>
     hot?: CommentUpdatehotInput | Enumerable<string>
-  }
-
-  export type CruiseUpdateWithoutPostInput = {
-    cursor?: StringFieldUpdateOperationsInput | string
-    slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    reaction?: InputJsonValue | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    kisses?: CruiseUpdatekissesInput | Enumerable<string>
-    hearts?: CruiseUpdateheartsInput | Enumerable<string>
-    hot?: CruiseUpdatehotInput | Enumerable<string>
-    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
-    user?: UserUpdateOneRequiredWithoutCruiseInput
-    followers?: UserUpdateManyWithoutCruiseFollowingInput
-    User?: UserUpdateOneWithoutCruisesInput
-    comments?: CommentUpdateManyWithoutCruiseInput
-    posts?: PostUpdateManyWithoutCruiseInput
-  }
-
-  export type CruiseUncheckedUpdateWithoutPostInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    cursor?: StringFieldUpdateOperationsInput | string
-    slogan?: StringFieldUpdateOperationsInput | string
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    userId?: StringFieldUpdateOperationsInput | string
-    reaction?: InputJsonValue | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    userUserId?: NullableIntFieldUpdateOperationsInput | number | null
-    kisses?: CruiseUpdatekissesInput | Enumerable<string>
-    hearts?: CruiseUpdateheartsInput | Enumerable<string>
-    hot?: CruiseUpdatehotInput | Enumerable<string>
-    hashtags?: CruiseUpdatehashtagsInput | Enumerable<string>
-    comments?: CommentUncheckedUpdateManyWithoutCruiseInput
-    posts?: PostUncheckedUpdateManyWithoutCruiseInput
-  }
-
-  export type CommentCreateManyCruiseInput = {
-    id?: number
-    cursor?: string
-    entityId: number
-    entityType: EntityType
-    comment: string
-    attachmentMeta?: InputJsonValue | null
-    attachmentType?: AttachmentType | null
-    attachmentUrl?: string | null
-    userId: string
-    reaction?: InputJsonValue | null
-    created?: Date | string
-    updated?: Date | string
-    postId?: number | null
-    challengeId?: number | null
-    userUserId?: number | null
-    kisses?: CommentCreateManykissesInput | Enumerable<string>
-    hearts?: CommentCreateManyheartsInput | Enumerable<string>
-    hot?: CommentCreateManyhotInput | Enumerable<string>
-  }
-
-  export type PostCreateManyCruiseInput = {
-    id?: number
-    cursor?: string
-    userId: string
-    attachmentUrl?: string | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentType?: AttachmentType | null
-    content: string
-    created?: Date | string
-    updated?: Date | string
-    reaction?: InputJsonValue | null
-    location?: InputJsonValue | null
-    challengeId?: number | null
-    hashtags?: PostCreateManyhashtagsInput | Enumerable<string>
-    kisses?: PostCreateManykissesInput | Enumerable<string>
-    hearts?: PostCreateManyheartsInput | Enumerable<string>
-    hot?: PostCreateManyhotInput | Enumerable<string>
-  }
-
-  export type UserUpdateWithoutCruiseFollowingInput = {
-    uid?: StringFieldUpdateOperationsInput | string
-    cursor?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
-    userName?: NullableStringFieldUpdateOperationsInput | string | null
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
-    imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    location?: InputJsonValue | null
-    following?: UserUpdateManyWithoutFollowersInput
-    followers?: UserUpdateManyWithoutFollowingInput
-    posts?: PostUpdateManyWithoutUserInput
-    cruises?: CruiseUpdateManyWithoutUserInput
-    comment?: CommentUpdateManyWithoutUserInput
-    challenges?: ChallengeUpdateManyWithoutUserInput
-    challengeFollowing?: ChallengeUpdateManyWithoutFollowersInput
-    Cruise?: CruiseUpdateManyWithoutUserInput
-    Comment?: CommentUpdateManyWithoutUserInput
-    Challenge?: ChallengeUpdateManyWithoutUserInput
-    peek?: PeekUpdateOneWithoutUserInput
-  }
-
-  export type UserUncheckedUpdateWithoutCruiseFollowingInput = {
-    userId?: IntFieldUpdateOperationsInput | number
-    uid?: StringFieldUpdateOperationsInput | string
-    cursor?: StringFieldUpdateOperationsInput | string
-    firstName?: StringFieldUpdateOperationsInput | string
-    lastName?: StringFieldUpdateOperationsInput | string
-    userName?: NullableStringFieldUpdateOperationsInput | string | null
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: StringFieldUpdateOperationsInput | string
-    imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    location?: InputJsonValue | null
-    posts?: PostUncheckedUpdateManyWithoutUserInput
-    cruises?: CruiseUncheckedUpdateManyWithoutUserInput
-    comment?: CommentUncheckedUpdateManyWithoutUserInput
-    challenges?: ChallengeUncheckedUpdateManyWithoutUserInput
-    Cruise?: CruiseUncheckedUpdateManyWithoutUserInput
-    Comment?: CommentUncheckedUpdateManyWithoutUserInput
-    Challenge?: ChallengeUncheckedUpdateManyWithoutUserInput
-    peek?: PeekUncheckedUpdateOneWithoutUserInput
-  }
-
-  export type CommentUpdateWithoutCruiseInput = {
-    cursor?: StringFieldUpdateOperationsInput | string
-    entityId?: IntFieldUpdateOperationsInput | number
-    entityType?: EnumEntityTypeFieldUpdateOperationsInput | EntityType
-    comment?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue | null
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    reaction?: InputJsonValue | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    kisses?: CommentUpdatekissesInput | Enumerable<string>
-    hearts?: CommentUpdateheartsInput | Enumerable<string>
-    hot?: CommentUpdatehotInput | Enumerable<string>
-    user?: UserUpdateOneRequiredWithoutCommentInput
-    post?: PostUpdateOneWithoutCommentsInput
-    challenge?: ChallengeUpdateOneWithoutCommentsInput
-    User?: UserUpdateOneWithoutCommentInput
-  }
-
-  export type CommentUncheckedUpdateWithoutCruiseInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    cursor?: StringFieldUpdateOperationsInput | string
-    entityId?: IntFieldUpdateOperationsInput | number
-    entityType?: EnumEntityTypeFieldUpdateOperationsInput | EntityType
-    comment?: StringFieldUpdateOperationsInput | string
-    attachmentMeta?: InputJsonValue | null
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    userId?: StringFieldUpdateOperationsInput | string
-    reaction?: InputJsonValue | null
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    postId?: NullableIntFieldUpdateOperationsInput | number | null
-    challengeId?: NullableIntFieldUpdateOperationsInput | number | null
-    userUserId?: NullableIntFieldUpdateOperationsInput | number | null
-    kisses?: CommentUpdatekissesInput | Enumerable<string>
-    hearts?: CommentUpdateheartsInput | Enumerable<string>
-    hot?: CommentUpdatehotInput | Enumerable<string>
-  }
-
-  export type PostUpdateWithoutCruiseInput = {
-    cursor?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    content?: StringFieldUpdateOperationsInput | string
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    reaction?: InputJsonValue | null
-    location?: InputJsonValue | null
-    hashtags?: PostUpdatehashtagsInput | Enumerable<string>
-    kisses?: PostUpdatekissesInput | Enumerable<string>
-    hearts?: PostUpdateheartsInput | Enumerable<string>
-    hot?: PostUpdatehotInput | Enumerable<string>
-    user?: UserUpdateOneRequiredWithoutPostsInput
-    comments?: CommentUpdateManyWithoutPostInput
-    cruises?: CruiseUpdateManyWithoutPostInput
-    challenge?: ChallengeUpdateOneWithoutPostInput
-    Challenge?: ChallengeUpdateOneWithoutPostsInput
-  }
-
-  export type PostUncheckedUpdateWithoutCruiseInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    cursor?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    attachmentMeta?: InputJsonValue | null
-    attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
-    content?: StringFieldUpdateOperationsInput | string
-    created?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    reaction?: InputJsonValue | null
-    location?: InputJsonValue | null
-    challengeId?: NullableIntFieldUpdateOperationsInput | number | null
-    hashtags?: PostUpdatehashtagsInput | Enumerable<string>
-    kisses?: PostUpdatekissesInput | Enumerable<string>
-    hearts?: PostUpdateheartsInput | Enumerable<string>
-    hot?: PostUpdatehotInput | Enumerable<string>
-    comments?: CommentUncheckedUpdateManyWithoutPostInput
-    cruises?: CruiseUncheckedUpdateManyWithoutPostInput
   }
 
   export type CommentCreateManyChallengeInput = {
@@ -11792,7 +8938,6 @@ export namespace Prisma {
     created?: Date | string
     updated?: Date | string
     postId?: number | null
-    cruiseId?: number | null
     userUserId?: number | null
     kisses?: CommentCreateManykissesInput | Enumerable<string>
     hearts?: CommentCreateManyheartsInput | Enumerable<string>
@@ -11811,7 +8956,6 @@ export namespace Prisma {
     updated?: Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
-    cruiseId?: number | null
     hashtags?: PostCreateManyhashtagsInput | Enumerable<string>
     kisses?: PostCreateManykissesInput | Enumerable<string>
     hearts?: PostCreateManyheartsInput | Enumerable<string>
@@ -11825,6 +8969,7 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11833,11 +8978,8 @@ export namespace Prisma {
     following?: UserUpdateManyWithoutFollowersInput
     followers?: UserUpdateManyWithoutFollowingInput
     posts?: PostUpdateManyWithoutUserInput
-    cruises?: CruiseUpdateManyWithoutUserInput
     comment?: CommentUpdateManyWithoutUserInput
     challenges?: ChallengeUpdateManyWithoutUserInput
-    cruiseFollowing?: CruiseUpdateManyWithoutFollowersInput
-    Cruise?: CruiseUpdateManyWithoutUserInput
     Comment?: CommentUpdateManyWithoutUserInput
     Challenge?: ChallengeUpdateManyWithoutUserInput
     peek?: PeekUpdateOneWithoutUserInput
@@ -11851,16 +8993,15 @@ export namespace Prisma {
     lastName?: StringFieldUpdateOperationsInput | string
     userName?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    cruise?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     imgUrl?: NullableStringFieldUpdateOperationsInput | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: InputJsonValue | null
     posts?: PostUncheckedUpdateManyWithoutUserInput
-    cruises?: CruiseUncheckedUpdateManyWithoutUserInput
     comment?: CommentUncheckedUpdateManyWithoutUserInput
     challenges?: ChallengeUncheckedUpdateManyWithoutUserInput
-    Cruise?: CruiseUncheckedUpdateManyWithoutUserInput
     Comment?: CommentUncheckedUpdateManyWithoutUserInput
     Challenge?: ChallengeUncheckedUpdateManyWithoutUserInput
     peek?: PeekUncheckedUpdateOneWithoutUserInput
@@ -11882,7 +9023,6 @@ export namespace Prisma {
     hot?: CommentUpdatehotInput | Enumerable<string>
     user?: UserUpdateOneRequiredWithoutCommentInput
     post?: PostUpdateOneWithoutCommentsInput
-    cruise?: CruiseUpdateOneWithoutCommentsInput
     User?: UserUpdateOneWithoutCommentInput
   }
 
@@ -11900,7 +9040,6 @@ export namespace Prisma {
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     postId?: NullableIntFieldUpdateOperationsInput | number | null
-    cruiseId?: NullableIntFieldUpdateOperationsInput | number | null
     userUserId?: NullableIntFieldUpdateOperationsInput | number | null
     kisses?: CommentUpdatekissesInput | Enumerable<string>
     hearts?: CommentUpdateheartsInput | Enumerable<string>
@@ -11923,9 +9062,7 @@ export namespace Prisma {
     hot?: PostUpdatehotInput | Enumerable<string>
     user?: UserUpdateOneRequiredWithoutPostsInput
     comments?: CommentUpdateManyWithoutPostInput
-    cruises?: CruiseUpdateManyWithoutPostInput
     challenge?: ChallengeUpdateOneWithoutPostInput
-    Cruise?: CruiseUpdateOneWithoutPostsInput
   }
 
   export type PostUncheckedUpdateWithoutChallengeInput = {
@@ -11940,13 +9077,11 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
-    cruiseId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
     kisses?: PostUpdatekissesInput | Enumerable<string>
     hearts?: PostUpdateheartsInput | Enumerable<string>
     hot?: PostUpdatehotInput | Enumerable<string>
     comments?: CommentUncheckedUpdateManyWithoutPostInput
-    cruises?: CruiseUncheckedUpdateManyWithoutPostInput
   }
 
 

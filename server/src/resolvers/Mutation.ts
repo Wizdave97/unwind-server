@@ -1,7 +1,7 @@
 import { UserInputError } from "apollo-server-express";
 import { ContextInterface, ParentInterface, Partial } from "unwind-server/types";
 import { getNextUTCHours } from "unwind-server/utils/helpers";
-import { CreateChallengeArgs, CreateCommentArgs, CreatePostArgs, CreateReactionArgs, CreateUserArgs, EntityType, FollowEntityArgs, ReactionType, UpdateUserArgs, UserFollowArgs } from "./types";
+import { CreateChallengeArgs, CreateCommentArgs, CreatePostArgs, CreateReactionArgs, CreateUserArgs, EntityType, FollowEntityArgs, PostOrigin, ReactionType, UpdateUserArgs, UserFollowArgs } from "./types";
 
 
 export const createUser = async (parent: ParentInterface, { input }: { input: CreateUserArgs }, context: ContextInterface) => {
@@ -90,7 +90,7 @@ export const createPost = async (parent: ParentInterface, { input }: { input: Cr
     const { attachmentType, content, uid, location, fileAttachment, challengeId } = input
 
     let hashtags = content?.toLowerCase().match(/#\w*/gi)
-    const reaction = { hot: 0, kisses: 0, hearts: 0 }
+    const reaction = { hot: 0, hearts: 0 }
     try {
         const post = await prisma.post.create({
             data: {
@@ -128,7 +128,7 @@ export const createChallenge = async (parent: ParentInterface, { input }: { inpu
     const { attachmentType, challenge, uid, fileAttachment, start, end } = input
 
     let hashtags = challenge?.toLowerCase().match(/#\w*/gi)
-    const reaction = { hot: 0, kisses: 0, hearts: 0 }
+    const reaction = { hot: 0, hearts: 0 }
     try {
         const newChallenge = await prisma.challenge.create({
             data: {
@@ -141,6 +141,20 @@ export const createChallenge = async (parent: ParentInterface, { input }: { inpu
                 reaction,
                 start,
                 end
+            }
+        })
+        
+        await prisma.post.create({
+            data : {
+                user: { connect : { uid: uid}},
+                content: challenge,
+                attachmentType: attachmentType ?? null,
+                attachmentUrl: fileAttachment?.url ?? null,
+                attachmentMeta: fileAttachment ?? null,
+                ...(hashtags && { hashtags }),
+                reaction,
+                origin: PostOrigin.OGCHALLENGE,
+                challenge: { connect: { id: newChallenge?.id }}
             }
         })
 
@@ -167,7 +181,7 @@ export const createComment = async (parent: ParentInterface, { input }: { input:
     const { attachmentType, comment, uid, fileAttachment, entityId, entityType } = input
 
     let hashtags = comment?.toLowerCase().match(/#\w*/gi)
-    const reaction = { hot: 0, kisses: 0, hearts: 0 }
+    const reaction = { hot: 0, hearts: 0 }
     try {
         const newComment = await prisma.comment.create({
             data: {
@@ -233,26 +247,6 @@ export const createReaction = async (parent: ParentInterface, { input }: { input
                     }
                 }
             }
-            if (entity && reactionType === ReactionType.KISSES) {
-                if (!entity.kisses.includes(uid)) {
-                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
-                    const post = await prisma.post.update({
-                        where: {
-                            id: entity.id
-                        },
-                        data: {
-                            kisses: [...entity.kisses, uid],
-                            reaction: { ...reaction, kisses: reaction.kisses + 1 }
-                        }
-                    })
-                    return {
-                        code: "200",
-                        success: true,
-                        message: 'Reaction created sucessfully',
-                        reaction: post.reaction
-                    }
-                }
-            }
             if (entity && reactionType === ReactionType.HOT) {
                 if (!entity.hot.includes(uid)) {
                     const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
@@ -281,26 +275,6 @@ export const createReaction = async (parent: ParentInterface, { input }: { input
                     id: entityId
                 }
             })
-            if (entity && reactionType === ReactionType.KISSES) {
-                if (!entity.kisses.includes(uid)) {
-                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
-                    const post = await prisma.challenge.update({
-                        where: {
-                            id: entity.id
-                        },
-                        data: {
-                            kisses: [...entity.kisses, uid],
-                            reaction: { ...reaction, kisses: reaction.kisses + 1 }
-                        }
-                    })
-                    return {
-                        code: "200",
-                        success: true,
-                        message: 'Reaction created sucessfully',
-                        reaction: post.reaction
-                    }
-                }
-            }
             if (entity && reactionType === ReactionType.HEARTS) {
                 if (!entity.hearts.includes(uid)) {
                     const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
@@ -384,26 +358,6 @@ export const deleteReaction = async (parent: ParentInterface, { input }: { input
                     }
                 }
             }
-            if (entity && reactionType === ReactionType.KISSES) {
-                if (entity.kisses.includes(uid)) {
-                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
-                    const post = await prisma.post.update({
-                        where: {
-                            id: entity.id
-                        },
-                        data: {
-                            kisses: entity.kisses.filter(id => id !== uid),
-                            reaction: { ...reaction, kisses: reaction.kisses - 1 }
-                        }
-                    })
-                    return {
-                        code: "200",
-                        success: true,
-                        message: 'Reaction removed sucessfully',
-                        reaction: post.reaction
-                    }
-                }
-            }
             if (entity && reactionType === ReactionType.HOT) {
                 if (entity.hot.includes(uid)) {
                     const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
@@ -433,26 +387,6 @@ export const deleteReaction = async (parent: ParentInterface, { input }: { input
                     id: entityId
                 }
             })
-            if (entity && reactionType === ReactionType.KISSES) {
-                if (entity.kisses.includes(uid)) {
-                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
-                    const post = await prisma.challenge.update({
-                        where: {
-                            id: entity.id
-                        },
-                        data: {
-                            kisses: entity.kisses.filter(id => id !== uid),
-                            reaction: { ...reaction, kisses: reaction.kisses - 1 }
-                        }
-                    })
-                    return {
-                        code: "200",
-                        success: true,
-                        message: 'Reaction removed sucessfully',
-                        reaction: post.reaction
-                    }
-                }
-            }
             if (entity && reactionType === ReactionType.HEARTS) {
                 if (entity.hearts.includes(uid)) {
                     const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue

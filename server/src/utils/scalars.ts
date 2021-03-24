@@ -1,3 +1,5 @@
+import { ApolloError } from "apollo-server-errors";
+
 const { GraphQLScalarType, Kind } = require('graphql');
 
 export const dateScalar = new GraphQLScalarType({
@@ -13,7 +15,7 @@ export const dateScalar = new GraphQLScalarType({
     if (ast.kind === Kind.INT) {
       return new Date(parseInt(ast.value, 10)); // Convert hard-coded AST string to integer and then to Date
     }
-    return null; // Invalid hard-coded value (not an integer)
+    throw new ApolloError('Invalid value supplied for type Date'); // Invalid hard-coded value (not an integer)
   },
 });
 
@@ -21,11 +23,11 @@ const MAX_INT = 2147483647
 const MIN_INT = -2147483648
 const coerceIntString = (value: any) => {
   if (Array.isArray(value)) {
-    throw new TypeError(`IntString cannot represent an array value: [${String(value)}]`)
+    throw new ApolloError(`IntString cannot represent an array value: [${String(value)}]`)
   }
   if (Number.isInteger(value)) {
     if (value < MIN_INT || value > MAX_INT) {
-      throw new TypeError(`Value is integer but outside of valid range for 32-bit signed integer: ${String(value)}`)
+      throw new ApolloError(`Value is integer but outside of valid range for 32-bit signed integer: ${String(value)}`)
     }
     return value
   }
@@ -50,12 +52,12 @@ export const intString = new GraphQLScalarType({
 export const mode = new GraphQLScalarType({
   name: 'Mode',
   serialize: (value: any) => {
-    if(value !== 'insensitive') throw new TypeError('Only value allowed is insensitive')
+    if(value !== 'insensitive') throw new ApolloError('Invalid value supplied for property `mode`')
 
     return value
   },
   parseValue: (value: any) => {
-    if(value !== 'insensitive') throw new TypeError('Only value allowed is insensitive')
+    if(value !== 'insensitive') throw new ApolloError('Invalid value supplied for property `mode`')
 
     return value
   },
@@ -63,8 +65,7 @@ export const mode = new GraphQLScalarType({
     if (ast.kind === Kind.STRING && ast.value === 'insensitive') {
       return ast.value
     }
-    return null
-    //throw new TypeError('Only value allowed is insensitive')
+    throw new ApolloError('Invalid value supplied for property `mode`')
   }
 })
 

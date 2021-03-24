@@ -28,7 +28,7 @@ export const onAuth = async (socket: Socket, next: any) => {
     // }
 
     socket.handshake.auth.decodedToken = {
-        uid: 'melindamay'
+        uid: 'c0fbea97-03bd-4194-991c-449f16933b2c'
     }
     next()
 }

@@ -31,6 +31,7 @@ class SocketState implements ISocketState {
     remove(id: string, socket: Socket){
         if(!this.state[id]) return
         this.state[id] = this.state[id].filter(sock =>  sock !== socket)
+        return this.state[id]
     }
 
     emit({ id, event, args} : { id: string, event: string, args: any}) {

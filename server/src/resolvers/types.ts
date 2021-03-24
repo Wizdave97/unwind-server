@@ -11,10 +11,21 @@ export enum EntityType {
 }
 
 export enum ReactionType {
-    KISSES = 'KISSES',
     HEARTS = 'HEARTS',
     HOT = 'HOT'
 }
+
+export enum PostOrigin {
+    REGULAR = 'REGULAR',
+    FOURMINUTE = 'FOURMINUTE',
+    OGCHALLENGE = 'OGCHALLENGE'
+}
+
+export enum SortEnum {
+    desc = 'desc',
+    asc = 'asc'
+}
+
 type LocationInput = {
     lat: number;
     long: number
@@ -90,8 +101,9 @@ export type UserFollowArgs = {
     followUid: string;
 }
 
-export interface PaginationInterface<T> {
+export interface PaginationInterface<T, U> {
     filters: T;
+    sort: U;
     first?: number;
     last?: number;
     after: string;
@@ -105,13 +117,32 @@ type UserRelationFilter = {
 type CommentRelationFilter = {
     every: CommentInputFilter
 }
-type PostRelationFilter = {
-    every: PostInputFilter
-}
-
 
 type ChallengeRelationFilter = {
     every: ChallengeInputFilter
+}
+
+export type PostSortInput = {
+    hearts: SortEnum,
+    hot: SortEnum
+}
+
+export type UserSortInput = {
+    firstName: SortEnum,
+    lastName: SortEnum,
+    userName: SortEnum,
+    email: SortEnum,
+    created: SortEnum
+}
+
+export type ChallengeSortInput = {
+    hearts: SortEnum,
+    hot: SortEnum
+}
+
+export type CommentSortInput = {
+    hearts: SortEnum,
+    hot: SortEnum
 }
 
 export interface FieldExpressionInput {

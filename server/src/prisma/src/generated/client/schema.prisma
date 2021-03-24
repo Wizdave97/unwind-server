@@ -54,6 +54,11 @@ enum EntityType {
   CHALLENGE
 }
 
+enum PostOrigin {
+  REGULAR
+  OGCHALLENGE
+}
+
 model Post {
   id             Int             @id @default(autoincrement())
   user           User            @relation(fields: [userId], references: [uid])
@@ -72,11 +77,11 @@ model Post {
   kisses         String[]
   hearts         String[]
   hot            String[]
+  origin         PostOrigin      @default(REGULAR)
   challengeId    Int?
   challenge      Challenge?      @relation(fields: [challengeId], references: [id])
   Challenge      Challenge?      @relation("TaggedChallengePosts", fields: [challengeId], references: [id])
 }
-
 
 model Comment {
   id             Int             @id @default(autoincrement())

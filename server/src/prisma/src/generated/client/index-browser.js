@@ -102,6 +102,7 @@ exports.Prisma.PostScalarFieldEnum = makeEnum({
   kisses: 'kisses',
   hearts: 'hearts',
   hot: 'hot',
+  origin: 'origin',
   challengeId: 'challengeId'
 });
 
@@ -167,6 +168,11 @@ exports.AttachmentType = makeEnum({
   VIDEO: 'VIDEO',
   IMAGE: 'IMAGE',
   AUDIO: 'AUDIO'
+});
+
+exports.PostOrigin = makeEnum({
+  REGULAR: 'REGULAR',
+  OGCHALLENGE: 'OGCHALLENGE'
 });
 
 exports.EntityType = makeEnum({

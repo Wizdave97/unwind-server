@@ -1,17 +1,23 @@
-import { ApolloError } from "apollo-server-express"
 import { ContextInterface, ParentInterface } from "unwind-server/types"
-import { AppLockStatus, createPaginationOptions, resolveTimezoneAndPeeks } from "unwind-server/utils/helpers"
-import { ChallengeInputFilter, CommentInputFilter, PaginationInterface, PostInputFilter, UserInputFilter } from "./types"
+import { createPaginationOptions, getSortArray, getUsersThatReactedToPost, resolveTimezoneAndPeeks } from "unwind-server/utils/helpers"
+import { ChallengeInputFilter, ChallengeSortInput, CommentInputFilter, CommentSortInput, PaginationInterface, PostInputFilter, PostSortInput, UserInputFilter, UserSortInput } from "./types"
 
-export const posts = async (parent: ParentInterface, args: PaginationInterface<PostInputFilter>, context: ContextInterface) => {
-    
-    const { before, filters } = args
+export const posts = async (parent: ParentInterface, args: PaginationInterface<PostInputFilter, PostSortInput>, context: ContextInterface) => {
+    const { uid } = context
+    const { before, filters, sort } = args
     const opts = createPaginationOptions(args)
+    const orderBy = getSortArray(sort)
+    const following = await context.prisma.user.findUnique({
+        where: {
+            uid
+        }
+    }).following()
     const posts = await context.prisma.post.findMany({
         ...opts,
         where: {
             ...(filters && filters)
-        }
+        },
+        orderBy
     })
     const endCursor = posts[posts.length - 1]?.cursor
     const startCursor = posts[0]?.cursor
@@ -23,7 +29,7 @@ export const posts = async (parent: ParentInterface, args: PaginationInterface<P
     }) : 0
     const edges = posts.map((post) => ({
         cursor: post?.cursor,
-        node: post
+        node: {...post, reactedUsers: getUsersThatReactedToPost(following, post)}
     }))
 
     return {
@@ -38,15 +44,17 @@ export const posts = async (parent: ParentInterface, args: PaginationInterface<P
 }
 
 
-export const comments = async (parent: ParentInterface, args: PaginationInterface<CommentInputFilter>, context: ContextInterface) => {
+export const comments = async (parent: ParentInterface, args: PaginationInterface<CommentInputFilter, CommentSortInput>, context: ContextInterface) => {
     
-    const { before, filters } = args
+    const { before, filters, sort } = args
     const opts = createPaginationOptions(args)
+    const orderBy = getSortArray(sort)
     const comments = await context.prisma.comment.findMany({
         ...opts,
         where: {
             ...(filters && filters)
-        }
+        },
+        orderBy
     })
     const endCursor = comments[comments.length - 1]?.cursor
     const startCursor = comments[0]?.cursor
@@ -73,15 +81,17 @@ export const comments = async (parent: ParentInterface, args: PaginationInterfac
     }
 }
 
-export const challenges = async (parent: ParentInterface, args: PaginationInterface<ChallengeInputFilter>, context: ContextInterface) => {
+export const challenges = async (parent: ParentInterface, args: PaginationInterface<ChallengeInputFilter, ChallengeSortInput>, context: ContextInterface) => {
     
-    const { before, filters } = args
+    const { before, filters, sort } = args
     const opts = createPaginationOptions(args)
+    const orderBy = getSortArray(sort)
     const challenges = await context.prisma.challenge.findMany({
         ...opts,
         where: {
             ...(filters && filters)
-        }
+        },
+        orderBy
     })
     const endCursor = challenges[challenges.length - 1]?.cursor
     const startCursor = challenges[0]?.cursor
@@ -108,15 +118,17 @@ export const challenges = async (parent: ParentInterface, args: PaginationInterf
     }
 }
 
-export const users = async (parent: ParentInterface, args: PaginationInterface<UserInputFilter>, context: ContextInterface) => {
+export const users = async (parent: ParentInterface, args: PaginationInterface<UserInputFilter, UserSortInput>, context: ContextInterface) => {
     
-    const { before, filters } = args
+    const { before, filters, sort } = args
     const opts = createPaginationOptions(args)
+    const orderBy = getSortArray(sort)
     const users = await context.prisma.user.findMany({
         ...opts,
         where: {
             ...(filters && filters)
-        }
+        },
+        orderBy
     })
     const endCursor = users[users.length - 1]?.cursor
     const startCursor = users[0]?.cursor

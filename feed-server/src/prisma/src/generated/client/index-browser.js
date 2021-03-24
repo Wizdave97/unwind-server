@@ -78,6 +78,7 @@ exports.Prisma.UserScalarFieldEnum = makeEnum({
   lastName: 'lastName',
   userName: 'userName',
   bio: 'bio',
+  cruise: 'cruise',
   email: 'email',
   imgUrl: 'imgUrl',
   created: 'created',
@@ -101,27 +102,7 @@ exports.Prisma.PostScalarFieldEnum = makeEnum({
   kisses: 'kisses',
   hearts: 'hearts',
   hot: 'hot',
-  challengeId: 'challengeId',
-  cruiseId: 'cruiseId'
-});
-
-exports.Prisma.CruiseScalarFieldEnum = makeEnum({
-  id: 'id',
-  cursor: 'cursor',
-  slogan: 'slogan',
-  attachmentType: 'attachmentType',
-  attachmentMeta: 'attachmentMeta',
-  attachmentUrl: 'attachmentUrl',
-  userId: 'userId',
-  reaction: 'reaction',
-  kisses: 'kisses',
-  hearts: 'hearts',
-  hot: 'hot',
-  hashtags: 'hashtags',
-  created: 'created',
-  updated: 'updated',
-  userUserId: 'userUserId',
-  postId: 'postId'
+  challengeId: 'challengeId'
 });
 
 exports.Prisma.CommentScalarFieldEnum = makeEnum({
@@ -142,7 +123,6 @@ exports.Prisma.CommentScalarFieldEnum = makeEnum({
   updated: 'updated',
   postId: 'postId',
   challengeId: 'challengeId',
-  cruiseId: 'cruiseId',
   userUserId: 'userUserId'
 });
 
@@ -191,14 +171,12 @@ exports.AttachmentType = makeEnum({
 
 exports.EntityType = makeEnum({
   POST: 'POST',
-  CRUISE: 'CRUISE',
   CHALLENGE: 'CHALLENGE'
 });
 
 exports.Prisma.ModelName = makeEnum({
   User: 'User',
   Post: 'Post',
-  Cruise: 'Cruise',
   Comment: 'Comment',
   Challenge: 'Challenge',
   Peek: 'Peek'

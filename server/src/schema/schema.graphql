@@ -2,10 +2,10 @@ scalar Date
 scalar IntString
 scalar Mode
 type Query {
-    posts(filters: PostInputFilter, first: Int, last: Int, after: String, before: String): PostConnection!
-    challenges(filters: ChallengeInputFilter, first: Int, last: Int, after: String, before: String): ChallengeConnection!
-    comments(filters: CommentInputFilter, first: Int, last: Int, after: String, before: String): CommentConnection!
-    users(filters:UserInputFilter, first: Int, last: Int, after: String, before: String): UserConnection!
+    posts(filters: PostInputFilter, sort: PostSortInput, first: Int, last: Int, after: String, before: String): PostConnection!
+    challenges(filters: ChallengeInputFilter, sort: ChallengeSortInput, first: Int, last: Int, after: String, before: String): ChallengeConnection!
+    comments(filters: CommentInputFilter, sort: CommentSortInput, first: Int, last: Int, after: String, before: String): CommentConnection!
+    users(filters:UserInputFilter, sort: UserSortInput, first: Int, last: Int, after: String, before: String): UserConnection!
     user(id: String!): User
     post(id: Int!): Post
     challenge(id: String!): Challenge
@@ -197,7 +197,6 @@ type File {
 
 type Reaction {
     hearts: Int!
-    kisses: Int!
     hot: Int!
 }
 enum AttachmentType {
@@ -216,9 +215,18 @@ enum AppLock {
 }
 
 enum ReactionType {
-    KISSES
     HEARTS
     HOT
+}
+
+enum PostOrigin {
+    REGULAR
+    OGCHALLENGE
+}
+
+enum SortEnum {
+    desc
+    asc
 }
 
 type AppLockStatus {
@@ -250,13 +258,15 @@ type Post {
     userId: String!    
     attachmentUrl: String     
     content: String!  
-    hashtags: [String]    
+    hashtags: [String!]    
     reaction: Reaction!  
     location: LatLng 
     comments(filters: CommentInputFilter, first: Int, last: Int, after: String, before: String): CommentConnection!   
     challengeId: Int
+    origin: PostOrigin!
     created: Date!  
     updated: Date!
+    reactedUsers: [User!]
 }
 
 type Challenge {
@@ -269,11 +279,8 @@ type Challenge {
     userId: String!
     followers(filters:UserInputFilter, first: Int, last: Int, after: String, before: String): UserConnection!
     start: String!  
-    hashtags: [String] 
-    reaction: Reaction! 
-    kisses: [String]!
-    hearts: [String]!
-    hot: [String]!  
+    hashtags: [String!] 
+    reaction: Reaction!  
     end: String! 
     comments(filters: CommentInputFilter, first: Int, last: Int, after: String, before: String): CommentConnection!     
     created: Date!  
@@ -289,12 +296,9 @@ type Comment  {
     attachmentUrl: String
     attachmentMeta: File
     userId: String! 
-    hashtags: [String] 
+    hashtags: [String!] 
     user: User! 
     reaction: Reaction!  
-    kisses: [String]!
-    hearts: [String]!
-    hot: [String]!
     created: Date!  
     updated: Date!
     post: Post
@@ -305,7 +309,7 @@ type Comment  {
 
 type UserConnection{
     pageInfo: PageInfo!
-    edges: [UserEdge]!
+    edges: [UserEdge!]!
 }
 
 type UserEdge {
@@ -315,7 +319,7 @@ type UserEdge {
 
 type PostConnection{
     pageInfo: PageInfo!
-    edges: [PostEdge]!
+    edges: [PostEdge!]!
 }
 
 type PostEdge {
@@ -326,7 +330,7 @@ type PostEdge {
 
 type ChallengeConnection {
     pageInfo: PageInfo!
-    edges: [ChallengeEdge]!
+    edges: [ChallengeEdge!]!
 }
 
 type ChallengeEdge {
@@ -336,7 +340,7 @@ type ChallengeEdge {
 
 type CommentConnection {
     pageInfo: PageInfo!
-    edges: [CommentEdge]!
+    edges: [CommentEdge!]!
 }
 
 type CommentEdge {
@@ -374,6 +378,7 @@ input PostInputFilter {
     id: NumberExpressionInput
     user: UserInputFilter
     content: StringExpressionInput
+    origin: PostOrigin
     hashtags: ListExpressionInput
     comments: CommentRelationFilter
     challenge: ChallengeInputFilter
@@ -437,4 +442,27 @@ input ChallengeRelationFilter {
     every: ChallengeInputFilter
 }
 
+
+input UserSortInput {
+    firstName: SortEnum
+    lastName: SortEnum
+    email: SortEnum
+    userName: SortEnum
+    created: SortEnum
+}
+
+input PostSortInput {
+    hearts: SortEnum
+    hot: SortEnum
+}
+
+input ChallengeSortInput {
+    hearts: SortEnum
+    hot: SortEnum
+}
+
+input CommentSortInput {
+    hearts: SortEnum
+    hot: SortEnum
+}
 

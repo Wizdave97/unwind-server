@@ -52,6 +52,7 @@ export type Post = {
   kisses: string[]
   hearts: string[]
   hot: string[]
+  origin: PostOrigin
   challengeId: number | null
 }
 
@@ -131,6 +132,14 @@ export const AttachmentType: {
 };
 
 export type AttachmentType = (typeof AttachmentType)[keyof typeof AttachmentType]
+
+
+export const PostOrigin: {
+  REGULAR: 'REGULAR',
+  OGCHALLENGE: 'OGCHALLENGE'
+};
+
+export type PostOrigin = (typeof PostOrigin)[keyof typeof PostOrigin]
 
 
 export const EntityType: {
@@ -1676,6 +1685,7 @@ export namespace Prisma {
     content: string | null
     created: Date | null
     updated: Date | null
+    origin: PostOrigin | null
     challengeId: number | null
   }
 
@@ -1688,6 +1698,7 @@ export namespace Prisma {
     content: string | null
     created: Date | null
     updated: Date | null
+    origin: PostOrigin | null
     challengeId: number | null
   }
 
@@ -1707,6 +1718,7 @@ export namespace Prisma {
     kisses: number | null
     hearts: number | null
     hot: number | null
+    origin: number | null
     challengeId: number | null
     _all: number
   }
@@ -1731,6 +1743,7 @@ export namespace Prisma {
     content?: true
     created?: true
     updated?: true
+    origin?: true
     challengeId?: true
   }
 
@@ -1743,6 +1756,7 @@ export namespace Prisma {
     content?: true
     created?: true
     updated?: true
+    origin?: true
     challengeId?: true
   }
 
@@ -1762,6 +1776,7 @@ export namespace Prisma {
     kisses?: true
     hearts?: true
     hot?: true
+    origin?: true
     challengeId?: true
     _all?: true
   }
@@ -1855,6 +1870,7 @@ export namespace Prisma {
     kisses?: boolean
     hearts?: boolean
     hot?: boolean
+    origin?: boolean
     challengeId?: boolean
     challenge?: boolean | ChallengeArgs
     Challenge?: boolean | ChallengeArgs
@@ -4886,6 +4902,7 @@ export namespace Prisma {
     kisses: 'kisses',
     hearts: 'hearts',
     hot: 'hot',
+    origin: 'origin',
     challengeId: 'challengeId'
   };
 
@@ -5044,6 +5061,7 @@ export namespace Prisma {
     kisses?: StringNullableListFilter
     hearts?: StringNullableListFilter
     hot?: StringNullableListFilter
+    origin?: EnumPostOriginFilter | PostOrigin
     challengeId?: IntNullableFilter | number | null
     challenge?: XOR<ChallengeRelationFilter, ChallengeWhereInput> | null
     Challenge?: XOR<ChallengeRelationFilter, ChallengeWhereInput> | null
@@ -5065,6 +5083,7 @@ export namespace Prisma {
     kisses?: SortOrder
     hearts?: SortOrder
     hot?: SortOrder
+    origin?: SortOrder
     challengeId?: SortOrder
   }
 
@@ -5354,6 +5373,7 @@ export namespace Prisma {
     updated?: Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: PostOrigin
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
     kisses?: PostCreatekissesInput | Enumerable<string>
     hearts?: PostCreateheartsInput | Enumerable<string>
@@ -5376,6 +5396,7 @@ export namespace Prisma {
     updated?: Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: PostOrigin
     challengeId?: number | null
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
     kisses?: PostCreatekissesInput | Enumerable<string>
@@ -5394,6 +5415,7 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
     kisses?: PostUpdatekissesInput | Enumerable<string>
     hearts?: PostUpdateheartsInput | Enumerable<string>
@@ -5416,6 +5438,7 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
     kisses?: PostUpdatekissesInput | Enumerable<string>
@@ -5436,6 +5459,7 @@ export namespace Prisma {
     updated?: Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: PostOrigin
     challengeId?: number | null
     hashtags?: PostCreateManyhashtagsInput | Enumerable<string>
     kisses?: PostCreateManykissesInput | Enumerable<string>
@@ -5453,6 +5477,7 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
     kisses?: PostUpdatekissesInput | Enumerable<string>
     hearts?: PostUpdateheartsInput | Enumerable<string>
@@ -5471,6 +5496,7 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
     kisses?: PostUpdatekissesInput | Enumerable<string>
@@ -5925,6 +5951,13 @@ export namespace Prisma {
     isEmpty?: boolean
   }
 
+  export type EnumPostOriginFilter = {
+    equals?: PostOrigin
+    in?: Enumerable<PostOrigin>
+    notIn?: Enumerable<PostOrigin>
+    not?: NestedEnumPostOriginFilter | PostOrigin
+  }
+
   export type IntNullableFilter = {
     equals?: number | null
     in?: Enumerable<number> | null
@@ -6265,6 +6298,10 @@ export namespace Prisma {
 
   export type NullableEnumAttachmentTypeFieldUpdateOperationsInput = {
     set?: AttachmentType | null
+  }
+
+  export type EnumPostOriginFieldUpdateOperationsInput = {
+    set?: PostOrigin
   }
 
   export type PostUpdatehashtagsInput = {
@@ -6727,6 +6764,13 @@ export namespace Prisma {
     not?: NestedEnumAttachmentTypeNullableFilter | AttachmentType | null
   }
 
+  export type NestedEnumPostOriginFilter = {
+    equals?: PostOrigin
+    in?: Enumerable<PostOrigin>
+    notIn?: Enumerable<PostOrigin>
+    not?: NestedEnumPostOriginFilter | PostOrigin
+  }
+
   export type NestedIntNullableFilter = {
     equals?: number | null
     in?: Enumerable<number> | null
@@ -6882,6 +6926,7 @@ export namespace Prisma {
     updated?: Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: PostOrigin
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
     kisses?: PostCreatekissesInput | Enumerable<string>
     hearts?: PostCreateheartsInput | Enumerable<string>
@@ -6902,6 +6947,7 @@ export namespace Prisma {
     updated?: Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: PostOrigin
     challengeId?: number | null
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
     kisses?: PostCreatekissesInput | Enumerable<string>
@@ -7177,6 +7223,7 @@ export namespace Prisma {
     kisses?: StringNullableListFilter
     hearts?: StringNullableListFilter
     hot?: StringNullableListFilter
+    origin?: EnumPostOriginFilter | PostOrigin
     challengeId?: IntNullableFilter | number | null
   }
 
@@ -7711,6 +7758,7 @@ export namespace Prisma {
     updated?: Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: PostOrigin
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
     kisses?: PostCreatekissesInput | Enumerable<string>
     hearts?: PostCreateheartsInput | Enumerable<string>
@@ -7732,6 +7780,7 @@ export namespace Prisma {
     updated?: Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: PostOrigin
     challengeId?: number | null
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
     kisses?: PostCreatekissesInput | Enumerable<string>
@@ -7857,6 +7906,7 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
     kisses?: PostUpdatekissesInput | Enumerable<string>
     hearts?: PostUpdateheartsInput | Enumerable<string>
@@ -7878,6 +7928,7 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
     kisses?: PostUpdatekissesInput | Enumerable<string>
@@ -8141,6 +8192,7 @@ export namespace Prisma {
     updated?: Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: PostOrigin
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
     kisses?: PostCreatekissesInput | Enumerable<string>
     hearts?: PostCreateheartsInput | Enumerable<string>
@@ -8162,6 +8214,7 @@ export namespace Prisma {
     updated?: Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: PostOrigin
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
     kisses?: PostCreatekissesInput | Enumerable<string>
     hearts?: PostCreateheartsInput | Enumerable<string>
@@ -8434,6 +8487,7 @@ export namespace Prisma {
     updated?: Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: PostOrigin
     challengeId?: number | null
     hashtags?: PostCreateManyhashtagsInput | Enumerable<string>
     kisses?: PostCreateManykissesInput | Enumerable<string>
@@ -8612,6 +8666,7 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
     kisses?: PostUpdatekissesInput | Enumerable<string>
     hearts?: PostUpdateheartsInput | Enumerable<string>
@@ -8632,6 +8687,7 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
     kisses?: PostUpdatekissesInput | Enumerable<string>
@@ -8651,6 +8707,7 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
     kisses?: PostUpdatekissesInput | Enumerable<string>
@@ -8956,6 +9013,7 @@ export namespace Prisma {
     updated?: Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: PostOrigin
     hashtags?: PostCreateManyhashtagsInput | Enumerable<string>
     kisses?: PostCreateManykissesInput | Enumerable<string>
     hearts?: PostCreateManyheartsInput | Enumerable<string>
@@ -9056,6 +9114,7 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
     kisses?: PostUpdatekissesInput | Enumerable<string>
     hearts?: PostUpdateheartsInput | Enumerable<string>
@@ -9077,6 +9136,7 @@ export namespace Prisma {
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
     kisses?: PostUpdatekissesInput | Enumerable<string>
     hearts?: PostUpdateheartsInput | Enumerable<string>

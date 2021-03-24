@@ -44,14 +44,18 @@ enum AttachmentType {
 }
 
 enum ReactionType {
-  KISS
-  HEART
+  HEARTS
   HOT
 }
 
 enum EntityType {
   POST
   CHALLENGE
+}
+
+enum PostOrigin {
+  REGULAR
+  OGCHALLENGE
 }
 
 model Post {
@@ -69,14 +73,13 @@ model Post {
   location       Json?
   hashtags       String[]
   comments       Comment[]
-  kisses         String[]
   hearts         String[]
   hot            String[]
+  origin         PostOrigin      @default(REGULAR)
   challengeId    Int?
   challenge      Challenge?      @relation(fields: [challengeId], references: [id])
   Challenge      Challenge?      @relation("TaggedChallengePosts", fields: [challengeId], references: [id])
 }
-
 
 model Comment {
   id             Int             @id @default(autoincrement())
@@ -89,7 +92,6 @@ model Comment {
   attachmentUrl  String?         @map("attachment_url")
   userId         String
   reaction       Json?
-  kisses         String[]
   hearts         String[]
   hot            String[]
   user           User            @relation(fields: [userId], references: [uid])
@@ -115,7 +117,6 @@ model Challenge {
   reaction       Json?
   hashtags       String[]
   followers      User[]          @relation("ChallengeFollowing")
-  kisses         String[]
   hearts         String[]
   hot            String[]
   start          DateTime?

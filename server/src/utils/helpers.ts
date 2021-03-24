@@ -1,11 +1,11 @@
 import { PaginationInterface } from "unwind-server/resolvers/types";
 import express from 'express'
 import { verifyToken } from "unwind-server/auth";
-import { PrismaClient } from "unwind-server/prisma/src/generated/client";
+import { User, Post, PrismaClient } from "unwind-server/prisma/src/generated/client";
 import { ApolloError } from "apollo-server-express";
 
 
-export const createPaginationOptions = (args: PaginationInterface<any>) => {
+export const createPaginationOptions = (args: PaginationInterface<any, any>) => {
     const { first, last, after, before } = args
     let opts: any = { take: 25 }
     if (after && !before) {
@@ -97,3 +97,27 @@ export const getNextUTCHours = () => {
     const utcHours = serverDate.getUTCHours()
     return (utcHours * 60) + 60
 }
+
+export const getUsersThatReactedToPost = (following: User[], post: Post) => {
+    const followingUIDs = following.map(user => user.uid)
+    const reactedUserIds = new Set()
+    followingUIDs.forEach(id => {
+        if(post.hearts.indexOf(id) > -1) reactedUserIds.add(id)
+        if(post.hot.indexOf(id)> -1) reactedUserIds.add(id)
+    })
+
+    const reactedUsers = following.filter(({uid}) => reactedUserIds.has(uid))
+
+    return reactedUsers
+}
+
+export const getSortArray = (sort: {[key: string]: 'asc' | 'desc' }) => {
+    const keys = Object.keys(sort)
+    const arr: any[] = []
+    keys.forEach(key => {
+        arr.push({[key]: sort[key]})
+    })
+
+    return arr
+}
+

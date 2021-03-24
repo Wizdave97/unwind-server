@@ -44,13 +44,16 @@ const io = new Server(httpServer, {
 io.use(onAuth)
 io.on('connection', (socket: Socket) => {
     socketState.add(socket.handshake.auth.decodedToken.uid, socket)
-    setAsync(socket.handshake.auth.decodedToken.uid, '')
+    setAsync(socket.handshake.auth.decodedToken.uid, JSON.stringify({}))
     socket.on('disconnect', () => {
-        socketState.remove(socket.handshake.auth.decodedToken.uid, socket)
+        const socketsLeft = socketState.remove(socket.handshake.auth.decodedToken.uid, socket)
+        if(socketsLeft?.length === 0) {
+            redisClient.del(socket.handshake.auth.decodedToken.uid)
+        }
     })
     socket.on(SOCKET_EVENTS.update_cursor, (msg) => {
-        const { postCursor, challengeCursor, userId } = msg
-        redisClient.set(userId, [postCursor, challengeCursor].join(','))
+        const { userId } = msg
+        redisClient.set(userId, JSON.stringify(msg))
     })
 })
 
