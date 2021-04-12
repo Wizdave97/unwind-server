@@ -1,6 +1,6 @@
 import { ContextInterface, ParentInterface } from "unwind-server/types";
 import { createPaginationOptions } from "unwind-server/utils/helpers";
-import { PaginationInterface } from "./types";
+import { CommentInputFilter, CommentSortInput, PaginationInterface } from "./types";
 
 
 export const user = async (parent: ParentInterface, args:any, context: ContextInterface) => {
@@ -12,7 +12,7 @@ export const user = async (parent: ParentInterface, args:any, context: ContextIn
     }).user()
 }
 
-export const comments = async (parent: ParentInterface, args:PaginationInterface<any, any>, context: ContextInterface) => {
+export const comments = async (parent: ParentInterface, args:PaginationInterface<CommentInputFilter, CommentSortInput>, context: ContextInterface) => {
     const { before, filters } = args
     const opts = createPaginationOptions(args)
     const comments = await context.prisma.comment.findMany({

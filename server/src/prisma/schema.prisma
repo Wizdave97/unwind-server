@@ -43,14 +43,10 @@ enum AttachmentType {
   AUDIO
 }
 
-enum ReactionType {
-  HEARTS
-  HOT
-}
-
 enum EntityType {
   POST
   CHALLENGE
+  COMMENT
 }
 
 enum PostOrigin {
@@ -69,12 +65,11 @@ model Post {
   content        String
   created        DateTime        @default(now())
   updated        DateTime        @updatedAt
-  reaction       Json?
   location       Json?
   hashtags       String[]
   comments       Comment[]
-  hearts         String[]
-  hot            String[]
+  likedBy        String[]
+  likes          BigInt          @default(0)
   origin         PostOrigin      @default(REGULAR)
   challengeId    Int?
   challenge      Challenge?      @relation(fields: [challengeId], references: [id])
@@ -91,9 +86,8 @@ model Comment {
   attachmentType AttachmentType?
   attachmentUrl  String?         @map("attachment_url")
   userId         String
-  reaction       Json?
-  hearts         String[]
-  hot            String[]
+  likedBy        String[]
+  likes          BigInt          @default(0)
   user           User            @relation(fields: [userId], references: [uid])
   created        DateTime        @default(now())
   updated        DateTime        @updatedAt
@@ -114,11 +108,10 @@ model Challenge {
   attachmentType AttachmentType?
   attachmentUrl  String?         @map("attachment_url")
   attachmentMeta Json?
-  reaction       Json?
   hashtags       String[]
   followers      User[]          @relation("ChallengeFollowing")
-  hearts         String[]
-  hot            String[]
+  likedBy        String[]
+  likes          BigInt          @default(0)
   start          DateTime?
   end            DateTime?
   created        DateTime        @default(now())

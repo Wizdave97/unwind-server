@@ -1,5 +1,6 @@
 import { RedisClient } from "redis"
 import { REDIS_EVENTS } from "unwind-feed-server/events"
+import { getUsersThatReactedToPost, PostWithComments } from "unwind-feed-server/lib/helpers"
 import { PrismaClient } from "unwind-feed-server/prisma/src/generated/client"
 import { promisify } from 'util'
 
@@ -26,8 +27,8 @@ const worker = async ({prisma, setAsync, scanAsync, getAsync, publisher}: {
                 visited.add(key)
                 const msg = await getAsync(key)
                 const parsedCursors = msg ? JSON.parse(msg) : {}
-                const { postCursor, challengeCursor } = parsedCursors
-                if(!postCursor && !challengeCursor) return
+                const { postCursor } = parsedCursors
+                if(!postCursor) return
                 const following = await prisma.user.findUnique({
                     where: {
                         uid: key
@@ -38,59 +39,48 @@ const worker = async ({prisma, setAsync, scanAsync, getAsync, publisher}: {
                         uid: key
                     }
                 }).challengeFollowing()
-                const [posts, challenges] = await Promise.all([
-                    postCursor ? prisma.post.findMany({
-                        cursor: {
-                            cursor : postCursor
-                        },
-                        take: 20,
-                        skip: 1,
-                        where: {
-                            OR: [
-                                {
-                                    userId: { in: [...following.map(user => user.uid), key] }
-                                },
-                                {
-                                    challengeId: { in: [...challengeFollowing.map(challenge => challenge.id)] }
-                                },
-                                {
-                                    hearts: {hasSome: [...following.map(user => user.uid), key]}
-                                }
-                            ]
+                const posts = await prisma.post.findMany({
+                    cursor: {
+                        cursor : postCursor
+                    },
+                    take: 20,
+                    skip: 1,
+                    where: {
+                        OR: [
+                            {
+                                userId: { in: [...following.map(user => user.uid), key] }
+                            },
+                            {
+                                challengeId: { in: [...challengeFollowing.map(challenge => challenge.id)] }
+                            },
+                            {
+                                likedBy: {hasSome: [...following.map(user => user.uid), key]}
+                            },
+                            {
+                                comments: { some: { userId: { equals: key}}}
+                            }
+                        ]
 
-                        }
-                    }): [],
-
-                    challengeCursor ? prisma.challenge.findMany({
-                        skip: 1 ,
-                        take: 20,
-                        cursor: {
-                            cursor: challengeCursor,
-                        },
-                        where: {
-                            OR: [
-                                {
-                                    userId: { in: [...following.map(user => user.uid), key]}
-                                },
-                                {
-                                    hearts: { hasSome: [...following.map(user => user.uid), key]}
-                                }
-                            ]
-                        }
-                    }) : []
-                ])
+                    },
+                    include: {
+                        comments: true
+                    }
+                })
 
                 
                 const updatedCursors = {
                     postCursor: posts?.length > 0 ? posts[posts.length - 1]?.cursor : postCursor,
-                    challengeCursor: challenges?.length > 0 ? challenges[challenges.length - 1]?.cursor : challengeCursor,
                     userId: key
                 }
-                if(updatedCursors.postCursor !== postCursor || updatedCursors.challengeCursor !== challengeCursor) {
+                if(updatedCursors.postCursor !== postCursor) {
                     setAsync(key, JSON.stringify(updatedCursors))
                 }
-                if(posts?.length  === 0 && challenges?.length === 0) return
-                const data = { posts, challenges, userId: key}
+                if(posts?.length  === 0) return
+                posts.forEach(post => {
+                    const reactedUsers = getUsersThatReactedToPost(following, post as PostWithComments)
+                    return { ...post, reactedUsers}
+                })
+                const data = { posts, userId: key}
                 publisher.publish(REDIS_EVENTS.feed, JSON.stringify(data))
                 
             })

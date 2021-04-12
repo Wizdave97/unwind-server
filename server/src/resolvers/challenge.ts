@@ -1,6 +1,6 @@
 import { ParentInterface, ContextInterface } from "unwind-server/types"
 import { createPaginationOptions } from "unwind-server/utils/helpers"
-import { PaginationInterface } from "./types"
+import { CommentInputFilter, CommentSortInput, PaginationInterface, PostInputFilter, PostSortInput, UserInputFilter, UserSortInput } from "./types"
 
 export const user = async (parent: ParentInterface, args: any, context: ContextInterface) => {
     return await context.prisma.challenge.findUnique({
@@ -10,7 +10,7 @@ export const user = async (parent: ParentInterface, args: any, context: ContextI
     }).user()
 }
 
-export const comments = async (parent: ParentInterface, args: PaginationInterface<any>, context: ContextInterface) => {
+export const comments = async (parent: ParentInterface, args: PaginationInterface<CommentInputFilter, CommentSortInput>, context: ContextInterface) => {
     const { before, filters } = args
     const opts = createPaginationOptions(args)
     const comments = await context.prisma.comment.findMany({
@@ -50,7 +50,7 @@ export const comments = async (parent: ParentInterface, args: PaginationInterfac
     }
 }
 
-export const followers = async (parent: ParentInterface, args: PaginationInterface<any>, context: ContextInterface) => {
+export const followers = async (parent: ParentInterface, args: PaginationInterface<UserInputFilter, UserSortInput>, context: ContextInterface) => {
     const { before, filters } = args
     const opts = createPaginationOptions(args)
     const users = await context.prisma.user.findMany({
@@ -94,7 +94,7 @@ export const followers = async (parent: ParentInterface, args: PaginationInterfa
     }
 }
 
-export const posts = async (parent: ParentInterface, args: PaginationInterface<any>, context: ContextInterface) => {
+export const posts = async (parent: ParentInterface, args: PaginationInterface<PostInputFilter, PostSortInput>, context: ContextInterface) => {
     const { before, filters } = args
     const opts = createPaginationOptions(args)
     const posts = await context.prisma.post.findMany({

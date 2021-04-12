@@ -1,6 +1,6 @@
 import { ContextInterface, ParentInterface } from "unwind-server/types"
 import { createPaginationOptions, getSortArray, getUsersThatReactedToPost, resolveTimezoneAndPeeks } from "unwind-server/utils/helpers"
-import { ChallengeInputFilter, ChallengeSortInput, CommentInputFilter, CommentSortInput, PaginationInterface, PostInputFilter, PostSortInput, UserInputFilter, UserSortInput } from "./types"
+import { ChallengeInputFilter, ChallengeSortInput, CommentInputFilter, CommentSortInput, PaginationInterface, PostInputFilter, PostSortInput, PostWithComments, UserInputFilter, UserSortInput } from "./types"
 
 export const posts = async (parent: ParentInterface, args: PaginationInterface<PostInputFilter, PostSortInput>, context: ContextInterface) => {
     const { uid } = context
@@ -17,7 +17,10 @@ export const posts = async (parent: ParentInterface, args: PaginationInterface<P
         where: {
             ...(filters && filters)
         },
-        orderBy
+        orderBy,
+        include: {
+            comments: true
+        }
     })
     const endCursor = posts[posts.length - 1]?.cursor
     const startCursor = posts[0]?.cursor
@@ -29,7 +32,7 @@ export const posts = async (parent: ParentInterface, args: PaginationInterface<P
     }) : 0
     const edges = posts.map((post) => ({
         cursor: post?.cursor,
-        node: {...post, reactedUsers: getUsersThatReactedToPost(following, post)}
+        node: {...post, reactedUsers: getUsersThatReactedToPost(following, post as PostWithComments)}
     }))
 
     return {

@@ -7,6 +7,7 @@ import { PrismaClient } from 'unwind-server/prisma/src/generated/client'
 import { Mutation, Query, Post, Comment, Challenge, User } from 'unwind-server/resolvers'
 import { dateScalar, intString, mode } from './utils/scalars';
 import Plugin from 'unwind-server/plugins'
+import { checkAuth } from './utils/helpers';
 
 
 const prisma = new PrismaClient()
@@ -43,6 +44,7 @@ const server = new ApolloServer({
   context: async ({ req, res }) => {
     return {
       ...req,
+      uid: 'c0fbea97-03bd-4194-991c-449f16933b2c',
       prisma
     }
   },

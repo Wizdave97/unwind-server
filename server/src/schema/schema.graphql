@@ -72,7 +72,6 @@ type CreateReactionMutationResponse implements MutationResponse {
     code: String!
     success: Boolean!
     message: String!
-    reaction: Reaction
 }
 
 type FollowEntityMutationResponse implements MutationResponse {
@@ -151,14 +150,12 @@ input CreateReactionInput {
     uid: String!
     entityId: Int!
     entityType: EntityType!
-    reactionType: ReactionType!
 }
 
 input DeleteReactionInput {
     uid: String!
     entityId: Int!
     entityType: EntityType!
-    reactionType: ReactionType!
 }
 
 input FileInput {
@@ -195,10 +192,6 @@ type File {
     url: String!
 }
 
-type Reaction {
-    hearts: Int!
-    hot: Int!
-}
 enum AttachmentType {
     VIDEO
     IMAGE
@@ -207,16 +200,12 @@ enum AttachmentType {
 enum EntityType {
     POST
     CHALLENGE
+    COMMENT
 }
 
 enum AppLock {
     UNLOCKED
     LOCKED
-}
-
-enum ReactionType {
-    HEARTS
-    HOT
 }
 
 enum PostOrigin {
@@ -243,11 +232,11 @@ type User {
     created: Date!  
     updated: Date!
     location: LatLng
-    posts(filters: PostInputFilter, first: Int, last: Int, after: String, before: String): PostConnection!
-    followers(filters:UserInputFilter, first: Int, last: Int, after: String, before: String): UserConnection!
-    following(filters:UserInputFilter, first: Int, last: Int, after: String, before: String): UserConnection!
-    challenges(filters: ChallengeInputFilter, first: Int, last: Int, after: String, before: String): ChallengeConnection!
-    challengeFollowing(filters: ChallengeInputFilter, first: Int, last: Int, after: String, before: String): ChallengeConnection!
+    posts(filters: PostInputFilter, sort: PostSortInput, first: Int, last: Int, after: String, before: String): PostConnection!
+    followers(filters:UserInputFilter, sort: UserSortInput, first: Int, last: Int, after: String, before: String): UserConnection!
+    following(filters:UserInputFilter, sort: UserSortInput, first: Int, last: Int, after: String, before: String): UserConnection!
+    challenges(filters: ChallengeInputFilter, sort: ChallengeSortInput, first: Int, last: Int, after: String, before: String): ChallengeConnection!
+    challengeFollowing(filters: ChallengeInputFilter, sort: ChallengeSortInput, first: Int, last: Int, after: String, before: String): ChallengeConnection!
 }
 
 type Post {
@@ -259,9 +248,10 @@ type Post {
     attachmentUrl: String     
     content: String!  
     hashtags: [String!]    
-    reaction: Reaction!  
+    likes: Int!
+    likedBy: [String!]! 
     location: LatLng 
-    comments(filters: CommentInputFilter, first: Int, last: Int, after: String, before: String): CommentConnection!   
+    comments(filters: CommentInputFilter, sort: CommentSortInput, first: Int, last: Int, after: String, before: String): CommentConnection!   
     challengeId: Int
     origin: PostOrigin!
     created: Date!  
@@ -277,15 +267,16 @@ type Challenge {
     attachmentUrl: String
     attachmentMeta: File
     userId: String!
-    followers(filters:UserInputFilter, first: Int, last: Int, after: String, before: String): UserConnection!
+    followers(filters:UserInputFilter, sort: UserSortInput,, first: Int, last: Int, after: String, before: String): UserConnection!
     start: String!  
     hashtags: [String!] 
-    reaction: Reaction!  
+    likes: Int!
+    likedBy: [String!]!  
     end: String! 
-    comments(filters: CommentInputFilter, first: Int, last: Int, after: String, before: String): CommentConnection!     
+    comments(filters: CommentInputFilter, sort: CommentSortInput, first: Int, last: Int, after: String, before: String): CommentConnection!     
     created: Date!  
     updated: Date! 
-    posts(filters: PostInputFilter, first: Int, last: Int, after: String, before: String): PostConnection!
+    posts(filters: PostInputFilter, sort: PostSortInput, first: Int, last: Int, after: String, before: String): PostConnection!
 }
 
 type Comment  {
@@ -298,7 +289,8 @@ type Comment  {
     userId: String! 
     hashtags: [String!] 
     user: User! 
-    reaction: Reaction!  
+    likes: Int!
+    likedBy: [String!]!   
     created: Date!  
     updated: Date!
     post: Post
@@ -397,8 +389,8 @@ input UserInputFilter {
     followers: UserRelationFilter
     AND: [UserInputFilter!]
     OR: [UserInputFilter!]
-
 }
+
 input UserRelationFilter {
     every: UserInputFilter
 }
@@ -432,14 +424,14 @@ input CommentInputFilter {
 }
 
 input CommentRelationFilter {
-    every: CommentInputFilter
+    some: CommentInputFilter
 }
 input PostRelationFilter {
-    every: PostInputFilter
+    some: PostInputFilter
 }
 
 input ChallengeRelationFilter {
-    every: ChallengeInputFilter
+    some: ChallengeInputFilter
 }
 
 
@@ -452,17 +444,14 @@ input UserSortInput {
 }
 
 input PostSortInput {
-    hearts: SortEnum
-    hot: SortEnum
+    likes: SortEnum
 }
 
 input ChallengeSortInput {
-    hearts: SortEnum
-    hot: SortEnum
+    likes: SortEnum
 }
 
 input CommentSortInput {
-    hearts: SortEnum
-    hot: SortEnum
+    likes: SortEnum
 }
 

@@ -96,12 +96,10 @@ exports.Prisma.PostScalarFieldEnum = makeEnum({
   content: 'content',
   created: 'created',
   updated: 'updated',
-  reaction: 'reaction',
   location: 'location',
   hashtags: 'hashtags',
-  kisses: 'kisses',
-  hearts: 'hearts',
-  hot: 'hot',
+  likedBy: 'likedBy',
+  likes: 'likes',
   origin: 'origin',
   challengeId: 'challengeId'
 });
@@ -116,10 +114,8 @@ exports.Prisma.CommentScalarFieldEnum = makeEnum({
   attachmentType: 'attachmentType',
   attachmentUrl: 'attachmentUrl',
   userId: 'userId',
-  reaction: 'reaction',
-  kisses: 'kisses',
-  hearts: 'hearts',
-  hot: 'hot',
+  likedBy: 'likedBy',
+  likes: 'likes',
   created: 'created',
   updated: 'updated',
   postId: 'postId',
@@ -135,11 +131,9 @@ exports.Prisma.ChallengeScalarFieldEnum = makeEnum({
   attachmentType: 'attachmentType',
   attachmentUrl: 'attachmentUrl',
   attachmentMeta: 'attachmentMeta',
-  reaction: 'reaction',
   hashtags: 'hashtags',
-  kisses: 'kisses',
-  hearts: 'hearts',
-  hot: 'hot',
+  likedBy: 'likedBy',
+  likes: 'likes',
   start: 'start',
   end: 'end',
   created: 'created',
@@ -177,7 +171,8 @@ exports.PostOrigin = makeEnum({
 
 exports.EntityType = makeEnum({
   POST: 'POST',
-  CHALLENGE: 'CHALLENGE'
+  CHALLENGE: 'CHALLENGE',
+  COMMENT: 'COMMENT'
 });
 
 exports.Prisma.ModelName = makeEnum({

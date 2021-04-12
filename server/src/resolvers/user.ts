@@ -1,8 +1,8 @@
 import { ParentInterface, ContextInterface } from "unwind-server/types";
 import { createPaginationOptions } from "unwind-server/utils/helpers";
-import { PaginationInterface } from "./types";
+import { ChallengeInputFilter, ChallengeSortInput, CommentInputFilter, CommentSortInput, PaginationInterface, PostInputFilter, PostSortInput, UserInputFilter, UserSortInput } from "./types";
 
-export const challenges = async (parent: ParentInterface, args: PaginationInterface<any>, context: ContextInterface) => {
+export const challenges = async (parent: ParentInterface, args: PaginationInterface<CommentInputFilter, CommentSortInput>, context: ContextInterface) => {
     const { before, filters } = args
     const opts = createPaginationOptions(args)
     const challenges = await context.prisma.challenge.findMany({
@@ -38,7 +38,7 @@ export const challenges = async (parent: ParentInterface, args: PaginationInterf
     }
 }
 
-export const challengeFollowing = async (parent: ParentInterface, args: PaginationInterface<any>, context: ContextInterface) => {
+export const challengeFollowing = async (parent: ParentInterface, args: PaginationInterface<ChallengeInputFilter, ChallengeSortInput>, context: ContextInterface) => {
     const { before, filters } = args
     const opts = createPaginationOptions(args)
     const challenges = await context.prisma.challenge.findMany({
@@ -83,7 +83,7 @@ export const challengeFollowing = async (parent: ParentInterface, args: Paginati
 }
 
 
-export const followers = async (parent: ParentInterface, args: PaginationInterface<any>, context: ContextInterface) => {
+export const followers = async (parent: ParentInterface, args: PaginationInterface<UserInputFilter, UserSortInput>, context: ContextInterface) => {
     const { before, filters } = args
     const opts = createPaginationOptions(args)
     const users = await context.prisma.user.findMany({
@@ -126,7 +126,7 @@ export const followers = async (parent: ParentInterface, args: PaginationInterfa
     }
 }
 
-export const following = async (parent: ParentInterface, args: PaginationInterface<any>, context: ContextInterface) => {
+export const following = async (parent: ParentInterface, args: PaginationInterface<UserInputFilter, UserSortInput>, context: ContextInterface) => {
     const { before, filters } = args
     const opts = createPaginationOptions(args)
     const users = await context.prisma.user.findMany({
@@ -169,7 +169,7 @@ export const following = async (parent: ParentInterface, args: PaginationInterfa
     }
 }
 
-export const posts = async (parent: ParentInterface, args: PaginationInterface<any>, context: ContextInterface) => {
+export const posts = async (parent: ParentInterface, args: PaginationInterface<PostInputFilter, PostSortInput>, context: ContextInterface) => {
     const { before, filters } = args
     const opts = createPaginationOptions(args)
     const posts = await context.prisma.post.findMany({

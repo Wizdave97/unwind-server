@@ -1,3 +1,4 @@
+import { Post, Comment } from "unwind-server/prisma/src/generated/client"
 
 export enum AttachmentType {
     VIDEO = 'VIDEO',
@@ -7,12 +8,8 @@ export enum AttachmentType {
 
 export enum EntityType {
     POST = 'POST',
-    CHALLENGE = 'CHALLENGE'
-}
-
-export enum ReactionType {
-    HEARTS = 'HEARTS',
-    HOT = 'HOT'
+    CHALLENGE = 'CHALLENGE',
+    COMMENT = 'COMMENT'
 }
 
 export enum PostOrigin {
@@ -24,6 +21,9 @@ export enum PostOrigin {
 export enum SortEnum {
     desc = 'desc',
     asc = 'asc'
+}
+export interface PostWithComments extends Post {
+    comments: Comment[]
 }
 
 type LocationInput = {
@@ -87,7 +87,6 @@ export  type CreateReactionArgs =  {
     uid: string
     entityId: number;
     entityType: EntityType
-    reactionType: ReactionType
 }
 
 export type FollowEntityArgs = {
@@ -111,20 +110,19 @@ export interface PaginationInterface<T, U> {
 }
 
 type UserRelationFilter = {
-    every: UserInputFilter
+    some: UserInputFilter
 }
 
 type CommentRelationFilter = {
-    every: CommentInputFilter
+    some: CommentInputFilter
 }
 
 type ChallengeRelationFilter = {
-    every: ChallengeInputFilter
+    some: ChallengeInputFilter
 }
 
 export type PostSortInput = {
-    hearts: SortEnum,
-    hot: SortEnum
+    likes: SortEnum
 }
 
 export type UserSortInput = {
@@ -136,13 +134,11 @@ export type UserSortInput = {
 }
 
 export type ChallengeSortInput = {
-    hearts: SortEnum,
-    hot: SortEnum
+    likes: SortEnum
 }
 
 export type CommentSortInput = {
-    hearts: SortEnum,
-    hot: SortEnum
+    likes: SortEnum
 }
 
 export interface FieldExpressionInput {

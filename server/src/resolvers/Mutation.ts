@@ -1,7 +1,7 @@
 import { UserInputError } from "apollo-server-express";
 import { ContextInterface, ParentInterface, Partial } from "unwind-server/types";
 import { getNextUTCHours } from "unwind-server/utils/helpers";
-import { CreateChallengeArgs, CreateCommentArgs, CreatePostArgs, CreateReactionArgs, CreateUserArgs, EntityType, FollowEntityArgs, PostOrigin, ReactionType, UpdateUserArgs, UserFollowArgs } from "./types";
+import { CreateChallengeArgs, CreateCommentArgs, CreatePostArgs, CreateReactionArgs, CreateUserArgs, EntityType, FollowEntityArgs, PostOrigin, UpdateUserArgs, UserFollowArgs } from "./types";
 
 
 export const createUser = async (parent: ParentInterface, { input }: { input: CreateUserArgs }, context: ContextInterface) => {
@@ -90,7 +90,7 @@ export const createPost = async (parent: ParentInterface, { input }: { input: Cr
     const { attachmentType, content, uid, location, fileAttachment, challengeId } = input
 
     let hashtags = content?.toLowerCase().match(/#\w*/gi)
-    const reaction = { hot: 0, hearts: 0 }
+    
     try {
         const post = await prisma.post.create({
             data: {
@@ -100,7 +100,6 @@ export const createPost = async (parent: ParentInterface, { input }: { input: Cr
                 attachmentMeta: fileAttachment ?? null,
                 content,
                 ...(hashtags && { hashtags }),
-                reaction,
                 ...(challengeId && { challenge : { connect :{ id: challengeId} }})
             }
         })
@@ -128,7 +127,7 @@ export const createChallenge = async (parent: ParentInterface, { input }: { inpu
     const { attachmentType, challenge, uid, fileAttachment, start, end } = input
 
     let hashtags = challenge?.toLowerCase().match(/#\w*/gi)
-    const reaction = { hot: 0, hearts: 0 }
+    
     try {
         const newChallenge = await prisma.challenge.create({
             data: {
@@ -138,7 +137,6 @@ export const createChallenge = async (parent: ParentInterface, { input }: { inpu
                 attachmentUrl: fileAttachment?.url ?? null,
                 attachmentMeta: fileAttachment ?? null,
                 ...(hashtags && { hashtags }),
-                reaction,
                 start,
                 end
             }
@@ -152,7 +150,6 @@ export const createChallenge = async (parent: ParentInterface, { input }: { inpu
                 attachmentUrl: fileAttachment?.url ?? null,
                 attachmentMeta: fileAttachment ?? null,
                 ...(hashtags && { hashtags }),
-                reaction,
                 origin: PostOrigin.OGCHALLENGE,
                 challenge: { connect: { id: newChallenge?.id }}
             }
@@ -181,7 +178,7 @@ export const createComment = async (parent: ParentInterface, { input }: { input:
     const { attachmentType, comment, uid, fileAttachment, entityId, entityType } = input
 
     let hashtags = comment?.toLowerCase().match(/#\w*/gi)
-    const reaction = { hot: 0, hearts: 0 }
+    
     try {
         const newComment = await prisma.comment.create({
             data: {
@@ -190,7 +187,6 @@ export const createComment = async (parent: ParentInterface, { input }: { input:
                 ...(attachmentType && { attachmentType: attachmentType }),
                 ...(fileAttachment && { attachmentUrl: fileAttachment.url, attachmentMeta: fileAttachment }),
                 ...(hashtags && { hashtags }),
-                reaction,
                 entityType,
                 entityId,
                 ...(entityType === EntityType.CHALLENGE && { challenge: { connect: { id: entityId } } }),
@@ -218,103 +214,64 @@ export const createComment = async (parent: ParentInterface, { input }: { input:
 export const createReaction = async (parent: ParentInterface, { input }: { input: CreateReactionArgs }, context: ContextInterface) => {
     const {  prisma  } = context
     
-    const { reactionType, entityType, entityId, uid } = input
-    let entity
+    const { entityType, entityId, uid } = input
     try {
         if (entityType === EntityType.POST) {
-            entity = await prisma.post.findUnique({
+            const post = await prisma.post.findUnique({
                 where: {
                     id: entityId
                 }
             })
-            if (entity && reactionType === ReactionType.HEARTS) {
-                if (!entity.hearts.includes(uid)) {
-                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
-                    const post = await prisma.post.update({
-                        where: {
-                            id: entity.id
-                        },
-                        data: {
-                            hearts: [...entity.hearts, uid],
-                            reaction: { ...reaction, hearts: reaction.hearts + 1 }
-                        }
-                    })
-                    return {
-                        code: "200",
-                        success: true,
-                        message: 'Reaction created sucessfully',
-                        reaction: post.reaction
-                    }
+            if(!post) throw new Error()
+            await prisma.post.update({
+                where: {
+                    id: entityId
+                },
+                data : {
+                    likedBy: [...post?.likedBy, uid],
+                    likes: ++post.likes
                 }
-            }
-            if (entity && reactionType === ReactionType.HOT) {
-                if (!entity.hot.includes(uid)) {
-                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
-                    const post = await prisma.post.update({
-                        where: {
-                            id: entity.id
-                        },
-                        data: {
-                            hot: [...entity.hot, uid],
-                            reaction: { ...reaction, hot: reaction.hot + 1 }
-                        }
-                    })
-                    return {
-                        code: "200",
-                        success: true,
-                        message: 'Reaction created sucessfully',
-                        reaction: post.reaction
-                    }
-                }
-            }
+            })
 
         }
         if (entityType === EntityType.CHALLENGE) {
-            entity = await prisma.challenge.findUnique({
+            const challenge = await prisma.challenge.findUnique({
                 where: {
                     id: entityId
                 }
             })
-            if (entity && reactionType === ReactionType.HEARTS) {
-                if (!entity.hearts.includes(uid)) {
-                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
-                    const post = await prisma.challenge.update({
-                        where: {
-                            id: entity.id
-                        },
-                        data: {
-                            hearts: [...entity.hearts, uid],
-                            reaction: { ...reaction, hearts: reaction.hearts + 1 }
-                        }
-                    })
-                    return {
-                        code: "200",
-                        success: true,
-                        message: 'Reaction created sucessfully',
-                        reaction: post.reaction
-                    }
+            if(!challenge) throw new Error()
+            await prisma.challenge.update({
+                where: {
+                    id: entityId
+                }, 
+                data: {
+                    likedBy: [...challenge.likedBy, uid],
+                    likes: ++challenge.likes
                 }
-            }
-            if (entity && reactionType === ReactionType.HOT) {
-                if (!entity.hot.includes(uid)) {
-                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
-                    const post = await prisma.challenge.update({
-                        where: {
-                            id: entity.id
-                        },
-                        data: {
-                            hot: [...entity.hot, uid],
-                            reaction: { ...reaction, hot: reaction.hot + 1 }
-                        }
-                    })
-                    return {
-                        code: "200",
-                        success: true,
-                        message: 'Reaction created sucessfully',
-                        reaction: post.reaction
-                    }
+            })
+        }
+        if (entityType === EntityType.COMMENT) {
+            const comment = await prisma.comment.findUnique({
+                where: {
+                    id: entityId
                 }
-            }
+            })
+            if(!comment) throw new Error()
+            await prisma.comment.update({
+                where: {
+                    id: entityId
+                }, 
+                data: {
+                    likedBy: [...comment.likedBy, uid],
+                    likes: ++comment.likes
+                }
+            })
+        }
+        return {
+            code: "200",
+            success: true,
+            message: 'Reaction added successfully'
         }
     }
     catch {
@@ -329,104 +286,64 @@ export const createReaction = async (parent: ParentInterface, { input }: { input
 export const deleteReaction = async (parent: ParentInterface, { input }: { input: CreateReactionArgs }, context: ContextInterface) => {
     const {  prisma  } = context
     
-    const { reactionType, entityType, entityId, uid } = input
-    let entity
+    const { entityType, entityId, uid } = input
     try {
         if (entityType === EntityType.POST) {
-            entity = await prisma.post.findUnique({
+            const post = await prisma.post.findUnique({
                 where: {
                     id: entityId
                 }
             })
-            if (entity && reactionType === ReactionType.HEARTS) {
-                if (entity.hearts.includes(uid)) {
-                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
-                    const post = await prisma.post.update({
-                        where: {
-                            id: entity.id
-                        },
-                        data: {
-                            hearts: entity.hearts.filter(id => id !== uid),
-                            reaction: { ...reaction, hearts: reaction.hearts - 1 }
-                        }
-                    })
-                    return {
-                        code: "200",
-                        success: true,
-                        message: 'Reaction removed sucessfully',
-                        reaction: post.reaction
-                    }
+            if(!post) throw new Error()
+            await prisma.post.update({
+                where: {
+                    id: entityId
+                },
+                data : {
+                    likedBy: post.likedBy.filter(id => id !== uid),
+                    likes: --post.likes
                 }
-            }
-            if (entity && reactionType === ReactionType.HOT) {
-                if (entity.hot.includes(uid)) {
-                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
-                    const post = await prisma.post.update({
-                        where: {
-                            id: entity.id
-                        },
-                        data: {
-                            hot: entity.hot.filter(id => id !== uid),
-                            reaction: { ...reaction, hot: reaction.hot - 1 }
-                        }
-                    })
-                    return {
-                        code: "200",
-                        success: true,
-                        message: 'Reaction removed sucessfully',
-                        reaction: post.reaction
-                    }
-                }
-            }
+            })
 
         }
-        
         if (entityType === EntityType.CHALLENGE) {
-            entity = await prisma.challenge.findUnique({
+            const challenge = await prisma.challenge.findUnique({
                 where: {
                     id: entityId
                 }
             })
-            if (entity && reactionType === ReactionType.HEARTS) {
-                if (entity.hearts.includes(uid)) {
-                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
-                    const post = await prisma.challenge.update({
-                        where: {
-                            id: entity.id
-                        },
-                        data: {
-                            hearts: entity.hearts.filter(id => id !== uid),
-                            reaction: { ...reaction, hearts: reaction.hearts - 1 }
-                        }
-                    })
-                    return {
-                        code: "200",
-                        success: true,
-                        message: 'Reaction removed sucessfully',
-                        reaction: post.reaction
-                    }
+            if(!challenge) throw new Error()
+            await prisma.challenge.update({
+                where: {
+                    id: entityId
+                }, 
+                data: {
+                    likedBy: challenge.likedBy.filter(id => id !== uid),
+                    likes: --challenge.likes
                 }
-            }
-            if (entity && reactionType === ReactionType.HOT) {
-                if (entity.hot.includes(uid)) {
-                    const reaction = entity.reaction ?? {hearts: 0, kisses: 0, hot: 0} as JsonValue
-                    const post = await prisma.challenge.update({
-                        where: {
-                            id: entity.id
-                        },
-                        data: {
-                            hot: entity.hot.filter(id => id !== uid),
-                            reaction: { ...reaction, hot: reaction.hot - 1 }
-                        }
-                    })
-                    return {
-                        code: "200",
-                        success: true,
-                        message: 'Reaction removed sucessfully',
-                        reaction: post.reaction
-                    }
+            })
+        }
+        if (entityType === EntityType.COMMENT) {
+            const comment = await prisma.comment.findUnique({
+                where: {
+                    id: entityId
                 }
-            }
+            })
+            if(!comment) throw new Error()
+            await prisma.comment.update({
+                where: {
+                    id: entityId
+                }, 
+                data: {
+                    likedBy: comment.likedBy.filter(id => id !== uid),
+                    likes: --comment.likes
+                }
+            })
+        }
+        return {
+            code: "200",
+            success: true,
+            message: 'Reaction added successfully'
         }
     }
     catch {

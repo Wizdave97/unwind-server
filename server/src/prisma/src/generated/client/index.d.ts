@@ -46,12 +46,10 @@ export type Post = {
   content: string
   created: Date
   updated: Date
-  reaction: Prisma.JsonValue | null
   location: Prisma.JsonValue | null
   hashtags: string[]
-  kisses: string[]
-  hearts: string[]
-  hot: string[]
+  likedBy: string[]
+  likes: bigint
   origin: PostOrigin
   challengeId: number | null
 }
@@ -70,10 +68,8 @@ export type Comment = {
   attachmentType: AttachmentType | null
   attachmentUrl: string | null
   userId: string
-  reaction: Prisma.JsonValue | null
-  kisses: string[]
-  hearts: string[]
-  hot: string[]
+  likedBy: string[]
+  likes: bigint
   created: Date
   updated: Date
   postId: number | null
@@ -93,11 +89,9 @@ export type Challenge = {
   attachmentType: AttachmentType | null
   attachmentUrl: string | null
   attachmentMeta: Prisma.JsonValue | null
-  reaction: Prisma.JsonValue | null
   hashtags: string[]
-  kisses: string[]
-  hearts: string[]
-  hot: string[]
+  likedBy: string[]
+  likes: bigint
   start: Date | null
   end: Date | null
   created: Date
@@ -144,7 +138,8 @@ export type PostOrigin = (typeof PostOrigin)[keyof typeof PostOrigin]
 
 export const EntityType: {
   POST: 'POST',
-  CHALLENGE: 'CHALLENGE'
+  CHALLENGE: 'CHALLENGE',
+  COMMENT: 'COMMENT'
 };
 
 export type EntityType = (typeof EntityType)[keyof typeof EntityType]
@@ -1668,11 +1663,13 @@ export namespace Prisma {
 
   export type PostAvgAggregateOutputType = {
     id: number
+    likes: number
     challengeId: number | null
   }
 
   export type PostSumAggregateOutputType = {
     id: number
+    likes: bigint
     challengeId: number | null
   }
 
@@ -1685,6 +1682,7 @@ export namespace Prisma {
     content: string | null
     created: Date | null
     updated: Date | null
+    likes: bigint
     origin: PostOrigin | null
     challengeId: number | null
   }
@@ -1698,6 +1696,7 @@ export namespace Prisma {
     content: string | null
     created: Date | null
     updated: Date | null
+    likes: bigint
     origin: PostOrigin | null
     challengeId: number | null
   }
@@ -1712,12 +1711,10 @@ export namespace Prisma {
     content: number | null
     created: number | null
     updated: number | null
-    reaction: number | null
     location: number | null
     hashtags: number | null
-    kisses: number | null
-    hearts: number | null
-    hot: number | null
+    likedBy: number | null
+    likes: number
     origin: number | null
     challengeId: number | null
     _all: number
@@ -1726,11 +1723,13 @@ export namespace Prisma {
 
   export type PostAvgAggregateInputType = {
     id?: true
+    likes?: true
     challengeId?: true
   }
 
   export type PostSumAggregateInputType = {
     id?: true
+    likes?: true
     challengeId?: true
   }
 
@@ -1743,6 +1742,7 @@ export namespace Prisma {
     content?: true
     created?: true
     updated?: true
+    likes?: true
     origin?: true
     challengeId?: true
   }
@@ -1756,6 +1756,7 @@ export namespace Prisma {
     content?: true
     created?: true
     updated?: true
+    likes?: true
     origin?: true
     challengeId?: true
   }
@@ -1770,12 +1771,10 @@ export namespace Prisma {
     content?: true
     created?: true
     updated?: true
-    reaction?: true
     location?: true
     hashtags?: true
-    kisses?: true
-    hearts?: true
-    hot?: true
+    likedBy?: true
+    likes?: true
     origin?: true
     challengeId?: true
     _all?: true
@@ -1863,13 +1862,11 @@ export namespace Prisma {
     content?: boolean
     created?: boolean
     updated?: boolean
-    reaction?: boolean
     location?: boolean
     hashtags?: boolean
     comments?: boolean | CommentFindManyArgs
-    kisses?: boolean
-    hearts?: boolean
-    hot?: boolean
+    likedBy?: boolean
+    likes?: boolean
     origin?: boolean
     challengeId?: boolean
     challenge?: boolean | ChallengeArgs
@@ -2478,6 +2475,7 @@ export namespace Prisma {
   export type CommentAvgAggregateOutputType = {
     id: number
     entityId: number
+    likes: number
     postId: number | null
     challengeId: number | null
     userUserId: number | null
@@ -2486,6 +2484,7 @@ export namespace Prisma {
   export type CommentSumAggregateOutputType = {
     id: number
     entityId: number
+    likes: bigint
     postId: number | null
     challengeId: number | null
     userUserId: number | null
@@ -2500,6 +2499,7 @@ export namespace Prisma {
     attachmentType: AttachmentType | null
     attachmentUrl: string | null
     userId: string | null
+    likes: bigint
     created: Date | null
     updated: Date | null
     postId: number | null
@@ -2516,6 +2516,7 @@ export namespace Prisma {
     attachmentType: AttachmentType | null
     attachmentUrl: string | null
     userId: string | null
+    likes: bigint
     created: Date | null
     updated: Date | null
     postId: number | null
@@ -2533,10 +2534,8 @@ export namespace Prisma {
     attachmentType: number | null
     attachmentUrl: number | null
     userId: number | null
-    reaction: number | null
-    kisses: number | null
-    hearts: number | null
-    hot: number | null
+    likedBy: number | null
+    likes: number
     created: number | null
     updated: number | null
     postId: number | null
@@ -2549,6 +2548,7 @@ export namespace Prisma {
   export type CommentAvgAggregateInputType = {
     id?: true
     entityId?: true
+    likes?: true
     postId?: true
     challengeId?: true
     userUserId?: true
@@ -2557,6 +2557,7 @@ export namespace Prisma {
   export type CommentSumAggregateInputType = {
     id?: true
     entityId?: true
+    likes?: true
     postId?: true
     challengeId?: true
     userUserId?: true
@@ -2571,6 +2572,7 @@ export namespace Prisma {
     attachmentType?: true
     attachmentUrl?: true
     userId?: true
+    likes?: true
     created?: true
     updated?: true
     postId?: true
@@ -2587,6 +2589,7 @@ export namespace Prisma {
     attachmentType?: true
     attachmentUrl?: true
     userId?: true
+    likes?: true
     created?: true
     updated?: true
     postId?: true
@@ -2604,10 +2607,8 @@ export namespace Prisma {
     attachmentType?: true
     attachmentUrl?: true
     userId?: true
-    reaction?: true
-    kisses?: true
-    hearts?: true
-    hot?: true
+    likedBy?: true
+    likes?: true
     created?: true
     updated?: true
     postId?: true
@@ -2697,10 +2698,8 @@ export namespace Prisma {
     attachmentType?: boolean
     attachmentUrl?: boolean
     userId?: boolean
-    reaction?: boolean
-    kisses?: boolean
-    hearts?: boolean
-    hot?: boolean
+    likedBy?: boolean
+    likes?: boolean
     user?: boolean | UserArgs
     created?: boolean
     updated?: boolean
@@ -3313,11 +3312,13 @@ export namespace Prisma {
 
   export type ChallengeAvgAggregateOutputType = {
     id: number
+    likes: number
     userUserId: number | null
   }
 
   export type ChallengeSumAggregateOutputType = {
     id: number
+    likes: bigint
     userUserId: number | null
   }
 
@@ -3328,6 +3329,7 @@ export namespace Prisma {
     userId: string | null
     attachmentType: AttachmentType | null
     attachmentUrl: string | null
+    likes: bigint
     start: Date | null
     end: Date | null
     created: Date | null
@@ -3342,6 +3344,7 @@ export namespace Prisma {
     userId: string | null
     attachmentType: AttachmentType | null
     attachmentUrl: string | null
+    likes: bigint
     start: Date | null
     end: Date | null
     created: Date | null
@@ -3357,11 +3360,9 @@ export namespace Prisma {
     attachmentType: number | null
     attachmentUrl: number | null
     attachmentMeta: number | null
-    reaction: number | null
     hashtags: number | null
-    kisses: number | null
-    hearts: number | null
-    hot: number | null
+    likedBy: number | null
+    likes: number
     start: number | null
     end: number | null
     created: number | null
@@ -3373,11 +3374,13 @@ export namespace Prisma {
 
   export type ChallengeAvgAggregateInputType = {
     id?: true
+    likes?: true
     userUserId?: true
   }
 
   export type ChallengeSumAggregateInputType = {
     id?: true
+    likes?: true
     userUserId?: true
   }
 
@@ -3388,6 +3391,7 @@ export namespace Prisma {
     userId?: true
     attachmentType?: true
     attachmentUrl?: true
+    likes?: true
     start?: true
     end?: true
     created?: true
@@ -3402,6 +3406,7 @@ export namespace Prisma {
     userId?: true
     attachmentType?: true
     attachmentUrl?: true
+    likes?: true
     start?: true
     end?: true
     created?: true
@@ -3417,11 +3422,9 @@ export namespace Prisma {
     attachmentType?: true
     attachmentUrl?: true
     attachmentMeta?: true
-    reaction?: true
     hashtags?: true
-    kisses?: true
-    hearts?: true
-    hot?: true
+    likedBy?: true
+    likes?: true
     start?: true
     end?: true
     created?: true
@@ -3510,12 +3513,10 @@ export namespace Prisma {
     attachmentType?: boolean
     attachmentUrl?: boolean
     attachmentMeta?: boolean
-    reaction?: boolean
     hashtags?: boolean
     followers?: boolean | UserFindManyArgs
-    kisses?: boolean
-    hearts?: boolean
-    hot?: boolean
+    likedBy?: boolean
+    likes?: boolean
     start?: boolean
     end?: boolean
     created?: boolean
@@ -4896,12 +4897,10 @@ export namespace Prisma {
     content: 'content',
     created: 'created',
     updated: 'updated',
-    reaction: 'reaction',
     location: 'location',
     hashtags: 'hashtags',
-    kisses: 'kisses',
-    hearts: 'hearts',
-    hot: 'hot',
+    likedBy: 'likedBy',
+    likes: 'likes',
     origin: 'origin',
     challengeId: 'challengeId'
   };
@@ -4919,10 +4918,8 @@ export namespace Prisma {
     attachmentType: 'attachmentType',
     attachmentUrl: 'attachmentUrl',
     userId: 'userId',
-    reaction: 'reaction',
-    kisses: 'kisses',
-    hearts: 'hearts',
-    hot: 'hot',
+    likedBy: 'likedBy',
+    likes: 'likes',
     created: 'created',
     updated: 'updated',
     postId: 'postId',
@@ -4941,11 +4938,9 @@ export namespace Prisma {
     attachmentType: 'attachmentType',
     attachmentUrl: 'attachmentUrl',
     attachmentMeta: 'attachmentMeta',
-    reaction: 'reaction',
     hashtags: 'hashtags',
-    kisses: 'kisses',
-    hearts: 'hearts',
-    hot: 'hot',
+    likedBy: 'likedBy',
+    likes: 'likes',
     start: 'start',
     end: 'end',
     created: 'created',
@@ -5054,13 +5049,11 @@ export namespace Prisma {
     content?: StringFilter | string
     created?: DateTimeFilter | Date | string
     updated?: DateTimeFilter | Date | string
-    reaction?: JsonNullableFilter
     location?: JsonNullableFilter
     hashtags?: StringNullableListFilter
     comments?: CommentListRelationFilter
-    kisses?: StringNullableListFilter
-    hearts?: StringNullableListFilter
-    hot?: StringNullableListFilter
+    likedBy?: StringNullableListFilter
+    likes?: BigIntFilter | bigint | number
     origin?: EnumPostOriginFilter | PostOrigin
     challengeId?: IntNullableFilter | number | null
     challenge?: XOR<ChallengeRelationFilter, ChallengeWhereInput> | null
@@ -5077,12 +5070,10 @@ export namespace Prisma {
     content?: SortOrder
     created?: SortOrder
     updated?: SortOrder
-    reaction?: SortOrder
     location?: SortOrder
     hashtags?: SortOrder
-    kisses?: SortOrder
-    hearts?: SortOrder
-    hot?: SortOrder
+    likedBy?: SortOrder
+    likes?: SortOrder
     origin?: SortOrder
     challengeId?: SortOrder
   }
@@ -5105,10 +5096,8 @@ export namespace Prisma {
     attachmentType?: EnumAttachmentTypeNullableFilter | AttachmentType | null
     attachmentUrl?: StringNullableFilter | string | null
     userId?: StringFilter | string
-    reaction?: JsonNullableFilter
-    kisses?: StringNullableListFilter
-    hearts?: StringNullableListFilter
-    hot?: StringNullableListFilter
+    likedBy?: StringNullableListFilter
+    likes?: BigIntFilter | bigint | number
     user?: XOR<UserRelationFilter, UserWhereInput>
     created?: DateTimeFilter | Date | string
     updated?: DateTimeFilter | Date | string
@@ -5130,10 +5119,8 @@ export namespace Prisma {
     attachmentType?: SortOrder
     attachmentUrl?: SortOrder
     userId?: SortOrder
-    reaction?: SortOrder
-    kisses?: SortOrder
-    hearts?: SortOrder
-    hot?: SortOrder
+    likedBy?: SortOrder
+    likes?: SortOrder
     created?: SortOrder
     updated?: SortOrder
     postId?: SortOrder
@@ -5158,12 +5145,10 @@ export namespace Prisma {
     attachmentType?: EnumAttachmentTypeNullableFilter | AttachmentType | null
     attachmentUrl?: StringNullableFilter | string | null
     attachmentMeta?: JsonNullableFilter
-    reaction?: JsonNullableFilter
     hashtags?: StringNullableListFilter
     followers?: UserListRelationFilter
-    kisses?: StringNullableListFilter
-    hearts?: StringNullableListFilter
-    hot?: StringNullableListFilter
+    likedBy?: StringNullableListFilter
+    likes?: BigIntFilter | bigint | number
     start?: DateTimeNullableFilter | Date | string | null
     end?: DateTimeNullableFilter | Date | string | null
     created?: DateTimeFilter | Date | string
@@ -5183,11 +5168,9 @@ export namespace Prisma {
     attachmentType?: SortOrder
     attachmentUrl?: SortOrder
     attachmentMeta?: SortOrder
-    reaction?: SortOrder
     hashtags?: SortOrder
-    kisses?: SortOrder
-    hearts?: SortOrder
-    hot?: SortOrder
+    likedBy?: SortOrder
+    likes?: SortOrder
     start?: SortOrder
     end?: SortOrder
     created?: SortOrder
@@ -5371,13 +5354,11 @@ export namespace Prisma {
     content: string
     created?: Date | string
     updated?: Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: bigint | number
     origin?: PostOrigin
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
-    kisses?: PostCreatekissesInput | Enumerable<string>
-    hearts?: PostCreateheartsInput | Enumerable<string>
-    hot?: PostCreatehotInput | Enumerable<string>
+    likedBy?: PostCreatelikedByInput | Enumerable<string>
     user: UserCreateNestedOneWithoutPostsInput
     comments?: CommentCreateNestedManyWithoutPostInput
     challenge?: ChallengeCreateNestedOneWithoutPostInput
@@ -5394,14 +5375,12 @@ export namespace Prisma {
     content: string
     created?: Date | string
     updated?: Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: bigint | number
     origin?: PostOrigin
     challengeId?: number | null
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
-    kisses?: PostCreatekissesInput | Enumerable<string>
-    hearts?: PostCreateheartsInput | Enumerable<string>
-    hot?: PostCreatehotInput | Enumerable<string>
+    likedBy?: PostCreatelikedByInput | Enumerable<string>
     comments?: CommentUncheckedCreateNestedManyWithoutPostInput
   }
 
@@ -5413,13 +5392,11 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
-    kisses?: PostUpdatekissesInput | Enumerable<string>
-    hearts?: PostUpdateheartsInput | Enumerable<string>
-    hot?: PostUpdatehotInput | Enumerable<string>
+    likedBy?: PostUpdatelikedByInput | Enumerable<string>
     user?: UserUpdateOneRequiredWithoutPostsInput
     comments?: CommentUpdateManyWithoutPostInput
     challenge?: ChallengeUpdateOneWithoutPostInput
@@ -5436,14 +5413,12 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
-    kisses?: PostUpdatekissesInput | Enumerable<string>
-    hearts?: PostUpdateheartsInput | Enumerable<string>
-    hot?: PostUpdatehotInput | Enumerable<string>
+    likedBy?: PostUpdatelikedByInput | Enumerable<string>
     comments?: CommentUncheckedUpdateManyWithoutPostInput
   }
 
@@ -5457,14 +5432,12 @@ export namespace Prisma {
     content: string
     created?: Date | string
     updated?: Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: bigint | number
     origin?: PostOrigin
     challengeId?: number | null
     hashtags?: PostCreateManyhashtagsInput | Enumerable<string>
-    kisses?: PostCreateManykissesInput | Enumerable<string>
-    hearts?: PostCreateManyheartsInput | Enumerable<string>
-    hot?: PostCreateManyhotInput | Enumerable<string>
+    likedBy?: PostCreateManylikedByInput | Enumerable<string>
   }
 
   export type PostUpdateManyMutationInput = {
@@ -5475,13 +5448,11 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
-    kisses?: PostUpdatekissesInput | Enumerable<string>
-    hearts?: PostUpdateheartsInput | Enumerable<string>
-    hot?: PostUpdatehotInput | Enumerable<string>
+    likedBy?: PostUpdatelikedByInput | Enumerable<string>
   }
 
   export type PostUncheckedUpdateManyInput = {
@@ -5494,14 +5465,12 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
-    kisses?: PostUpdatekissesInput | Enumerable<string>
-    hearts?: PostUpdateheartsInput | Enumerable<string>
-    hot?: PostUpdatehotInput | Enumerable<string>
+    likedBy?: PostUpdatelikedByInput | Enumerable<string>
   }
 
   export type CommentCreateInput = {
@@ -5512,12 +5481,10 @@ export namespace Prisma {
     attachmentMeta?: InputJsonValue | null
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     created?: Date | string
     updated?: Date | string
-    kisses?: CommentCreatekissesInput | Enumerable<string>
-    hearts?: CommentCreateheartsInput | Enumerable<string>
-    hot?: CommentCreatehotInput | Enumerable<string>
+    likedBy?: CommentCreatelikedByInput | Enumerable<string>
     user: UserCreateNestedOneWithoutCommentInput
     post?: PostCreateNestedOneWithoutCommentsInput
     challenge?: ChallengeCreateNestedOneWithoutCommentsInput
@@ -5534,15 +5501,13 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     userId: string
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     created?: Date | string
     updated?: Date | string
     postId?: number | null
     challengeId?: number | null
     userUserId?: number | null
-    kisses?: CommentCreatekissesInput | Enumerable<string>
-    hearts?: CommentCreateheartsInput | Enumerable<string>
-    hot?: CommentCreatehotInput | Enumerable<string>
+    likedBy?: CommentCreatelikedByInput | Enumerable<string>
   }
 
   export type CommentUpdateInput = {
@@ -5553,12 +5518,10 @@ export namespace Prisma {
     attachmentMeta?: InputJsonValue | null
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    kisses?: CommentUpdatekissesInput | Enumerable<string>
-    hearts?: CommentUpdateheartsInput | Enumerable<string>
-    hot?: CommentUpdatehotInput | Enumerable<string>
+    likedBy?: CommentUpdatelikedByInput | Enumerable<string>
     user?: UserUpdateOneRequiredWithoutCommentInput
     post?: PostUpdateOneWithoutCommentsInput
     challenge?: ChallengeUpdateOneWithoutCommentsInput
@@ -5575,15 +5538,13 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     postId?: NullableIntFieldUpdateOperationsInput | number | null
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
     userUserId?: NullableIntFieldUpdateOperationsInput | number | null
-    kisses?: CommentUpdatekissesInput | Enumerable<string>
-    hearts?: CommentUpdateheartsInput | Enumerable<string>
-    hot?: CommentUpdatehotInput | Enumerable<string>
+    likedBy?: CommentUpdatelikedByInput | Enumerable<string>
   }
 
   export type CommentCreateManyInput = {
@@ -5596,15 +5557,13 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     userId: string
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     created?: Date | string
     updated?: Date | string
     postId?: number | null
     challengeId?: number | null
     userUserId?: number | null
-    kisses?: CommentCreateManykissesInput | Enumerable<string>
-    hearts?: CommentCreateManyheartsInput | Enumerable<string>
-    hot?: CommentCreateManyhotInput | Enumerable<string>
+    likedBy?: CommentCreateManylikedByInput | Enumerable<string>
   }
 
   export type CommentUpdateManyMutationInput = {
@@ -5615,12 +5574,10 @@ export namespace Prisma {
     attachmentMeta?: InputJsonValue | null
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    kisses?: CommentUpdatekissesInput | Enumerable<string>
-    hearts?: CommentUpdateheartsInput | Enumerable<string>
-    hot?: CommentUpdatehotInput | Enumerable<string>
+    likedBy?: CommentUpdatelikedByInput | Enumerable<string>
   }
 
   export type CommentUncheckedUpdateManyInput = {
@@ -5633,15 +5590,13 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     postId?: NullableIntFieldUpdateOperationsInput | number | null
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
     userUserId?: NullableIntFieldUpdateOperationsInput | number | null
-    kisses?: CommentUpdatekissesInput | Enumerable<string>
-    hearts?: CommentUpdateheartsInput | Enumerable<string>
-    hot?: CommentUpdatehotInput | Enumerable<string>
+    likedBy?: CommentUpdatelikedByInput | Enumerable<string>
   }
 
   export type ChallengeCreateInput = {
@@ -5650,15 +5605,13 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     start?: Date | string | null
     end?: Date | string | null
     created?: Date | string
     updated?: Date | string
     hashtags?: ChallengeCreatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeCreatekissesInput | Enumerable<string>
-    hearts?: ChallengeCreateheartsInput | Enumerable<string>
-    hot?: ChallengeCreatehotInput | Enumerable<string>
+    likedBy?: ChallengeCreatelikedByInput | Enumerable<string>
     user: UserCreateNestedOneWithoutChallengeInput
     followers?: UserCreateNestedManyWithoutChallengeFollowingInput
     User?: UserCreateNestedOneWithoutChallengesInput
@@ -5675,16 +5628,14 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     start?: Date | string | null
     end?: Date | string | null
     created?: Date | string
     updated?: Date | string
     userUserId?: number | null
     hashtags?: ChallengeCreatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeCreatekissesInput | Enumerable<string>
-    hearts?: ChallengeCreateheartsInput | Enumerable<string>
-    hot?: ChallengeCreatehotInput | Enumerable<string>
+    likedBy?: ChallengeCreatelikedByInput | Enumerable<string>
     comments?: CommentUncheckedCreateNestedManyWithoutChallengeInput
     posts?: PostUncheckedCreateNestedManyWithoutChallengeInput
     Post?: PostUncheckedCreateNestedManyWithoutChallengeInput
@@ -5696,15 +5647,13 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeUpdatekissesInput | Enumerable<string>
-    hearts?: ChallengeUpdateheartsInput | Enumerable<string>
-    hot?: ChallengeUpdatehotInput | Enumerable<string>
+    likedBy?: ChallengeUpdatelikedByInput | Enumerable<string>
     user?: UserUpdateOneRequiredWithoutChallengeInput
     followers?: UserUpdateManyWithoutChallengeFollowingInput
     User?: UserUpdateOneWithoutChallengesInput
@@ -5721,16 +5670,14 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     userUserId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeUpdatekissesInput | Enumerable<string>
-    hearts?: ChallengeUpdateheartsInput | Enumerable<string>
-    hot?: ChallengeUpdatehotInput | Enumerable<string>
+    likedBy?: ChallengeUpdatelikedByInput | Enumerable<string>
     comments?: CommentUncheckedUpdateManyWithoutChallengeInput
     posts?: PostUncheckedUpdateManyWithoutChallengeInput
     Post?: PostUncheckedUpdateManyWithoutChallengeInput
@@ -5744,16 +5691,14 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     start?: Date | string | null
     end?: Date | string | null
     created?: Date | string
     updated?: Date | string
     userUserId?: number | null
     hashtags?: ChallengeCreateManyhashtagsInput | Enumerable<string>
-    kisses?: ChallengeCreateManykissesInput | Enumerable<string>
-    hearts?: ChallengeCreateManyheartsInput | Enumerable<string>
-    hot?: ChallengeCreateManyhotInput | Enumerable<string>
+    likedBy?: ChallengeCreateManylikedByInput | Enumerable<string>
   }
 
   export type ChallengeUpdateManyMutationInput = {
@@ -5762,15 +5707,13 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeUpdatekissesInput | Enumerable<string>
-    hearts?: ChallengeUpdateheartsInput | Enumerable<string>
-    hot?: ChallengeUpdatehotInput | Enumerable<string>
+    likedBy?: ChallengeUpdatelikedByInput | Enumerable<string>
   }
 
   export type ChallengeUncheckedUpdateManyInput = {
@@ -5781,16 +5724,14 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     userUserId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeUpdatekissesInput | Enumerable<string>
-    hearts?: ChallengeUpdateheartsInput | Enumerable<string>
-    hot?: ChallengeUpdatehotInput | Enumerable<string>
+    likedBy?: ChallengeUpdatelikedByInput | Enumerable<string>
   }
 
   export type PeekCreateInput = {
@@ -5949,6 +5890,17 @@ export namespace Prisma {
     hasEvery?: Enumerable<string>
     hasSome?: Enumerable<string>
     isEmpty?: boolean
+  }
+
+  export type BigIntFilter = {
+    equals?: bigint | number
+    in?: Enumerable<bigint> | Enumerable<number>
+    notIn?: Enumerable<bigint> | Enumerable<number>
+    lt?: bigint | number
+    lte?: bigint | number
+    gt?: bigint | number
+    gte?: bigint | number
+    not?: NestedBigIntFilter | bigint | number
   }
 
   export type EnumPostOriginFilter = {
@@ -6252,15 +6204,7 @@ export namespace Prisma {
     set: Enumerable<string>
   }
 
-  export type PostCreatekissesInput = {
-    set: Enumerable<string>
-  }
-
-  export type PostCreateheartsInput = {
-    set: Enumerable<string>
-  }
-
-  export type PostCreatehotInput = {
+  export type PostCreatelikedByInput = {
     set: Enumerable<string>
   }
 
@@ -6300,6 +6244,14 @@ export namespace Prisma {
     set?: AttachmentType | null
   }
 
+  export type BigIntFieldUpdateOperationsInput = {
+    set?: bigint | number
+    increment?: bigint | number
+    decrement?: bigint | number
+    multiply?: bigint | number
+    divide?: bigint | number
+  }
+
   export type EnumPostOriginFieldUpdateOperationsInput = {
     set?: PostOrigin
   }
@@ -6308,15 +6260,7 @@ export namespace Prisma {
     set: Enumerable<string>
   }
 
-  export type PostUpdatekissesInput = {
-    set: Enumerable<string>
-  }
-
-  export type PostUpdateheartsInput = {
-    set: Enumerable<string>
-  }
-
-  export type PostUpdatehotInput = {
+  export type PostUpdatelikedByInput = {
     set: Enumerable<string>
   }
 
@@ -6388,27 +6332,11 @@ export namespace Prisma {
     set: Enumerable<string>
   }
 
-  export type PostCreateManykissesInput = {
+  export type PostCreateManylikedByInput = {
     set: Enumerable<string>
   }
 
-  export type PostCreateManyheartsInput = {
-    set: Enumerable<string>
-  }
-
-  export type PostCreateManyhotInput = {
-    set: Enumerable<string>
-  }
-
-  export type CommentCreatekissesInput = {
-    set: Enumerable<string>
-  }
-
-  export type CommentCreateheartsInput = {
-    set: Enumerable<string>
-  }
-
-  export type CommentCreatehotInput = {
+  export type CommentCreatelikedByInput = {
     set: Enumerable<string>
   }
 
@@ -6434,15 +6362,7 @@ export namespace Prisma {
     set?: EntityType
   }
 
-  export type CommentUpdatekissesInput = {
-    set: Enumerable<string>
-  }
-
-  export type CommentUpdateheartsInput = {
-    set: Enumerable<string>
-  }
-
-  export type CommentUpdatehotInput = {
+  export type CommentUpdatelikedByInput = {
     set: Enumerable<string>
   }
 
@@ -6484,15 +6404,7 @@ export namespace Prisma {
     update?: XOR<UserUpdateWithoutCommentInput, UserUncheckedUpdateWithoutCommentInput>
   }
 
-  export type CommentCreateManykissesInput = {
-    set: Enumerable<string>
-  }
-
-  export type CommentCreateManyheartsInput = {
-    set: Enumerable<string>
-  }
-
-  export type CommentCreateManyhotInput = {
+  export type CommentCreateManylikedByInput = {
     set: Enumerable<string>
   }
 
@@ -6500,15 +6412,7 @@ export namespace Prisma {
     set: Enumerable<string>
   }
 
-  export type ChallengeCreatekissesInput = {
-    set: Enumerable<string>
-  }
-
-  export type ChallengeCreateheartsInput = {
-    set: Enumerable<string>
-  }
-
-  export type ChallengeCreatehotInput = {
+  export type ChallengeCreatelikedByInput = {
     set: Enumerable<string>
   }
 
@@ -6566,15 +6470,7 @@ export namespace Prisma {
     set: Enumerable<string>
   }
 
-  export type ChallengeUpdatekissesInput = {
-    set: Enumerable<string>
-  }
-
-  export type ChallengeUpdateheartsInput = {
-    set: Enumerable<string>
-  }
-
-  export type ChallengeUpdatehotInput = {
+  export type ChallengeUpdatelikedByInput = {
     set: Enumerable<string>
   }
 
@@ -6669,15 +6565,7 @@ export namespace Prisma {
     set: Enumerable<string>
   }
 
-  export type ChallengeCreateManykissesInput = {
-    set: Enumerable<string>
-  }
-
-  export type ChallengeCreateManyheartsInput = {
-    set: Enumerable<string>
-  }
-
-  export type ChallengeCreateManyhotInput = {
+  export type ChallengeCreateManylikedByInput = {
     set: Enumerable<string>
   }
 
@@ -6762,6 +6650,17 @@ export namespace Prisma {
     in?: Enumerable<AttachmentType> | null
     notIn?: Enumerable<AttachmentType> | null
     not?: NestedEnumAttachmentTypeNullableFilter | AttachmentType | null
+  }
+
+  export type NestedBigIntFilter = {
+    equals?: bigint | number
+    in?: Enumerable<bigint> | Enumerable<number>
+    notIn?: Enumerable<bigint> | Enumerable<number>
+    lt?: bigint | number
+    lte?: bigint | number
+    gt?: bigint | number
+    gte?: bigint | number
+    not?: NestedBigIntFilter | bigint | number
   }
 
   export type NestedEnumPostOriginFilter = {
@@ -6924,13 +6823,11 @@ export namespace Prisma {
     content: string
     created?: Date | string
     updated?: Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: bigint | number
     origin?: PostOrigin
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
-    kisses?: PostCreatekissesInput | Enumerable<string>
-    hearts?: PostCreateheartsInput | Enumerable<string>
-    hot?: PostCreatehotInput | Enumerable<string>
+    likedBy?: PostCreatelikedByInput | Enumerable<string>
     comments?: CommentCreateNestedManyWithoutPostInput
     challenge?: ChallengeCreateNestedOneWithoutPostInput
     Challenge?: ChallengeCreateNestedOneWithoutPostsInput
@@ -6945,14 +6842,12 @@ export namespace Prisma {
     content: string
     created?: Date | string
     updated?: Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: bigint | number
     origin?: PostOrigin
     challengeId?: number | null
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
-    kisses?: PostCreatekissesInput | Enumerable<string>
-    hearts?: PostCreateheartsInput | Enumerable<string>
-    hot?: PostCreatehotInput | Enumerable<string>
+    likedBy?: PostCreatelikedByInput | Enumerable<string>
     comments?: CommentUncheckedCreateNestedManyWithoutPostInput
   }
 
@@ -6974,12 +6869,10 @@ export namespace Prisma {
     attachmentMeta?: InputJsonValue | null
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     created?: Date | string
     updated?: Date | string
-    kisses?: CommentCreatekissesInput | Enumerable<string>
-    hearts?: CommentCreateheartsInput | Enumerable<string>
-    hot?: CommentCreatehotInput | Enumerable<string>
+    likedBy?: CommentCreatelikedByInput | Enumerable<string>
     user: UserCreateNestedOneWithoutCommentInput
     post?: PostCreateNestedOneWithoutCommentsInput
     challenge?: ChallengeCreateNestedOneWithoutCommentsInput
@@ -6995,14 +6888,12 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     userId: string
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     created?: Date | string
     updated?: Date | string
     postId?: number | null
     challengeId?: number | null
-    kisses?: CommentCreatekissesInput | Enumerable<string>
-    hearts?: CommentCreateheartsInput | Enumerable<string>
-    hot?: CommentCreatehotInput | Enumerable<string>
+    likedBy?: CommentCreatelikedByInput | Enumerable<string>
   }
 
   export type CommentCreateOrConnectWithoutUserInput = {
@@ -7021,15 +6912,13 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     start?: Date | string | null
     end?: Date | string | null
     created?: Date | string
     updated?: Date | string
     hashtags?: ChallengeCreatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeCreatekissesInput | Enumerable<string>
-    hearts?: ChallengeCreateheartsInput | Enumerable<string>
-    hot?: ChallengeCreatehotInput | Enumerable<string>
+    likedBy?: ChallengeCreatelikedByInput | Enumerable<string>
     user: UserCreateNestedOneWithoutChallengeInput
     followers?: UserCreateNestedManyWithoutChallengeFollowingInput
     comments?: CommentCreateNestedManyWithoutChallengeInput
@@ -7045,15 +6934,13 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     start?: Date | string | null
     end?: Date | string | null
     created?: Date | string
     updated?: Date | string
     hashtags?: ChallengeCreatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeCreatekissesInput | Enumerable<string>
-    hearts?: ChallengeCreateheartsInput | Enumerable<string>
-    hot?: ChallengeCreatehotInput | Enumerable<string>
+    likedBy?: ChallengeCreatelikedByInput | Enumerable<string>
     comments?: CommentUncheckedCreateNestedManyWithoutChallengeInput
     posts?: PostUncheckedCreateNestedManyWithoutChallengeInput
     Post?: PostUncheckedCreateNestedManyWithoutChallengeInput
@@ -7075,15 +6962,13 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     start?: Date | string | null
     end?: Date | string | null
     created?: Date | string
     updated?: Date | string
     hashtags?: ChallengeCreatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeCreatekissesInput | Enumerable<string>
-    hearts?: ChallengeCreateheartsInput | Enumerable<string>
-    hot?: ChallengeCreatehotInput | Enumerable<string>
+    likedBy?: ChallengeCreatelikedByInput | Enumerable<string>
     user: UserCreateNestedOneWithoutChallengeInput
     User?: UserCreateNestedOneWithoutChallengesInput
     comments?: CommentCreateNestedManyWithoutChallengeInput
@@ -7099,16 +6984,14 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     start?: Date | string | null
     end?: Date | string | null
     created?: Date | string
     updated?: Date | string
     userUserId?: number | null
     hashtags?: ChallengeCreatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeCreatekissesInput | Enumerable<string>
-    hearts?: ChallengeCreateheartsInput | Enumerable<string>
-    hot?: ChallengeCreatehotInput | Enumerable<string>
+    likedBy?: ChallengeCreatelikedByInput | Enumerable<string>
     comments?: CommentUncheckedCreateNestedManyWithoutChallengeInput
     posts?: PostUncheckedCreateNestedManyWithoutChallengeInput
     Post?: PostUncheckedCreateNestedManyWithoutChallengeInput
@@ -7217,12 +7100,10 @@ export namespace Prisma {
     content?: StringFilter | string
     created?: DateTimeFilter | Date | string
     updated?: DateTimeFilter | Date | string
-    reaction?: JsonNullableFilter
     location?: JsonNullableFilter
     hashtags?: StringNullableListFilter
-    kisses?: StringNullableListFilter
-    hearts?: StringNullableListFilter
-    hot?: StringNullableListFilter
+    likedBy?: StringNullableListFilter
+    likes?: BigIntFilter | bigint | number
     origin?: EnumPostOriginFilter | PostOrigin
     challengeId?: IntNullableFilter | number | null
   }
@@ -7256,10 +7137,8 @@ export namespace Prisma {
     attachmentType?: EnumAttachmentTypeNullableFilter | AttachmentType | null
     attachmentUrl?: StringNullableFilter | string | null
     userId?: StringFilter | string
-    reaction?: JsonNullableFilter
-    kisses?: StringNullableListFilter
-    hearts?: StringNullableListFilter
-    hot?: StringNullableListFilter
+    likedBy?: StringNullableListFilter
+    likes?: BigIntFilter | bigint | number
     created?: DateTimeFilter | Date | string
     updated?: DateTimeFilter | Date | string
     postId?: IntNullableFilter | number | null
@@ -7294,11 +7173,9 @@ export namespace Prisma {
     attachmentType?: EnumAttachmentTypeNullableFilter | AttachmentType | null
     attachmentUrl?: StringNullableFilter | string | null
     attachmentMeta?: JsonNullableFilter
-    reaction?: JsonNullableFilter
     hashtags?: StringNullableListFilter
-    kisses?: StringNullableListFilter
-    hearts?: StringNullableListFilter
-    hot?: StringNullableListFilter
+    likedBy?: StringNullableListFilter
+    likes?: BigIntFilter | bigint | number
     start?: DateTimeNullableFilter | Date | string | null
     end?: DateTimeNullableFilter | Date | string | null
     created?: DateTimeFilter | Date | string
@@ -7397,12 +7274,10 @@ export namespace Prisma {
     attachmentMeta?: InputJsonValue | null
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     created?: Date | string
     updated?: Date | string
-    kisses?: CommentCreatekissesInput | Enumerable<string>
-    hearts?: CommentCreateheartsInput | Enumerable<string>
-    hot?: CommentCreatehotInput | Enumerable<string>
+    likedBy?: CommentCreatelikedByInput | Enumerable<string>
     user: UserCreateNestedOneWithoutCommentInput
     challenge?: ChallengeCreateNestedOneWithoutCommentsInput
     User?: UserCreateNestedOneWithoutCommentInput
@@ -7418,14 +7293,12 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     userId: string
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     created?: Date | string
     updated?: Date | string
     challengeId?: number | null
     userUserId?: number | null
-    kisses?: CommentCreatekissesInput | Enumerable<string>
-    hearts?: CommentCreateheartsInput | Enumerable<string>
-    hot?: CommentCreatehotInput | Enumerable<string>
+    likedBy?: CommentCreatelikedByInput | Enumerable<string>
   }
 
   export type CommentCreateOrConnectWithoutPostInput = {
@@ -7444,15 +7317,13 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     start?: Date | string | null
     end?: Date | string | null
     created?: Date | string
     updated?: Date | string
     hashtags?: ChallengeCreatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeCreatekissesInput | Enumerable<string>
-    hearts?: ChallengeCreateheartsInput | Enumerable<string>
-    hot?: ChallengeCreatehotInput | Enumerable<string>
+    likedBy?: ChallengeCreatelikedByInput | Enumerable<string>
     user: UserCreateNestedOneWithoutChallengeInput
     followers?: UserCreateNestedManyWithoutChallengeFollowingInput
     User?: UserCreateNestedOneWithoutChallengesInput
@@ -7468,16 +7339,14 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     start?: Date | string | null
     end?: Date | string | null
     created?: Date | string
     updated?: Date | string
     userUserId?: number | null
     hashtags?: ChallengeCreatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeCreatekissesInput | Enumerable<string>
-    hearts?: ChallengeCreateheartsInput | Enumerable<string>
-    hot?: ChallengeCreatehotInput | Enumerable<string>
+    likedBy?: ChallengeCreatelikedByInput | Enumerable<string>
     comments?: CommentUncheckedCreateNestedManyWithoutChallengeInput
     posts?: PostUncheckedCreateNestedManyWithoutChallengeInput
   }
@@ -7493,15 +7362,13 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     start?: Date | string | null
     end?: Date | string | null
     created?: Date | string
     updated?: Date | string
     hashtags?: ChallengeCreatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeCreatekissesInput | Enumerable<string>
-    hearts?: ChallengeCreateheartsInput | Enumerable<string>
-    hot?: ChallengeCreatehotInput | Enumerable<string>
+    likedBy?: ChallengeCreatelikedByInput | Enumerable<string>
     user: UserCreateNestedOneWithoutChallengeInput
     followers?: UserCreateNestedManyWithoutChallengeFollowingInput
     User?: UserCreateNestedOneWithoutChallengesInput
@@ -7517,16 +7384,14 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     start?: Date | string | null
     end?: Date | string | null
     created?: Date | string
     updated?: Date | string
     userUserId?: number | null
     hashtags?: ChallengeCreatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeCreatekissesInput | Enumerable<string>
-    hearts?: ChallengeCreateheartsInput | Enumerable<string>
-    hot?: ChallengeCreatehotInput | Enumerable<string>
+    likedBy?: ChallengeCreatelikedByInput | Enumerable<string>
     comments?: CommentUncheckedCreateNestedManyWithoutChallengeInput
     Post?: PostUncheckedCreateNestedManyWithoutChallengeInput
   }
@@ -7612,15 +7477,13 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeUpdatekissesInput | Enumerable<string>
-    hearts?: ChallengeUpdateheartsInput | Enumerable<string>
-    hot?: ChallengeUpdatehotInput | Enumerable<string>
+    likedBy?: ChallengeUpdatelikedByInput | Enumerable<string>
     user?: UserUpdateOneRequiredWithoutChallengeInput
     followers?: UserUpdateManyWithoutChallengeFollowingInput
     User?: UserUpdateOneWithoutChallengesInput
@@ -7636,16 +7499,14 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     userUserId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeUpdatekissesInput | Enumerable<string>
-    hearts?: ChallengeUpdateheartsInput | Enumerable<string>
-    hot?: ChallengeUpdatehotInput | Enumerable<string>
+    likedBy?: ChallengeUpdatelikedByInput | Enumerable<string>
     comments?: CommentUncheckedUpdateManyWithoutChallengeInput
     posts?: PostUncheckedUpdateManyWithoutChallengeInput
   }
@@ -7661,15 +7522,13 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeUpdatekissesInput | Enumerable<string>
-    hearts?: ChallengeUpdateheartsInput | Enumerable<string>
-    hot?: ChallengeUpdatehotInput | Enumerable<string>
+    likedBy?: ChallengeUpdatelikedByInput | Enumerable<string>
     user?: UserUpdateOneRequiredWithoutChallengeInput
     followers?: UserUpdateManyWithoutChallengeFollowingInput
     User?: UserUpdateOneWithoutChallengesInput
@@ -7685,16 +7544,14 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     userUserId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeUpdatekissesInput | Enumerable<string>
-    hearts?: ChallengeUpdateheartsInput | Enumerable<string>
-    hot?: ChallengeUpdatehotInput | Enumerable<string>
+    likedBy?: ChallengeUpdatelikedByInput | Enumerable<string>
     comments?: CommentUncheckedUpdateManyWithoutChallengeInput
     Post?: PostUncheckedUpdateManyWithoutChallengeInput
   }
@@ -7756,13 +7613,11 @@ export namespace Prisma {
     content: string
     created?: Date | string
     updated?: Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: bigint | number
     origin?: PostOrigin
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
-    kisses?: PostCreatekissesInput | Enumerable<string>
-    hearts?: PostCreateheartsInput | Enumerable<string>
-    hot?: PostCreatehotInput | Enumerable<string>
+    likedBy?: PostCreatelikedByInput | Enumerable<string>
     user: UserCreateNestedOneWithoutPostsInput
     challenge?: ChallengeCreateNestedOneWithoutPostInput
     Challenge?: ChallengeCreateNestedOneWithoutPostsInput
@@ -7778,14 +7633,12 @@ export namespace Prisma {
     content: string
     created?: Date | string
     updated?: Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: bigint | number
     origin?: PostOrigin
     challengeId?: number | null
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
-    kisses?: PostCreatekissesInput | Enumerable<string>
-    hearts?: PostCreateheartsInput | Enumerable<string>
-    hot?: PostCreatehotInput | Enumerable<string>
+    likedBy?: PostCreatelikedByInput | Enumerable<string>
   }
 
   export type PostCreateOrConnectWithoutCommentsInput = {
@@ -7799,15 +7652,13 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     start?: Date | string | null
     end?: Date | string | null
     created?: Date | string
     updated?: Date | string
     hashtags?: ChallengeCreatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeCreatekissesInput | Enumerable<string>
-    hearts?: ChallengeCreateheartsInput | Enumerable<string>
-    hot?: ChallengeCreatehotInput | Enumerable<string>
+    likedBy?: ChallengeCreatelikedByInput | Enumerable<string>
     user: UserCreateNestedOneWithoutChallengeInput
     followers?: UserCreateNestedManyWithoutChallengeFollowingInput
     User?: UserCreateNestedOneWithoutChallengesInput
@@ -7823,16 +7674,14 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     start?: Date | string | null
     end?: Date | string | null
     created?: Date | string
     updated?: Date | string
     userUserId?: number | null
     hashtags?: ChallengeCreatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeCreatekissesInput | Enumerable<string>
-    hearts?: ChallengeCreateheartsInput | Enumerable<string>
-    hot?: ChallengeCreatehotInput | Enumerable<string>
+    likedBy?: ChallengeCreatelikedByInput | Enumerable<string>
     posts?: PostUncheckedCreateNestedManyWithoutChallengeInput
     Post?: PostUncheckedCreateNestedManyWithoutChallengeInput
   }
@@ -7904,13 +7753,11 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
-    kisses?: PostUpdatekissesInput | Enumerable<string>
-    hearts?: PostUpdateheartsInput | Enumerable<string>
-    hot?: PostUpdatehotInput | Enumerable<string>
+    likedBy?: PostUpdatelikedByInput | Enumerable<string>
     user?: UserUpdateOneRequiredWithoutPostsInput
     challenge?: ChallengeUpdateOneWithoutPostInput
     Challenge?: ChallengeUpdateOneWithoutPostsInput
@@ -7926,14 +7773,12 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
-    kisses?: PostUpdatekissesInput | Enumerable<string>
-    hearts?: PostUpdateheartsInput | Enumerable<string>
-    hot?: PostUpdatehotInput | Enumerable<string>
+    likedBy?: PostUpdatelikedByInput | Enumerable<string>
   }
 
   export type ChallengeUpsertWithoutCommentsInput = {
@@ -7947,15 +7792,13 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeUpdatekissesInput | Enumerable<string>
-    hearts?: ChallengeUpdateheartsInput | Enumerable<string>
-    hot?: ChallengeUpdatehotInput | Enumerable<string>
+    likedBy?: ChallengeUpdatelikedByInput | Enumerable<string>
     user?: UserUpdateOneRequiredWithoutChallengeInput
     followers?: UserUpdateManyWithoutChallengeFollowingInput
     User?: UserUpdateOneWithoutChallengesInput
@@ -7971,16 +7814,14 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     userUserId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeUpdatekissesInput | Enumerable<string>
-    hearts?: ChallengeUpdateheartsInput | Enumerable<string>
-    hot?: ChallengeUpdatehotInput | Enumerable<string>
+    likedBy?: ChallengeUpdatelikedByInput | Enumerable<string>
     posts?: PostUncheckedUpdateManyWithoutChallengeInput
     Post?: PostUncheckedUpdateManyWithoutChallengeInput
   }
@@ -8141,12 +7982,10 @@ export namespace Prisma {
     attachmentMeta?: InputJsonValue | null
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     created?: Date | string
     updated?: Date | string
-    kisses?: CommentCreatekissesInput | Enumerable<string>
-    hearts?: CommentCreateheartsInput | Enumerable<string>
-    hot?: CommentCreatehotInput | Enumerable<string>
+    likedBy?: CommentCreatelikedByInput | Enumerable<string>
     user: UserCreateNestedOneWithoutCommentInput
     post?: PostCreateNestedOneWithoutCommentsInput
     User?: UserCreateNestedOneWithoutCommentInput
@@ -8162,14 +8001,12 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     userId: string
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     created?: Date | string
     updated?: Date | string
     postId?: number | null
     userUserId?: number | null
-    kisses?: CommentCreatekissesInput | Enumerable<string>
-    hearts?: CommentCreateheartsInput | Enumerable<string>
-    hot?: CommentCreatehotInput | Enumerable<string>
+    likedBy?: CommentCreatelikedByInput | Enumerable<string>
   }
 
   export type CommentCreateOrConnectWithoutChallengeInput = {
@@ -8190,13 +8027,11 @@ export namespace Prisma {
     content: string
     created?: Date | string
     updated?: Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: bigint | number
     origin?: PostOrigin
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
-    kisses?: PostCreatekissesInput | Enumerable<string>
-    hearts?: PostCreateheartsInput | Enumerable<string>
-    hot?: PostCreatehotInput | Enumerable<string>
+    likedBy?: PostCreatelikedByInput | Enumerable<string>
     user: UserCreateNestedOneWithoutPostsInput
     comments?: CommentCreateNestedManyWithoutPostInput
     challenge?: ChallengeCreateNestedOneWithoutPostInput
@@ -8212,13 +8047,11 @@ export namespace Prisma {
     content: string
     created?: Date | string
     updated?: Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: bigint | number
     origin?: PostOrigin
     hashtags?: PostCreatehashtagsInput | Enumerable<string>
-    kisses?: PostCreatekissesInput | Enumerable<string>
-    hearts?: PostCreateheartsInput | Enumerable<string>
-    hot?: PostCreatehotInput | Enumerable<string>
+    likedBy?: PostCreatelikedByInput | Enumerable<string>
     comments?: CommentUncheckedCreateNestedManyWithoutPostInput
   }
 
@@ -8485,14 +8318,12 @@ export namespace Prisma {
     content: string
     created?: Date | string
     updated?: Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: bigint | number
     origin?: PostOrigin
     challengeId?: number | null
     hashtags?: PostCreateManyhashtagsInput | Enumerable<string>
-    kisses?: PostCreateManykissesInput | Enumerable<string>
-    hearts?: PostCreateManyheartsInput | Enumerable<string>
-    hot?: PostCreateManyhotInput | Enumerable<string>
+    likedBy?: PostCreateManylikedByInput | Enumerable<string>
   }
 
   export type CommentCreateManyUserInput = {
@@ -8505,14 +8336,12 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     userId: string
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     created?: Date | string
     updated?: Date | string
     postId?: number | null
     challengeId?: number | null
-    kisses?: CommentCreateManykissesInput | Enumerable<string>
-    hearts?: CommentCreateManyheartsInput | Enumerable<string>
-    hot?: CommentCreateManyhotInput | Enumerable<string>
+    likedBy?: CommentCreateManylikedByInput | Enumerable<string>
   }
 
   export type ChallengeCreateManyUserInput = {
@@ -8523,15 +8352,13 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     start?: Date | string | null
     end?: Date | string | null
     created?: Date | string
     updated?: Date | string
     hashtags?: ChallengeCreateManyhashtagsInput | Enumerable<string>
-    kisses?: ChallengeCreateManykissesInput | Enumerable<string>
-    hearts?: ChallengeCreateManyheartsInput | Enumerable<string>
-    hot?: ChallengeCreateManyhotInput | Enumerable<string>
+    likedBy?: ChallengeCreateManylikedByInput | Enumerable<string>
   }
 
   export type UserUpdateWithoutFollowersInput = {
@@ -8664,13 +8491,11 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
-    kisses?: PostUpdatekissesInput | Enumerable<string>
-    hearts?: PostUpdateheartsInput | Enumerable<string>
-    hot?: PostUpdatehotInput | Enumerable<string>
+    likedBy?: PostUpdatelikedByInput | Enumerable<string>
     comments?: CommentUpdateManyWithoutPostInput
     challenge?: ChallengeUpdateOneWithoutPostInput
     Challenge?: ChallengeUpdateOneWithoutPostsInput
@@ -8685,14 +8510,12 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
-    kisses?: PostUpdatekissesInput | Enumerable<string>
-    hearts?: PostUpdateheartsInput | Enumerable<string>
-    hot?: PostUpdatehotInput | Enumerable<string>
+    likedBy?: PostUpdatelikedByInput | Enumerable<string>
     comments?: CommentUncheckedUpdateManyWithoutPostInput
   }
 
@@ -8705,14 +8528,12 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
-    kisses?: PostUpdatekissesInput | Enumerable<string>
-    hearts?: PostUpdateheartsInput | Enumerable<string>
-    hot?: PostUpdatehotInput | Enumerable<string>
+    likedBy?: PostUpdatelikedByInput | Enumerable<string>
   }
 
   export type CommentUpdateWithoutUserInput = {
@@ -8723,12 +8544,10 @@ export namespace Prisma {
     attachmentMeta?: InputJsonValue | null
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    kisses?: CommentUpdatekissesInput | Enumerable<string>
-    hearts?: CommentUpdateheartsInput | Enumerable<string>
-    hot?: CommentUpdatehotInput | Enumerable<string>
+    likedBy?: CommentUpdatelikedByInput | Enumerable<string>
     user?: UserUpdateOneRequiredWithoutCommentInput
     post?: PostUpdateOneWithoutCommentsInput
     challenge?: ChallengeUpdateOneWithoutCommentsInput
@@ -8744,14 +8563,12 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     postId?: NullableIntFieldUpdateOperationsInput | number | null
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
-    kisses?: CommentUpdatekissesInput | Enumerable<string>
-    hearts?: CommentUpdateheartsInput | Enumerable<string>
-    hot?: CommentUpdatehotInput | Enumerable<string>
+    likedBy?: CommentUpdatelikedByInput | Enumerable<string>
   }
 
   export type CommentUncheckedUpdateManyWithoutCommentInput = {
@@ -8764,14 +8581,12 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     postId?: NullableIntFieldUpdateOperationsInput | number | null
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
-    kisses?: CommentUpdatekissesInput | Enumerable<string>
-    hearts?: CommentUpdateheartsInput | Enumerable<string>
-    hot?: CommentUpdatehotInput | Enumerable<string>
+    likedBy?: CommentUpdatelikedByInput | Enumerable<string>
   }
 
   export type ChallengeUpdateWithoutUserInput = {
@@ -8780,15 +8595,13 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeUpdatekissesInput | Enumerable<string>
-    hearts?: ChallengeUpdateheartsInput | Enumerable<string>
-    hot?: ChallengeUpdatehotInput | Enumerable<string>
+    likedBy?: ChallengeUpdatelikedByInput | Enumerable<string>
     user?: UserUpdateOneRequiredWithoutChallengeInput
     followers?: UserUpdateManyWithoutChallengeFollowingInput
     comments?: CommentUpdateManyWithoutChallengeInput
@@ -8804,15 +8617,13 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeUpdatekissesInput | Enumerable<string>
-    hearts?: ChallengeUpdateheartsInput | Enumerable<string>
-    hot?: ChallengeUpdatehotInput | Enumerable<string>
+    likedBy?: ChallengeUpdatelikedByInput | Enumerable<string>
     comments?: CommentUncheckedUpdateManyWithoutChallengeInput
     posts?: PostUncheckedUpdateManyWithoutChallengeInput
     Post?: PostUncheckedUpdateManyWithoutChallengeInput
@@ -8826,15 +8637,13 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeUpdatekissesInput | Enumerable<string>
-    hearts?: ChallengeUpdateheartsInput | Enumerable<string>
-    hot?: ChallengeUpdatehotInput | Enumerable<string>
+    likedBy?: ChallengeUpdatelikedByInput | Enumerable<string>
   }
 
   export type ChallengeUpdateWithoutFollowersInput = {
@@ -8843,15 +8652,13 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeUpdatekissesInput | Enumerable<string>
-    hearts?: ChallengeUpdateheartsInput | Enumerable<string>
-    hot?: ChallengeUpdatehotInput | Enumerable<string>
+    likedBy?: ChallengeUpdatelikedByInput | Enumerable<string>
     user?: UserUpdateOneRequiredWithoutChallengeInput
     User?: UserUpdateOneWithoutChallengesInput
     comments?: CommentUpdateManyWithoutChallengeInput
@@ -8867,16 +8674,14 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     userUserId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeUpdatekissesInput | Enumerable<string>
-    hearts?: ChallengeUpdateheartsInput | Enumerable<string>
-    hot?: ChallengeUpdatehotInput | Enumerable<string>
+    likedBy?: ChallengeUpdatelikedByInput | Enumerable<string>
     comments?: CommentUncheckedUpdateManyWithoutChallengeInput
     posts?: PostUncheckedUpdateManyWithoutChallengeInput
     Post?: PostUncheckedUpdateManyWithoutChallengeInput
@@ -8890,16 +8695,14 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentMeta?: InputJsonValue | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     start?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     end?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     userUserId?: NullableIntFieldUpdateOperationsInput | number | null
     hashtags?: ChallengeUpdatehashtagsInput | Enumerable<string>
-    kisses?: ChallengeUpdatekissesInput | Enumerable<string>
-    hearts?: ChallengeUpdateheartsInput | Enumerable<string>
-    hot?: ChallengeUpdatehotInput | Enumerable<string>
+    likedBy?: ChallengeUpdatelikedByInput | Enumerable<string>
   }
 
   export type CommentCreateManyPostInput = {
@@ -8912,14 +8715,12 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     userId: string
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     created?: Date | string
     updated?: Date | string
     challengeId?: number | null
     userUserId?: number | null
-    kisses?: CommentCreateManykissesInput | Enumerable<string>
-    hearts?: CommentCreateManyheartsInput | Enumerable<string>
-    hot?: CommentCreateManyhotInput | Enumerable<string>
+    likedBy?: CommentCreateManylikedByInput | Enumerable<string>
   }
 
   export type CommentUpdateWithoutPostInput = {
@@ -8930,12 +8731,10 @@ export namespace Prisma {
     attachmentMeta?: InputJsonValue | null
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    kisses?: CommentUpdatekissesInput | Enumerable<string>
-    hearts?: CommentUpdateheartsInput | Enumerable<string>
-    hot?: CommentUpdatehotInput | Enumerable<string>
+    likedBy?: CommentUpdatelikedByInput | Enumerable<string>
     user?: UserUpdateOneRequiredWithoutCommentInput
     challenge?: ChallengeUpdateOneWithoutCommentsInput
     User?: UserUpdateOneWithoutCommentInput
@@ -8951,14 +8750,12 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
     userUserId?: NullableIntFieldUpdateOperationsInput | number | null
-    kisses?: CommentUpdatekissesInput | Enumerable<string>
-    hearts?: CommentUpdateheartsInput | Enumerable<string>
-    hot?: CommentUpdatehotInput | Enumerable<string>
+    likedBy?: CommentUpdatelikedByInput | Enumerable<string>
   }
 
   export type CommentUncheckedUpdateManyWithoutCommentsInput = {
@@ -8971,14 +8768,12 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     challengeId?: NullableIntFieldUpdateOperationsInput | number | null
     userUserId?: NullableIntFieldUpdateOperationsInput | number | null
-    kisses?: CommentUpdatekissesInput | Enumerable<string>
-    hearts?: CommentUpdateheartsInput | Enumerable<string>
-    hot?: CommentUpdatehotInput | Enumerable<string>
+    likedBy?: CommentUpdatelikedByInput | Enumerable<string>
   }
 
   export type CommentCreateManyChallengeInput = {
@@ -8991,14 +8786,12 @@ export namespace Prisma {
     attachmentType?: AttachmentType | null
     attachmentUrl?: string | null
     userId: string
-    reaction?: InputJsonValue | null
+    likes?: bigint | number
     created?: Date | string
     updated?: Date | string
     postId?: number | null
     userUserId?: number | null
-    kisses?: CommentCreateManykissesInput | Enumerable<string>
-    hearts?: CommentCreateManyheartsInput | Enumerable<string>
-    hot?: CommentCreateManyhotInput | Enumerable<string>
+    likedBy?: CommentCreateManylikedByInput | Enumerable<string>
   }
 
   export type PostCreateManyChallengeInput = {
@@ -9011,13 +8804,11 @@ export namespace Prisma {
     content: string
     created?: Date | string
     updated?: Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: bigint | number
     origin?: PostOrigin
     hashtags?: PostCreateManyhashtagsInput | Enumerable<string>
-    kisses?: PostCreateManykissesInput | Enumerable<string>
-    hearts?: PostCreateManyheartsInput | Enumerable<string>
-    hot?: PostCreateManyhotInput | Enumerable<string>
+    likedBy?: PostCreateManylikedByInput | Enumerable<string>
   }
 
   export type UserUpdateWithoutChallengeFollowingInput = {
@@ -9073,12 +8864,10 @@ export namespace Prisma {
     attachmentMeta?: InputJsonValue | null
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    kisses?: CommentUpdatekissesInput | Enumerable<string>
-    hearts?: CommentUpdateheartsInput | Enumerable<string>
-    hot?: CommentUpdatehotInput | Enumerable<string>
+    likedBy?: CommentUpdatelikedByInput | Enumerable<string>
     user?: UserUpdateOneRequiredWithoutCommentInput
     post?: PostUpdateOneWithoutCommentsInput
     User?: UserUpdateOneWithoutCommentInput
@@ -9094,14 +8883,12 @@ export namespace Prisma {
     attachmentType?: NullableEnumAttachmentTypeFieldUpdateOperationsInput | AttachmentType | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-    reaction?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
     postId?: NullableIntFieldUpdateOperationsInput | number | null
     userUserId?: NullableIntFieldUpdateOperationsInput | number | null
-    kisses?: CommentUpdatekissesInput | Enumerable<string>
-    hearts?: CommentUpdateheartsInput | Enumerable<string>
-    hot?: CommentUpdatehotInput | Enumerable<string>
+    likedBy?: CommentUpdatelikedByInput | Enumerable<string>
   }
 
   export type PostUpdateWithoutChallengeInput = {
@@ -9112,13 +8899,11 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
-    kisses?: PostUpdatekissesInput | Enumerable<string>
-    hearts?: PostUpdateheartsInput | Enumerable<string>
-    hot?: PostUpdatehotInput | Enumerable<string>
+    likedBy?: PostUpdatelikedByInput | Enumerable<string>
     user?: UserUpdateOneRequiredWithoutPostsInput
     comments?: CommentUpdateManyWithoutPostInput
     challenge?: ChallengeUpdateOneWithoutPostInput
@@ -9134,13 +8919,11 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     created?: DateTimeFieldUpdateOperationsInput | Date | string
     updated?: DateTimeFieldUpdateOperationsInput | Date | string
-    reaction?: InputJsonValue | null
     location?: InputJsonValue | null
+    likes?: BigIntFieldUpdateOperationsInput | bigint | number
     origin?: EnumPostOriginFieldUpdateOperationsInput | PostOrigin
     hashtags?: PostUpdatehashtagsInput | Enumerable<string>
-    kisses?: PostUpdatekissesInput | Enumerable<string>
-    hearts?: PostUpdateheartsInput | Enumerable<string>
-    hot?: PostUpdatehotInput | Enumerable<string>
+    likedBy?: PostUpdatelikedByInput | Enumerable<string>
     comments?: CommentUncheckedUpdateManyWithoutPostInput
   }
 

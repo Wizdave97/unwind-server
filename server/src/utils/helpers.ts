@@ -1,7 +1,7 @@
-import { PaginationInterface } from "unwind-server/resolvers/types";
+import { PaginationInterface, PostWithComments } from "unwind-server/resolvers/types";
 import express from 'express'
 import { verifyToken } from "unwind-server/auth";
-import { User, Post, PrismaClient } from "unwind-server/prisma/src/generated/client";
+import { User, Post, PrismaClient, Comment } from "unwind-server/prisma/src/generated/client";
 import { ApolloError } from "apollo-server-express";
 
 
@@ -98,12 +98,13 @@ export const getNextUTCHours = () => {
     return (utcHours * 60) + 60
 }
 
-export const getUsersThatReactedToPost = (following: User[], post: Post) => {
+
+export const getUsersThatReactedToPost = (following: User[], post: PostWithComments) => {
     const followingUIDs = following.map(user => user.uid)
     const reactedUserIds = new Set()
     followingUIDs.forEach(id => {
-        if(post.hearts.indexOf(id) > -1) reactedUserIds.add(id)
-        if(post.hot.indexOf(id)> -1) reactedUserIds.add(id)
+        if(post.likedBy.indexOf(id) > -1) reactedUserIds.add(id)
+        if(post.comments.findIndex(o => o.userId === id)) reactedUserIds.add(id)
     })
 
     const reactedUsers = following.filter(({uid}) => reactedUserIds.has(uid))
